@@ -1,0 +1,4 @@
+Admin=MSSQL,Data Source=DT02GHP0005\SQLEXPRESS; Initial Catalog=LEGAL; User ID=dietech; Password=Mexic02017; Min Pool Size=3; Max Pool Size=25;
+Default=MSSQL,Data Source=DT02GHP0005\SQLEXPRESS; Initial Catalog=LEGAL; User ID=dietech; Password=Mexic02017; Min Pool Size=3; Max Pool Size=25;
+MRP=MYSQL,Server=10.6.1.11; Port=3306; Database=mrp_dietech; Uid=root; Pwd=wW8hqW+E;
+SMTP=SMTP,mail.ramaps.net/25/postmaster@ramaps.net/_Rama3023

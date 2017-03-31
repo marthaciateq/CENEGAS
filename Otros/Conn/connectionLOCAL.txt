@@ -1,0 +1,4 @@
+Admin=MSSQL,Data Source=C000889\SQLC000889; Initial Catalog=LEGAL; User ID=legalAdmin; Password=123; Pooling=true; Min Pool Size=3; Max Pool Size=5;
+Default=MSSQL,Data Source=C000889\SQLC000889; Initial Catalog=LEGAL; User ID=legalDefault; Password=123; Pooling=true; Min Pool Size=3; Max Pool Size=5;
+MRP=MYSQL,Server=172.16.9.42; Port=3306; Database=dietech2; Uid=dietech; Pwd=123;
+SMTP=SMTP,mail.ramaps.net/25/postmaster@ramaps.net/_Rama3023

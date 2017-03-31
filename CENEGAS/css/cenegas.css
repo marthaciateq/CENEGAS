@@ -1,0 +1,74 @@
+#side-menu {
+  background-color: #003d4d;
+  padding-top: 2rem;
+  height: 100%;
+  position: fixed;
+}
+
+
+#side-menu ul.nav {
+  margin-top: 1rem;
+}
+
+
+#side-menu ul.nav a {
+  color: #8b91a0;
+}
+
+#side-menu ul.nav a:hover,
+#side-menu ul.nav a:focus {
+  color: #FFF;
+  background-color: inherit;
+  outline: none;
+}
+
+#side-menu ul.nav a .glyphicon {
+  margin-right: 0.7rem;
+}
+
+
+#side-menu ul.nav a .glyphicon.pull-right {
+  margin-top: 0.2rem;
+  will-change: transform;
+}
+
+#side-menu ul.nav a:focus .glyphicon.pull-right {
+  -moz-transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+}
+
+#side-menu ul.nav ul {
+  margin-left: 10%;
+}
+
+#side-menu ul.nav ul a {
+  display: block;
+  background-color: #005266;
+  padding: 1rem;
+  margin-bottom: 0.3rem;
+  border-radius: 0.25em;
+}
+
+#side-menu ul.nav ul a:hover {
+  text-decoration: none;
+  background-color: #006680;
+}
+
+#top-menu ul.nav a .glyphicon {
+  margin-right: 0.7rem;
+}
+
+#formAcceso
+{
+  padding-top: 6%;
+  padding-left: 25%;
+}
+
+#formAcceso h2 {
+  font-size: 1.5rem;
+}
+
+

@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Reportes</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/cenegas.css">
+    <link rel="stylesheet" href="../css/chosen.css">
+    <link rel="stylesheet" href="../css/bootstrap-datetimepicker.min.css" />
+    <script type="text/javascript">
+        var files = [];
+        function getPuntosMuestreoConInformacion(pmuestreo, formato) {
+            var nombre = 'especificaciones';
+            var procedimiento = 'sps_reporte_especificaciones';
+            var dfd = $.Deferred();
+            if ($("#reporte").MiVal() == 'F') {
+                nombre = 'falta_informacion';
+                procedimiento = 'sps_reporte_falta_informacion'
+            }
+            Mi.AJAX.request({
+                data: {
+                    NAME: procedimiento,
+                    pmuestreo: pmuestreo==""?null:pmuestreo,
+                    elementos: $("#idelemento").MiVal(),
+                    finicial: $("#finicial").val(),
+                    ffinal: $("#ffinal").val(),
+                    resultado:1
+                },
+                onsuccess: function (r) {
+                   dfd.resolve(r);
+                }
+            });
+            return dfd.promise();
+        }
+        function generarReporte(pmuestreo, formato, ptoFile) {
+           
+            var nombre = 'especificaciones';
+            var procedimiento = 'sps_reporte_especificaciones';
+            var dfd = $.Deferred();
+            if ($("#reporte").MiVal() == 'F') {
+                nombre = 'falta_informacion';
+                procedimiento = 'sps_reporte_falta_informacion'
+            }
+            console.log('called processItem');
+                Mi.Reports.request({
+                    data: {
+                        NAME: procedimiento,
+                        pmuestreo: pmuestreo == "" ? null : pmuestreo,
+                        elementos: $("#idelemento").val()==""?null:$("#idelemento").val(),
+                        finicial: $("#finicial").val(),
+                        ffinal: $("#ffinal").val(),
+                        formato: formato,
+                        resultado:2
+                    },
+                    nombre: nombre,
+                    format: formato,
+                    toFile: ptoFile,
+                    onsuccess: function (data) {
+                        files.push(data);
+                        dfd.resolve(data);
+                    }
+                });
+                return dfd.promise();
+        }
+        function _onload() {
+            Mi.Template.load(function () {
+                Mi.Template.menuTop([
+                    {
+                        label: "Validar Información",
+                        onclick: function () {
+                            if ($(this).parent().hasClass('disabled')) return;
+                            $(this).parent().parent().children('li').addClass("disabled");
+                            $(this).parent().removeClass("disabled");
+                            validar();
+                        }, img: ""
+                    },
+                    {
+                        label: "Cancelar Información",
+                        onclick: function () {
+                            var row;
+                            row = $("#registros").find('input:checked').first().parent().parent().data('row');
+                            if ($(this).parent().hasClass('disabled')) return;
+                            $(this).parent().removeClass("disabled");
+                            cancelar();
+                        },
+                        img: ""
+                    }
+                ], "REPORTES");
+
+
+                $("#loading").hide();
+
+                pmuestreo = Mi.Input.comboPmuestreo({ multiple: "true" });
+                pmuestreo.appendTo("#divpmuestreo");
+                pmuestreo.prop("id", "idpmuestreo");
+
+                elementos = Mi.Input.comboElementos({ multiple: "true" });
+                elementos.appendTo("#divElementos");
+                elementos.prop("id", "idelemento");
+
+                reportes = Mi.Input.comboReportes();
+                reportes.appendTo("#divReportes");
+                reportes.prop("id", "reporte");
+
+                formatos= Mi.Input.comboFormatos();
+                formatos.appendTo("#divFormatos");
+                formatos.prop("id", "formato");
+
+                var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+                var options = {
+                    format: 'dd/mm/yyyy',
+                    container: container,
+                    todayHighlight: true,
+                    autoclose: true,
+                };
+                $("#finicial").datepicker(options);
+                $("#ffinal").datepicker(options);
+
+                $("#bgenerar").click(function () {
+                    function everythingDone() {
+                        console.log('processed all items');
+                        console.log(files.length);
+                    }
+                    var formato = $("#formato").MiVal() == null ? 'EXCEL' : $("#formato").MiVal()
+
+                    if (formato == 'PDF') {
+
+                        var processItemsDeferred = [];
+
+                        $.when(getPuntosMuestreoConInformacion($("#idpmuestreo").val(), formato)).then(function (data) {
+
+                            if (data.length != 0) {
+                                $("#loading").show();
+                                $.each(data, function (index, value) {
+                                    alert(value.idpmuestreo);
+                                    processItemsDeferred.push(generarReporte(value.idpmuestreo,formato,'S'));
+                                });
+
+                                $.when.apply($, processItemsDeferred).then(function () {
+
+                                    var formData = new FormData();
+                                    $.each(files, function (index, value) {
+                                        formData.append("files", value);
+                                    });
+
+                                    var frm01 = document.createElement('form');
+                                    frm01.style.display = 'none';
+                                    frm01.method = 'post';
+                                    frm01.action = Mi.webHome + 'dispatch/zip.aspx';
+                                    document.body.appendChild(frm01);
+                                    $.each(files, function (index, value) {
+                                        if (value != null && value != undefined) {
+                                            input = document.createElement('input');
+                                            input.name = "files";
+                                            input.value = value;
+                                            frm01.appendChild(input);
+                                        }
+                                    });
+                                    frm01.submit();
+                                    document.body.removeChild(frm01);
+                                    $("#loading").hide();
+                                });
+                            } else alert("No hay información fuera de especificacion en las fechas seleccionadas")
+                        });
+
+
+                    } else {
+                        $.when(generarReporte($("#idpmuestreo").val(), formato)).then(function (data) {
+
+                        });
+                    }
+                });
+
+            });
+
+        }
+    </script>
+</head>
+<body onload="Mi.onload();">
+    <div id="div_principal" class="container-fluid">
+        <div id="row_principal" class="row">
+            <div id="side-menu" class="col-sm-2 hidden-xs" data-spy="affix" data-offset-top="0"></div>
+            <div id="opciones" class="col-sm-offset-2 col-sm-10"></div>
+            <div id="main" class="col-sm-offset-2 col-sm-10">
+                    <div class="col-md-3 col-md-offset-9 clearfix" id="loading">
+                        <p><img height="42" width="42" src="../imgs/loading.gif" /> Generando archivo...</p>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Punto(s) de Muestreo:</label>
+                        <div id="divpmuestreo" class="col-sm-4">
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Elemento(s):</label>
+                        <div id="divElementos" class="col-sm-4">
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Reporte:</label>
+                        <div id="divReportes" class="col-sm-4">
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Fecha inicio:</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" id="finicial" name="finicial" placeholder="DD/MM/YYY"/>
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Fecha Final:</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" id="ffinal" name="ffinal" placeholder="DD/MM/YYY"/>
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Formato:</label>
+                        <div id="divFormatos" class="col-sm-4">
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <div class="col-sm-3">
+                            <button id="bgenerar" class="btn btn-success">Generar Reporte</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="../js/Mi.aspx"></script>
+

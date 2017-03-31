@@ -1,0 +1,13 @@
+C:\proyectos\CENEGAS\CENEGAS\obj\Debug\CENEGAS.csprojResolveAssemblyReference.cache
+C:\proyectos\CENEGAS\CENEGAS\bin\CENEGAS.dll.config
+C:\proyectos\CENEGAS\CENEGAS\bin\CENEGAS.dll
+C:\proyectos\CENEGAS\CENEGAS\bin\CENEGAS.pdb
+C:\proyectos\CENEGAS\CENEGAS\bin\MiControl.dll
+C:\proyectos\CENEGAS\CENEGAS\bin\MiCrypt.dll
+C:\proyectos\CENEGAS\CENEGAS\bin\MySql.Data.dll
+C:\proyectos\CENEGAS\CENEGAS\bin\Spire.Barcode.dll
+C:\proyectos\CENEGAS\CENEGAS\bin\MiControl.pdb
+C:\proyectos\CENEGAS\CENEGAS\bin\MiCrypt.pdb
+C:\proyectos\CENEGAS\CENEGAS\bin\Spire.Barcode.xml
+C:\proyectos\CENEGAS\CENEGAS\obj\Debug\CENEGAS.dll
+C:\proyectos\CENEGAS\CENEGAS\obj\Debug\CENEGAS.pdb

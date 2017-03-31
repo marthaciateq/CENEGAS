@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+-->    
+    <title>Usuarios</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/cenegas.css">
+    <link rel="stylesheet" href="../css/chosen.css">
+
+
+
+
+
+
+    <script language="javascript">
+        function guardar() {
+
+                var formData = new FormData();
+                var horarios = $("#horarios")[0].files[0];
+                var promedios = $("#promedios")[0].files[0];
+
+                formData.append("initDate", "2017-02-01");
+                formData.append("finalDate", "2017-02-28");
+                formData.append("updateRecords", true);
+                formData.append("horarios", horarios);
+                formData.append("promedios", promedios);
+                
+
+                $.ajax({
+                    url: Mi.webHome + 'dispatch/import.aspx', // Url to which the request is send
+                    type: "POST",             // Type of request to be send, called as method
+                    timeout: 20 * 1000 * 60,
+                    //dataType: 'json',
+                    data: formData, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+                    contentType: false,       // The content type used when sending data to the server.
+                    cache: false,             // To unable request pages to be cached
+                    processData: false,        // To send DOMDocument or non processed data file it is set to false
+                    success: function (data)   // A function to be called if request succeeds
+                    {
+                        if (typeof data.error === 'undefined') {
+                            var r = JSON.parse(data);
+                        }
+                        else {
+                            alert(data.error);
+                        }
+                    },
+                    onerror: function () {
+                        alert("ocurrio un error");
+                    }
+                });
+
+        }
+
+
+        function cargar() {
+            $("#formulario").show()
+            $("#listado").hide()
+        }
+        function eliminar() { 
+        }
+        function buscar(usuario) {
+            Mi.AJAX.request({
+                data: {
+                    NAME: 'sps_usuarios_buscar',
+                    buscar: usuario
+                },
+                onsuccess: function (r) {
+                    listado(r);
+                }
+            });
+        }
+        function listado(r) {
+            $("#listado").empty();
+            $("#formulario").hide();
+            $("#listado").show();
+            $("#top-menu").find('li').removeClass('disabled');
+
+            var table = Mi.table({
+                head: {
+                    data: [['', 'Archivo Horarios', 'Archivo Promedios', 'Fecha de Carga', 'Usuario', '# reg. insertados horarios', '# reg. actualizados horarios', '# excepciones horarios', '# reg. insertados promedio', '# reg. actualizados promedio', '# excepciones promedio']]
+                },
+                body: {
+                    data: r,
+                    cols: ['idbdatos', 'nombre', 'fechaS', 'nombres']
+                },
+                addCheckbox: true
+            });
+
+            table.children('thead').children('tr').addClass('table-header');
+            table.appendTo($("#listado"))
+            table.prop("id", "registros")
+
+        }
+
+        function _onload() {
+            Mi.Template.load(function () {
+                Mi.Template.menuTop([
+                    {
+                        label: "Cargar Base de Datos",
+                        onclick: function () {
+                            if ($(this).parent().hasClass('disabled')) return;
+                            $(this).parent().parent().children('li').addClass("disabled");
+                            $(this).parent().removeClass("disabled");
+                            cargar();
+                        }, img: ""
+                    },
+                    {
+                        label: "Eliminar Base de Datos",
+                        onclick: function () {
+                            var row;
+                            row = $("#registros").find('input:checked').first().parent().parent().data('row');
+                            if ($(this).parent().hasClass('disabled')) return;
+                            if (!row) {
+                                Mi.Modal.alert("Por favor seleccione un registro");
+                                return;
+                            }
+                            //$(this).parent().parent().children('li').addClass("disabled");
+                            $(this).parent().removeClass("disabled");
+                            eliminar();
+                        },
+                        img: ""
+                    }
+,
+                    {
+                        label: "Ver información faltante ",
+                        onclick: function () {
+                            var row;
+                            row = $("#registros").find('input:checked').first().parent().parent().data('row');
+                            if ($(this).parent().hasClass('disabled')) return;
+                            if (!row) {
+                                Mi.Modal.alert("Por favor seleccione un registro");
+                                return;
+                            }
+                            //$(this).parent().parent().children('li').addClass("disabled");
+                            $(this).parent().removeClass("disabled");
+                        },
+                        img: ""
+                    }
+
+                ], "CARGA DE BASES DE DATOS");
+                $("#bbuscar").click(function () {
+                    buscar($("#txtbuscar").val());
+                });
+                $("#bcancelar").click(function () {
+                    buscar();
+                });
+                $("#guardar").click(function () {
+                    guardar();
+                });
+                $("#formulario").hide();
+                Mi.AJAX.request({
+                    data: [
+                        {
+                            NAME: 'sps_bdatos_buscar'
+                        }
+                    ],
+                    onsuccess: function (r) {
+                        listado(r);
+                    }
+                });
+
+            });
+
+        }
+
+    </script>
+</head>
+<body onload="Mi.onload();">
+    <div id="div_principal" class="container-fluid">
+        <div id="row_principal" class="row">
+            <div id="side-menu" class="col-sm-2 hidden-xs" data-spy="affix" data-offset-top="0"></div>
+            <div id="opciones" class="col-sm-offset-2 col-sm-10"></div>
+            <div id="main" class="col-sm-offset-2 col-sm-10">
+                <div id="listado" class="col-sm-10"></div>
+                <form id="formulario" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Horarios:</label>
+                        <div class="col-sm-9">
+                            <input type="file" class="form-control" id="horarios" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Promedios:</label>
+                        <div class="col-sm-9">
+                            <input type="file" class="form-control" id="promedios" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <button id="guardar" class="btn btn-success">Subir</button>
+                            <button id="bcancelar" class="btn btn-danger">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="../js/Mi.aspx"></script>
+
+

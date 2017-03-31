@@ -1,0 +1,4 @@
+CREATE VIEW v_rnd
+AS
+SELECT RAND() rndResult
+GO
