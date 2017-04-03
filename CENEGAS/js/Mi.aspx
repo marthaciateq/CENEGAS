@@ -6,6 +6,7 @@
 		"bootstrap.min.js",        
         "chosen.jquery.min.js",    
         "bootstrap-datepicker.min.js",
+        "bootstrap-datepicker.es.min.js",        
         "jszip.min.js",      
         "FileSaver.min.js",        
 		"Mi.js",

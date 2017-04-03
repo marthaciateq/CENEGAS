@@ -1,5 +1,5 @@
-drop table valores2
-create table valores2(
+drop table valores
+create table valores(
 	columna1 varchar(max),
 	columna2 varchar(max),
 	columna3 varchar(max),
@@ -18,8 +18,8 @@ create table valores2(
 
 GO
 
-BULK INSERT valores2
-	from 'c:\meth\cenegas\valores2.csv'
+BULK INSERT valores
+	from 'c:\meth\cenegas\valores1.csv'
 	with(
 		fieldterminator=',',
 		rowterminator='\n'

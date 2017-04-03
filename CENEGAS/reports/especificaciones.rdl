@@ -37,17 +37,47 @@
           <QueryParameter Name="@formato">
             <Value>=Parameters!formato.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@resultado">
+            <Value>=Parameters!resultado.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@reporte">
+            <Value>=Parameters!reporte.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>sps_reporte_especificaciones</CommandText>
       </Query>
       <Fields>
-        <Field Name="punto">
-          <DataField>punto</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="idpmuestreo">
           <DataField>idpmuestreo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="idelemento">
+          <DataField>idelemento</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="fecha">
+          <DataField>fecha</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="fechaS">
+          <DataField>fechaS</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="valor">
+          <DataField>valor</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="fpromedio">
+          <DataField>fpromedio</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="fpromedioS">
+          <DataField>fpromedioS</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="punto">
+          <DataField>punto</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="nalterno">
@@ -58,33 +88,9 @@
           <DataField>descripcion</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="fecha">
-          <DataField>fecha</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="fpromedio">
-          <DataField>fpromedio</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="idelemento">
-          <DataField>idelemento</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="fpromedioS">
-          <DataField>fpromedioS</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="valor">
-          <DataField>valor</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
         <Field Name="promedio">
           <DataField>promedio</DataField>
           <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="fechaS">
-          <DataField>fechaS</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="zona">
           <DataField>zona</DataField>
@@ -96,6 +102,18 @@
         </Field>
         <Field Name="formato">
           <DataField>formato</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="finicial">
+          <DataField>finicial</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ffinal">
+          <DataField>ffinal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="reporte">
+          <DataField>reporte</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -568,26 +586,25 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox23">
+                                          <Textbox Name="finicial">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!finicial.Value</Value>
                                                     <Style>
                                                       <FontSize>9pt</FontSize>
-                                                      <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
-                                                  <TextAlign>Right</TextAlign>
+                                                  <TextAlign>Center</TextAlign>
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox23</rd:DefaultName>
+                                            <rd:DefaultName>finicial</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -639,14 +656,14 @@
                                       </TablixCell>
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox27">
+                                          <Textbox Name="ffinal">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!ffinal.Value</Value>
                                                     <Style>
                                                       <FontSize>9pt</FontSize>
                                                     </Style>
@@ -657,7 +674,7 @@
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox27</rd:DefaultName>
+                                            <rd:DefaultName>ffinal</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -669,42 +686,10 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
+                                          <ColSpan>2</ColSpan>
                                         </CellContents>
                                       </TablixCell>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Textbox Name="Textbox30">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value />
-                                                    <Style>
-                                                      <FontSize>9pt</FontSize>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style>
-                                                  <TextAlign>Center</TextAlign>
-                                                </Style>
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox30</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>None</Style>
-                                              </Border>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
-                                        </CellContents>
-                                      </TablixCell>
+                                      <TablixCell />
                                     </TablixCells>
                                   </TablixRow>
                                   <TablixRow>
@@ -4200,6 +4185,7 @@
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixRowHierarchy>
+                              <NoRowsMessage>NO SE ENCONTRO INFORMACIÓN.</NoRowsMessage>
                               <DataSetName>DataSet1</DataSetName>
                               <Top>0.09545cm</Top>
                               <Height>13.06081cm</Height>
@@ -4586,6 +4572,9 @@
                               <Height>2.02958cm</Height>
                               <Width>19.13918cm</Width>
                               <ZIndex>1</ZIndex>
+                              <Visibility>
+                                <Hidden>=IIF(Fields!reporte.Value="G",true,false)</Hidden>
+                              </Visibility>
                               <Style>
                                 <Border>
                                   <Style>None</Style>
@@ -4600,7 +4589,6 @@
                             </Border>
                           </Style>
                         </Rectangle>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -4662,7 +4650,7 @@
       <Width>7.53511in</Width>
       <Page>
         <PageFooter>
-          <Height>2.8885cm</Height>
+          <Height>0.59118cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -4793,39 +4781,6 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Textbox Name="Textbox32">
-              <CanGrow>true</CanGrow>
-              <KeepTogether>true</KeepTogether>
-              <Paragraphs>
-                <Paragraph>
-                  <TextRuns>
-                    <TextRun>
-                      <Value>Los datos de este reporte no han sido validados</Value>
-                      <Style>
-                        <FontStyle>Italic</FontStyle>
-                        <FontSize>8pt</FontSize>
-                      </Style>
-                    </TextRun>
-                  </TextRuns>
-                  <Style />
-                </Paragraph>
-              </Paragraphs>
-              <rd:DefaultName>Textbox32</rd:DefaultName>
-              <Top>0.03954cm</Top>
-              <Left>0.49953cm</Left>
-              <Height>0.6cm</Height>
-              <Width>7.73875cm</Width>
-              <ZIndex>4</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-                <PaddingLeft>2pt</PaddingLeft>
-                <PaddingRight>2pt</PaddingRight>
-                <PaddingTop>2pt</PaddingTop>
-                <PaddingBottom>2pt</PaddingBottom>
-              </Style>
-            </Textbox>
           </ReportItems>
           <Style>
             <Border>
@@ -4879,6 +4834,16 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <Prompt>formato</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="resultado">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>resultado</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="reporte">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>reporte</Prompt>
     </ReportParameter>
   </ReportParameters>
   <EmbeddedImages>

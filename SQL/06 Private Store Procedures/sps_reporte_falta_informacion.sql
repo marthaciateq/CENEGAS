@@ -20,13 +20,22 @@ BEGIN
 		if @finicial is null execute sp_error 'U','Favor de seleccionar fecha inicial'
 		if @ffinal is null execute sp_error 'U','Favor de seleccionar fecha final'
 		
+		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
+		if DATEDIFF(day,@d_finicial,@d_ffinal)>15 execute sp_error 'U','El máximo rango de consulta son 15 días'		
+		
 		set @d_finicial=convert(date,@finicial,103)
 		set @d_ffinal=convert(date,@ffinal,103)	
 		
+		declare @t_pmuestreo table(
+			idpmuestreo char(32),
+			punto varchar(max),
+			nalterno varchar(max)
+		)
 		declare @fcero datetime
 		declare @fechas table(
 			fecha datetime
-		)		
+		)	
+			
 		select *
 		into #base_registros
 		from registros
@@ -35,10 +44,10 @@ BEGIN
 			  (@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal)) 
 			   or idbdatos=@idbdatos
 			)
-			and valido='S'
+			and estado=1
 			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
 			and (@elementos is null or idelemento in ( select col1 from dbo.fn_table(1,@elementos)))
-
+			
 		select *
 		into #base_rpromedio
 		from rpromedio
@@ -47,10 +56,13 @@ BEGIN
 			  (@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
 			   or idbdatos=@idbdatos
 			)
-			and valido='S'
+			and estado=1
 			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
 			and (@elementos is null or idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
-
+			
+		if(@pmuestreo is null) insert into @t_pmuestreo select idpmuestreo,punto,nalterno from pmuestreo where deleted='N'
+		else insert into @t_pmuestreo select idpmuestreo,punto,nalterno from pmuestreo where deleted='N' and idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo))
+	
 		select 
 			@d_finicial=convert(date,min(fminima)),
 			@d_ffinal=convert(date,max(fmaxima))
@@ -62,13 +74,13 @@ BEGIN
 			from #base_rpromedio			
 		)a
 		
-		set @fcero=@finicial
-		while @fcero<dateadd(dd,1,@ffinal)		
+		set @fcero=@d_finicial
+		while @fcero<dateadd(dd,1,@d_ffinal)		
 		begin
 			insert into @fechas values(@fcero)
 			set @fcero=dateadd(hh,1,@fcero)			
 		end
-		
+	
 		--TOTAL DE FECHAS
 		select
 			a.idpmuestreo,
@@ -77,8 +89,7 @@ BEGIN
 			b.descripcion,
 			c.fecha
 		into #tcompleta_horarios		
-		from pmuestreo a,elementos b,@fechas c
-			where a.deleted='N'
+		from @t_pmuestreo a,(select * from elementos where deleted='N') b,@fechas c
 			
 		--TOTAL DE FECHAS PROMEDIO
 		select
@@ -102,7 +113,7 @@ BEGIN
 		from #base_registros a
 			inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
 			inner join elementos c on a.idelemento=c.idelemento
-			
+
 		-- TOTAL REGISTROS PROMEDIO
 		select
 			b.idpmuestreo,
@@ -114,9 +125,8 @@ BEGIN
 		from #base_rpromedio a
 			inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
 			inner join elementos c on a.idelemento=c.idelemento
-			
 
-		-- REGISTRO QUE NO ESTAN EN LA TABLA COMPLETA DE HORARIOS
+		--REGISTRO QUE NO ESTAN EN LA TABLA COMPLETA DE HORARIOS
 		select * 
 		into #incompleta_horarios
 		from 
@@ -155,6 +165,15 @@ BEGIN
 		dbo.fn_dateToString(isnull(a.fecha,b.fecha)) fechaS,
 		case when a.fecha is not null
 			then
+				 (
+					SELECT count(*)
+					FROM #incompleta_horarios b where a.fecha=convert(date,b.fecha) and a.punto=b.punto and a.nalterno=b.nalterno and a.descripcion=b.descripcion
+				)
+			  else
+				24
+		end num_hfalta,		
+		case when a.fecha is not null
+			then
 				STUFF((
 					 SELECT ','+dbo.fn_datetimeToString(b.fecha,5)
 					 FROM #incompleta_horarios b where a.fecha=convert(date,b.fecha) and a.punto=b.punto and a.nalterno=b.nalterno and a.descripcion=b.descripcion
@@ -163,7 +182,7 @@ BEGIN
 			  else
 				'TODAS LAS HORAS'
 		end hfalta,
-		case when b.fecha is not null
+		case when b.fecha is null
 			then 'SI'
 			else 'NO'
 		end promedio,
@@ -177,7 +196,8 @@ BEGIN
 		if @resultado=1
 		begin
 			select 
-				distinct idpmuestreo idpmuestreo
+				distinct idpmuestreo idpmuestreo,
+				punto+'_'+replace(replace(replace(replace(replace(nalterno,' ',''),'"',''),'(',''),')',''),'Ú','U') pmuestreo
 			from 
 				#horarios
 		end	

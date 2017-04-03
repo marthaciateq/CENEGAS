@@ -12,6 +12,14 @@
       <Name>falta_informacion.rdl</Name>
       <FullPath>falta_informacion.rdl</FullPath>
     </ProjectItem>
+    <ProjectItem>
+      <Name>bombeadoRecibo_chart.rdl</Name>
+      <FullPath>bombeadoRecibo_chart.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>tendencia.rdl</Name>
+      <FullPath>tendencia.rdl</FullPath>
+    </ProjectItem>
   </Reports>
   <Configurations>
     <Configuration>

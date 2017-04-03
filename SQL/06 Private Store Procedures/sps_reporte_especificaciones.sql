@@ -6,7 +6,8 @@ ALTER PROCEDURE sps_reporte_especificaciones
 	@finicial varchar(max),
 	@ffinal varchar(max),
 	@formato varchar(max),
-	@resultado int --(1) Solo puntos de muestreo que cuentan con información fuera de especificacion (2) Informacion completa
+	@resultado int, --(1) Solo puntos de muestreo que cuentan con información fuera de especificacion (2) Informacion completa
+	@reporte varchar(max) -- (G) General (D) detalle 
 AS
 BEGIN
 	declare @error varchar(max)
@@ -22,6 +23,7 @@ BEGIN
 		set @d_finicial=convert(date,@finicial,103)
 		set @d_ffinal=convert(date,@ffinal,103)		
 		
+		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
 		if DATEDIFF(day,@d_finicial,@d_ffinal)>15 execute sp_error 'U','El máximo rango de consulta son 15 días'
 	
 		declare @fcero datetime
@@ -37,7 +39,7 @@ BEGIN
 			  (@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal)) 
 			   or idbdatos=@idbdatos
 			)
-			and valido='S'
+			and estado=1
 			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
 			and (@elementos is null or idelemento in ( select col1 from dbo.fn_table(1,@elementos)))
 
@@ -49,20 +51,13 @@ BEGIN
 			  (@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
 			   or idbdatos=@idbdatos
 			)
-			and valido='S'
+			and estado=1
 			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
 			and (@elementos is null or idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
 
 		select @d_finicial=min(fecha),@d_ffinal=max(fecha) 
-		from #base_rpromedio			
-		set @fcero=@d_finicial
+		from #base_rpromedio
 		
-		while @fcero<dateadd(dd,1,@d_ffinal)		
-		begin
-			insert into @fechas values(@fcero)
-			set @fcero=dateadd(hh,1,@fcero)			
-		end
-	
 		--PROMEDIOS FUERA DE ESPECIFICACION
 
 		select a.*,
@@ -84,7 +79,8 @@ BEGIN
 		if @resultado=1
 		begin
 			select 
-				distinct idpmuestreo idpmuestreo
+				distinct idpmuestreo idpmuestreo,
+				punto+'_'+replace(replace(replace(replace(replace(nalterno,' ',''),'"',''),'(',''),')',''),'Ú','U') pmuestreo
 			from 
 				#fespecificacion
 		end	
@@ -109,7 +105,8 @@ BEGIN
 				end zonaS,
 				@formato formato,
 				@finicial finicial,
-				@ffinal ffinal
+				@ffinal ffinal,
+				@reporte reporte
 			from #base_registros a
 				inner join #fespecificacion b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and convert(date,a.fecha)=convert(date,b.fecha)
 				inner join elementos c on a.idelemento=c.idelemento

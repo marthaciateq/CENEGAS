@@ -96,10 +96,10 @@ namespace Mi
                     {
                         using (var archive = new ZipArchive(fileStream, ZipArchiveMode.Create, true))
                         {
-                            foreach (var file in files)
+                            for(int i=0;i<files.Length;i++)
                             {
-                                var fPath = Files.Path + "\\" + file + ".dat";
-                                var zipArchiveEntry = archive.CreateEntryFromFile(fPath, Path.GetFileNameWithoutExtension(fPath) + ".pdf");
+                                var fPath = Files.Path + "\\" + files[i]+ ".dat";
+                                var zipArchiveEntry = archive.CreateEntryFromFile(fPath, files[++i] + ".pdf");
                             }
                         }
                     }

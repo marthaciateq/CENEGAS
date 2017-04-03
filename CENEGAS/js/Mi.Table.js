@@ -173,7 +173,7 @@ Mi.Table.plugin = function ($) {
 		this.each(function () {
 			if ($(this).prop('nodeName') == 'TABLE') {
 			    $(this).addClass('MiTable');
-			    $(this).addClass('table table-striped');
+			    $(this).addClass('table table-striped table-condensed');
 				$(this).children().remove();
 				$(this).append('<thead/><tbody/><tfoot/>');
 				fill($(this).children().eq(0), params.head.data, params.head.cols);

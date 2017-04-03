@@ -4,7 +4,7 @@
 }
 Mi.Template.menuTop = function (opciones, titulo) {
     $('#opciones').append(
-        $('<nav id="top-menu" class="navbar navbar-default" role="navigation"></nav>').append(
+        $('<nav id="top-menu" class="navbar navbar-default navbar-transparent" role="navigation"></nav>').append(
             $('<div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"><span class="sr-only">Desplegar navegación</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><a class="navbar-brand" href="#">' + titulo + '</a></div>')
         ).append(
             $('<div class="collapse navbar-collapse navbar-ex1-collapse"></div>').append(
@@ -143,7 +143,7 @@ Mi.Template.oneAutentication = function (onload) {
 //    var pwd = Mi.Input.text(); pwd.prop('type', 'password'); pwd.keydown(teclaEnter);
 //    var buttons = $('<button>Entrar</button>'); buttons.MiButton();
 
-    $('#TABLE1').append('<h2 class="text-center">Aplicación para la evaluación de la calidad del Gas</h2><hr>');
+    $('#TABLE1').append('<img width="230px" height="70px" src="../imgs/logo.png"/><h2 class="text-center">Aplicación para la evaluación de la calidad del Gas</h2><hr>');
     $('#TABLE1').append(
         $('<div id="formAcceso"><form class="form-horizontal"><div class="form-group form-group-sm"><label class="col-sm-2 control-label" for="lg">Usuario</label><div class="col-sm-4"><input class="form-control MiInputText" type="text" id="login" placeholder="Email"></div></div><div class="form-group form-group-sm"><label class="col-sm-2 control-label" for="sm">Password</label><div class="col-sm-4"><input class="form-control MiInputText" type="password" id="password" placeholder="Password"></div></div><div class="form-group form-group-sm "><div class="col-xs-offset-3"><a class="btn btn-primary btn-lg MiButton" id="acceso" role="button">Entrar</a></div></div></form></div>')
     )

@@ -77,13 +77,16 @@
             $("#listado").show();
             $("#top-menu").find('li').removeClass('disabled');
 
+            for (i = 0; i < r.length; i++) {
+                r[i].link = $('<a>Nuevo link</a>');
+            }
             var table = Mi.table({
                 head: {
                     data: [['', 'Archivo Horarios', 'Archivo Promedios', 'Fecha de Carga', 'Usuario', '# reg. insertados horarios', '# reg. actualizados horarios', '# excepciones horarios', '# reg. insertados promedio', '# reg. actualizados promedio', '# excepciones promedio']]
                 },
                 body: {
                     data: r,
-                    cols: ['idbdatos', 'nombre', 'fechaS', 'nombres']
+                    cols: ['idbdatos', 'nombre', 'fechaS', 'nombres','link']
                 },
                 addCheckbox: true
             });

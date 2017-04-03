@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../css/bootstrap-datetimepicker.min.css" />
     <script type="text/javascript">
         var files = [];
+        var apmuestreo = new Array();
         function getPuntosMuestreoConInformacion(pmuestreo, formato) {
             var nombre = 'especificaciones';
             var procedimiento = 'sps_reporte_especificaciones';
@@ -31,7 +32,7 @@
             });
             return dfd.promise();
         }
-        function generarReporte(pmuestreo, formato, ptoFile) {
+        function generarReporte(pmuestreo,punto,formato, ptoFile) {
            
             var nombre = 'especificaciones';
             var procedimiento = 'sps_reporte_especificaciones';
@@ -46,15 +47,17 @@
                         NAME: procedimiento,
                         pmuestreo: pmuestreo == "" ? null : pmuestreo,
                         elementos: $("#idelemento").val()==""?null:$("#idelemento").val(),
-                        finicial: $("#finicial").val(),
-                        ffinal: $("#ffinal").val(),
+                        finicial: $("#finicial").val() == "" ? null : $("#finicial").val(),
+                        ffinal: $("#ffinal").val() == "" ? null : $("#ffinal").val(),
                         formato: formato,
-                        resultado:2
+                        resultado: 2,
+                        reporte: $('#reporte').val() == "" ? 'D': $("#reporte").val()
                     },
                     nombre: nombre,
                     format: formato,
                     toFile: ptoFile,
                     onsuccess: function (data) {
+                        apmuestreo[data] = punto;
                         files.push(data);
                         dfd.resolve(data);
                     }
@@ -64,27 +67,27 @@
         function _onload() {
             Mi.Template.load(function () {
                 Mi.Template.menuTop([
-                    {
-                        label: "Validar Información",
-                        onclick: function () {
-                            if ($(this).parent().hasClass('disabled')) return;
-                            $(this).parent().parent().children('li').addClass("disabled");
-                            $(this).parent().removeClass("disabled");
-                            validar();
-                        }, img: ""
-                    },
-                    {
-                        label: "Cancelar Información",
-                        onclick: function () {
-                            var row;
-                            row = $("#registros").find('input:checked').first().parent().parent().data('row');
-                            if ($(this).parent().hasClass('disabled')) return;
-                            $(this).parent().removeClass("disabled");
-                            cancelar();
-                        },
-                        img: ""
-                    }
-                ], "REPORTES");
+                    //{
+                    //    label: "Validar Información",
+                    //    onclick: function () {
+                    //        if ($(this).parent().hasClass('disabled')) return;
+                    //        $(this).parent().parent().children('li').addClass("disabled");
+                    //        $(this).parent().removeClass("disabled");
+                    //        validar();
+                    //    }, img: ""
+                    //},
+                    //{
+                    //    label: "Cancelar Información",
+                    //    onclick: function () {
+                    //        var row;
+                    //        row = $("#registros").find('input:checked').first().parent().parent().data('row');
+                    //        if ($(this).parent().hasClass('disabled')) return;
+                    //        $(this).parent().removeClass("disabled");
+                    //        cancelar();
+                    //    },
+                    //    img: ""
+                    //}
+                ], "Reportes del Registro de propiedades fuera de especificaciones ( NOM-001-SECRE-2010 )");
 
 
                 $("#loading").hide();
@@ -111,28 +114,32 @@
                     container: container,
                     todayHighlight: true,
                     autoclose: true,
+                    language: 'es'
                 };
                 $("#finicial").datepicker(options);
                 $("#ffinal").datepicker(options);
 
                 $("#bgenerar").click(function () {
-                    function everythingDone() {
+                    files = [];
+                    apmuestreo = new Array();
+
+                     function everythingDone() {
                         console.log('processed all items');
                         console.log(files.length);
                     }
                     var formato = $("#formato").MiVal() == null ? 'EXCEL' : $("#formato").MiVal()
 
-                    if (formato == 'PDF') {
+                    if (formato == 'PDF' && ($("#reporte").MiVal() == 'G' || $("#reporte").MiVal() == 'D')) {
 
                         var processItemsDeferred = [];
+                        $('#bgenerar').attr('disabled', true);
 
                         $.when(getPuntosMuestreoConInformacion($("#idpmuestreo").val(), formato)).then(function (data) {
 
                             if (data.length != 0) {
                                 $("#loading").show();
                                 $.each(data, function (index, value) {
-                                    alert(value.idpmuestreo);
-                                    processItemsDeferred.push(generarReporte(value.idpmuestreo,formato,'S'));
+                                    processItemsDeferred.push(generarReporte(value.idpmuestreo, value.pmuestreo, formato, 'S'));
                                 });
 
                                 $.when.apply($, processItemsDeferred).then(function () {
@@ -152,22 +159,28 @@
                                             input = document.createElement('input');
                                             input.name = "files";
                                             input.value = value;
+                                            input2 = document.createElement('input');
+                                            input2.name = "files";
+                                            input2.value = apmuestreo[value];
                                             frm01.appendChild(input);
+                                            frm01.appendChild(input2);
                                         }
                                     });
                                     frm01.submit();
                                     document.body.removeChild(frm01);
+                                    $('#bgenerar').attr('disabled', false);
                                     $("#loading").hide();
                                 });
-                            } else alert("No hay información fuera de especificacion en las fechas seleccionadas")
+                            } else {
+                                Mi.Modal.alert("No hay información fuera de especificacion en las fechas seleccionadas");
+                            } 
                         });
 
 
-                    } else {
-                        $.when(generarReporte($("#idpmuestreo").val(), formato)).then(function (data) {
-
-                        });
-                    }
+                    } 
+                    else {
+                        generarReporte($("#idpmuestreo").val(), null, formato);
+                   }
                 });
 
             });
@@ -200,7 +213,7 @@
                         </div>
                     </div>
                     <div class="form-group clearfix">
-                        <label class="control-label col-sm-2">Fecha inicio:</label>
+                        <label class="control-label col-sm-2">Fecha inicial:</label>
                         <div class="col-sm-4">
                             <input class="form-control" id="finicial" name="finicial" placeholder="DD/MM/YYY"/>
                         </div>
@@ -212,7 +225,7 @@
                         </div>
                     </div>
                     <div class="form-group clearfix">
-                        <label class="control-label col-sm-2">Formato:</label>
+                        <label class="control-label col-sm-2">Formato del Reporte:</label>
                         <div id="divFormatos" class="col-sm-4">
                         </div>
                     </div>
