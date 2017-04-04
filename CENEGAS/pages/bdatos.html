@@ -107,7 +107,7 @@
                         debugger;
                         var r = JSON.parse(data);
 
-                        if ( typeof r.error === 'undefined') {
+                        if (typeof r.error === 'undefined') {
                             buscar();
                         }
                         else {
@@ -154,7 +154,7 @@
                     listado(r);
                 }
                 , onerror: function (data) {
-                    
+
                 }
             });
         }
@@ -175,11 +175,11 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. ignorados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. ignorados', 'Promedios - Reg. fuera de fecha',  'Archivo Horarios', 'Archivo Promedios']]
+                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. ignorados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. ignorados', 'Promedios - Reg. fuera de fecha', 'Archivo Horarios', 'Archivo Promedios']]
                 },
                 body: {
                     data: r,
-                    cols: ['fechaS', 'actualizar', 'finicialS', 'ffinalS', 'horariosInsertados', 'horariosActualizados', 'horariosIgnorados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosIgnorados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
+                    cols: ['fechaS', 'actualizar', 'finicial', 'ffinal', 'horariosInsertados', 'horariosActualizados', 'horariosIgnorados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosIgnorados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
                 },
                 addCheckbox: true
             });
@@ -261,7 +261,7 @@
                 $("#guardar").click(function (e) {
                     guardar(e);
                 });
-                
+
                 Mi.AJAX.request({
                     data: [
                         {

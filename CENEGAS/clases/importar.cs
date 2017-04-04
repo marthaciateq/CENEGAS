@@ -25,11 +25,12 @@ namespace cenegas.clases
         // Inicia el proceso de importacion del archivo de mediciones
         public static void import(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, DateTime initDate, DateTime finalDate, HttpResponse response)
         {
-            Dictionary<string, object>  result = new Dictionary<string,object>();
-            try {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            try
+            {
                 int taskTime;
                 string filter = "";
-                
+
 
                 result.Add("success", true);
 
@@ -39,13 +40,13 @@ namespace cenegas.clases
                 finalDate = finalDate.AddDays(1);
 
 
-                filter = useRange ? " WHERE   Fecha >= CDate('" + initDate.Year + ( initDate.Month < 10 ? "/0" : "/" ) + initDate.Month  +  ( initDate.Day < 10 ? "/0" : "/" ) + initDate.Day + "')   AND   fecha < CDate('" + finalDate.Year + (finalDate.Month < 10 ? "/0" : "/") + finalDate.Month + ( finalDate.Day < 10 ? "/0" : "/" )+ finalDate.Day + "') " : "";
+                filter = useRange ? " WHERE   Fecha >= CDate('" + initDate.Year + (initDate.Month < 10 ? "/0" : "/") + initDate.Month + (initDate.Day < 10 ? "/0" : "/") + initDate.Day + "')   AND   fecha < CDate('" + finalDate.Year + (finalDate.Month < 10 ? "/0" : "/") + finalDate.Month + (finalDate.Day < 10 ? "/0" : "/") + finalDate.Day + "') " : "";
 
                 // Se reestablece la fecha original
                 finalDate = finalDate.AddDays(-1);
 
 
-                importCSVFile(idsesion, csvHours, csvSummary, updateRecords, initDate, finalDate, filter);
+                importCSVFile(idsesion, csvHours, csvSummary, updateRecords, useRange, initDate, finalDate, filter);
 
                 TimeSpan ts = DateTime.Now - start;
 
@@ -55,20 +56,20 @@ namespace cenegas.clases
             }
             catch (Exception e)
             {
-                result["success"]=false;
-                
+                result["success"] = false;
+
                 result.Add("error", e.Message);
 
                 response.Output.Write(JSON.Serialize(result));
             }
-        
+
         }
 
 
-      
 
-        // Recibe un archivo CSV e importa sus registros a una tabla del servidor
-        private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, DateTime? initDate, DateTime? finalDate, string filter)
+
+        // Recibe un archivo CSV e importa sus registros a una tabla del servidor *
+        private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, DateTime? initDate, DateTime? finalDate, string filter)
         {
             const decimal _byte = 8; // bits
             const decimal KB = _byte * 1024;
@@ -179,26 +180,27 @@ namespace cenegas.clases
                 }
 
 
-                saveRecords(idsesion, updateRecords, hoursName, csvHours.FileName, summaryName, csvSummary.FileName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
+                saveRecords(idsesion, updateRecords, useRange, hoursName, csvHours.FileName, summaryName, csvSummary.FileName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
             }
-            catch(Exception e) {
+            catch (Exception e)
+            {
 
                 throw (e);
             }
 
-            
+
         }
 
         // Guarda el archivo recibido en la ruta especificada
         private static void saveFileInServer(ref HttpPostedFile csvFile, ref string destinyPath)
         {
-            try 
-            { 
+            try
+            {
                 utils utils = new utils();
 
                 double mileseconds = DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
 
-                destinyPath += mileseconds.ToString().Replace(".","") + ".csv";
+                destinyPath += mileseconds.ToString().Replace(".", "") + ".csv";
 
                 csvFile.SaveAs(destinyPath);
             }
@@ -218,7 +220,8 @@ namespace cenegas.clases
             //////- IIS > Application Pools > DefaultAppPool > Advanced Settings > Enable 32-Bit Applications 
             //////-      Cambiar el valor a TRUE
 
-            try { 
+            try
+            {
                 string path = System.IO.Path.GetDirectoryName(pathFile);
 
                 ////Guardamos el tiempo antes del proceso a cronometrar
@@ -248,15 +251,15 @@ namespace cenegas.clases
         }
 
         // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
-        private static void saveRecords( string idsesion             , bool updateRecords
+        private static void saveRecords(string idsesion, bool updateRecords, bool useRange
                                         , string hoursName, string originalHoursName
                                         , string summaryName, string originalSummaryName
                                         , ref DataTable recordsByHour, ref DataTable summaryOfRecords
-                                        , DateTime?      initDate    , DateTime?      finalDate
+                                        , DateTime? initDate, DateTime? finalDate
                                         )
         {
 
-            
+
             SqlConnection adminConnection = BD.Connection("Admin");
 
             SqlConnection cnn = new SqlConnection();
@@ -269,8 +272,16 @@ namespace cenegas.clases
 
                 cnn = BD.Connection();
 
-                cmd.Parameters.Add("@initDate", SqlDbType.DateTime);
-                cmd.Parameters.Add("@finalDate", SqlDbType.DateTime);
+                if (useRange)
+                {
+                    cmd.Parameters.Add("@initDate", SqlDbType.DateTime);
+                    cmd.Parameters.Add("@finalDate", SqlDbType.DateTime);
+
+                    cmd.Parameters["@initDate"].Value = initDate;
+                    cmd.Parameters["@finalDate"].Value = finalDate;
+                }
+
+
 
                 cmd.Parameters.Add("@updateRecords", SqlDbType.Bit);
                 cmd.Parameters.Add("@idsesion", SqlDbType.VarChar);
@@ -280,13 +291,12 @@ namespace cenegas.clases
 
                 cmd.Parameters.Add("@summaryName", SqlDbType.VarChar);
                 cmd.Parameters.Add("@originalSummaryName", SqlDbType.VarChar);
-                
+
                 cmd.Parameters.Add("@recordsByHour", SqlDbType.Structured);
                 cmd.Parameters.Add("@summaryOfRecords", SqlDbType.Structured);
 
 
-                cmd.Parameters["@initDate"].Value = initDate;
-                cmd.Parameters["@finalDate"].Value = finalDate;
+
 
                 cmd.Parameters["@updateRecords"].Value = updateRecords;
                 cmd.Parameters["@idsesion"].Value = idsesion;
@@ -308,23 +318,28 @@ namespace cenegas.clases
                 idlog = BD.LogInit(cmd, adminConnection);
                 cmd.ExecuteNonQuery();
 
-               BD.LogOk(idlog, adminConnection);
+                BD.LogOk(idlog, adminConnection);
             }
             catch (Exception e)
             {
                 BD.LogException(idlog, e, adminConnection);
-                throw(e);
+                throw (e);
             }
-            finally {
-                if (cnn != null){
-                    if (cnn.State == ConnectionState.Open) {
+            finally
+            {
+                if (cnn != null)
+                {
+                    if (cnn.State == ConnectionState.Open)
+                    {
                         cnn.Close();
                         cnn.Dispose();
                     }
                 }
 
-                if (adminConnection != null) {
-                    if (adminConnection.State == ConnectionState.Open) {
+                if (adminConnection != null)
+                {
+                    if (adminConnection.State == ConnectionState.Open)
+                    {
                         adminConnection.Close();
                         adminConnection.Dispose();
                     }
@@ -336,24 +351,24 @@ namespace cenegas.clases
 
         public static Mi.Control.Files.File getFile(string idDownload)
         {
-            try 
-            { 
-               string importsDirectory = WebConfigurationManager.AppSettings["importsDirectory"];
+            try
+            {
+                string importsDirectory = WebConfigurationManager.AppSettings["importsDirectory"];
 
-               Mi.Control.Files.File file = new Files.File();
+                Mi.Control.Files.File file = new Files.File();
 
 
-               string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
+                string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
                 string fileName = getFileName(idDownload);
 
-               byte[] bytesFile = fileToBytes(path + fileName);
+                byte[] bytesFile = fileToBytes(path + fileName);
 
-               file.clength = bytesFile.Length;
-               file.ctype = "csv";
-               file.data = bytesFile;
-               file.name = fileName;
+                file.clength = bytesFile.Length;
+                file.ctype = "csv";
+                file.data = bytesFile;
+                file.name = fileName;
 
-               return file ;
+                return file;
             }
             catch (Exception e)
             {
@@ -366,8 +381,8 @@ namespace cenegas.clases
 
         public static byte[] fileToBytes(String path)
         {
-            try 
-            { 
+            try
+            {
                 MemoryStream destination = new MemoryStream();
 
                 FileStream source = new FileStream(path, FileMode.Open);
