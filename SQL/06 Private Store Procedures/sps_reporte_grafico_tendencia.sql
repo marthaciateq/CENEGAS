@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[sps_reporte_grafico_tendencia]
+CREATE PROCEDURE sps_reporte_grafico_tendencia
 	@idsesion varchar(max),
 	@idbdatos varchar(max),
 	@pmuestreo varchar(max),

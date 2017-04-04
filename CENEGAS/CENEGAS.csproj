@@ -38,6 +38,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MiControl, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Otros\Librerias\MiControl.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MiCrypt">
       <HintPath>..\Otros\Librerias\MiCrypt.dll</HintPath>
@@ -146,12 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="documents\imports\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\MiControl\MiControl\MiControl.csproj">
-      <Project>{3f972c25-c060-46b5-ab6f-376c1df6f245}</Project>
-      <Name>MiControl</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
