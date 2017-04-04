@@ -60,7 +60,7 @@ Mi.Input.comboDeleted = function (params) {
 Mi.Input.comboReportes = function (params) {
     var e = $('<select/>');
     e.MiInputCombo(params);
-    e.MiFill([['D', 'NOM-001-SECRE-2010'], ['G', 'NOM-001-SECRE-2010 (Solo punto A y B)'], ['F', 'Información Faltante']]);
+    e.MiFill([['D', 'NOM-001-SECRE-2010'], ['G', 'NOM-001-SECRE-2010 (Solo punto A y B)'], ['F', 'Información Faltante'], ['T', 'Gráfico de Tendencia']]);
     return e;
 }
 Mi.Input.comboFormatos = function (params) {

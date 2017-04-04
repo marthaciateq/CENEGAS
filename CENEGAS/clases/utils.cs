@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-
-
+using System.IO.Compression;
 using System.IO;
+using Mi.Control;
+
 
 namespace cenegas.clases
 {
@@ -34,7 +35,36 @@ namespace cenegas.clases
             return rnd.Next(MIN, MAX);
         }
 
+        public static void generateZip(HttpRequest request, HttpResponse response)
+        {
 
+            try
+            {
+                if (request.Params["files"] == null) throw new ArgumentException("Se debe especificar los identificadores de los archivos a generar");
+
+                string[] files = request.Params["files"].Split(',');
+
+                string nfile = "temp_" + DateTime.Now.ToString().Replace("/", "").Replace(".", "").Replace(" ", "").Replace(":", "") + ".zip";
+                using (var fileStream = new FileStream(Files.Path + "\\" + nfile, FileMode.Create))
+                {
+                    using (var archive = new ZipArchive(fileStream, ZipArchiveMode.Create, true))
+                    {
+                        for (int i = 0; i < files.Length; i++)
+                        {
+                            var fPath = Files.Path + "\\" + files[i] + ".dat";
+                            var zipArchiveEntry = archive.CreateEntryFromFile(fPath, files[++i] + ".pdf");
+                        }
+                    }
+                }
+                response.ContentType = "application/zip";
+                response.AddHeader("Content-disposition", "attachment; filename=" + nfile);
+                response.WriteFile(Files.Path + "\\" + nfile);
+            }
+            catch (Exception exception)
+            {
+                response.Output.Write(AJAX.Exception(exception));
+            }
+        }
 
         
     }

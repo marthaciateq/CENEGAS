@@ -64,6 +64,7 @@ BEGIN
 			idpmuestreo,
 			punto,
 			nalterno,
+			idelemento,
 			descripcion,
 			fecha,
 			concepto,
@@ -74,6 +75,7 @@ BEGIN
 				a.idpmuestreo,
 				b.punto,
 				b.nalterno,
+				a.idelemento,
 				c.descripcion,
 				replace(convert(varchar(max),a.fecha,103),'/','-') fecha,
 				a.promedio,
@@ -84,6 +86,7 @@ BEGIN
 					from rpromedio z 
 					where  
 						a.idpmuestreo=z.idpmuestreo
+						and a.idelemento=z.idelemento
 						and dateadd(dd,-4,a.fecha)<=z.fecha and z.fecha<=a.fecha
 				) tendencia
 				
@@ -92,20 +95,21 @@ BEGIN
 				inner join elementos c on a.idelemento=c.idelemento
 				inner join especificaciones d on a.idelemento=d.idelemento and b.zona=d.zona
 		) SOURCE
-		unpivot (valor FOR concepto IN ( tendencia,promedio,minimo )) as pivottable
-			
-		select idpmuestreo,min(valor) min_valorY,max(valor) max_valorY
+		unpivot (valor FOR concepto IN ( tendencia,promedio,minimo,maximo )) as pivottable
+		
+		select idpmuestreo,idelemento,descripcion,min(valor) min_valorY,max(valor) max_valorY
 		into #valoresY
 		from #unpivot
-		where valor is not null
-		group by idpmuestreo,punto,nalterno,descripcion
-		order by punto,nalterno,descripcion
+		where valor is not null 
+		group by idpmuestreo,punto,nalterno,idelemento,descripcion
+		order by punto,nalterno,idelemento,descripcion
 
 		select
 			b.punto,
 			b.nalterno,
 			c.descripcion,
 			convert(date,a.fecha) fecha,
+			dbo.fn_dateToString(convert(date,a.fecha)) fechaS,
 			a.promedio,
 			convert(float,d.minimo) minimo,
 			convert(float,d.maximo) maximo,
@@ -117,13 +121,15 @@ BEGIN
 					and dateadd(dd,-4,a.fecha)<=z.fecha and z.fecha<=a.fecha
 					and z.idelemento=a.idelemento
 			) tendencia,
-			e.min_valorY - (e.min_valorY*.01) as min_valorY,
-			e.max_valorY + (e.max_valorY*.01) as max_valorY
+			e.min_valorY - (e.min_valorY*0.1) as min_valorY,
+			e.max_valorY + (e.max_valorY*0.1) as max_valorY,
+			@finicial finicial,
+			@ffinal ffinal
 		from #base_rpromedio a
 			inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
 			inner join elementos c on a.idelemento=c.idelemento
 			inner join especificaciones d on a.idelemento=d.idelemento and b.zona=d.zona
-			inner join #valoresY e on a.idpmuestreo=a.idpmuestreo
+			inner join #valoresY e on a.idpmuestreo=e.idpmuestreo and a.idelemento=e.idelemento
 		order by b.nalterno,c.descripcion,convert(date,a.fecha)
 
 		--set @query=

@@ -17,6 +17,10 @@
                 nombre = 'falta_informacion';
                 procedimiento = 'sps_reporte_falta_informacion'
             }
+            else if($("#reporte").MiVal() == 'T') {
+                nombre = 'tendencia';
+                procedimiento = 'sps_reporte_grafico_tendencia'
+            }
             Mi.AJAX.request({
                 data: {
                     NAME: procedimiento,
@@ -40,6 +44,10 @@
             if ($("#reporte").MiVal() == 'F') {
                 nombre = 'falta_informacion';
                 procedimiento = 'sps_reporte_falta_informacion'
+            }
+            else if ($("#reporte").MiVal() == 'T') {
+                nombre = 'tendencia';
+                procedimiento = 'sps_reporte_grafico_tendencia'
             }
             console.log('called processItem');
                 Mi.Reports.request({

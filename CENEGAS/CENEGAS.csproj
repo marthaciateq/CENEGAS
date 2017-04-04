@@ -46,6 +46,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Otros\Librerias\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -143,13 +145,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MiControl\MiControl.csproj">
+    <Folder Include="documents\imports\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MiControl\MiControl\MiControl.csproj">
       <Project>{3f972c25-c060-46b5-ab6f-376c1df6f245}</Project>
       <Name>MiControl</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="documents\imports\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
