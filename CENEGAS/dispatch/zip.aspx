@@ -1,3 +1,3 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" %><%
-    Mi.Control.Reports.generateZip(Request, Response); 
+    cenegas.clases.utils.generateZip(Request, Response); 
 %>

@@ -5,6 +5,10 @@
   <DataSets />
   <Reports>
     <ProjectItem>
+      <Name>bombeadoRecibo_chart.rdl</Name>
+      <FullPath>bombeadoRecibo_chart.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
       <Name>especificaciones.rdl</Name>
       <FullPath>especificaciones.rdl</FullPath>
     </ProjectItem>
@@ -13,12 +17,12 @@
       <FullPath>falta_informacion.rdl</FullPath>
     </ProjectItem>
     <ProjectItem>
-      <Name>bombeadoRecibo_chart.rdl</Name>
-      <FullPath>bombeadoRecibo_chart.rdl</FullPath>
-    </ProjectItem>
-    <ProjectItem>
       <Name>tendencia.rdl</Name>
       <FullPath>tendencia.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>pmuestreo.rdl</Name>
+      <FullPath>pmuestreo.rdl</FullPath>
     </ProjectItem>
   </Reports>
   <Configurations>
