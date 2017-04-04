@@ -3,12 +3,14 @@ CREATE TABLE bdatos(
 	idusuario char(32) NOT NULL,
 	finicial datetime,		
 	ffinal datetime,
-	actaulizar char(1) NOT NULL,		
+	actualizar char(1) NOT NULL,		
 	fcarga datetime NOT NULL,
 	narchivo varchar(256) NOT NULL,
 	noriginal varchar(256) NOT NULL,
 	insertados decimal(10) NOT NULL,
 	actualizados decimal(10) NOT NULL,
+	tipoArchivo char(1) NOT NULL,
+		
 	CONSTRAINT PK_bdatos PRIMARY KEY (idbdatos),
 	CONSTRAINT CK_bdatos_01 CHECK (actualizar in ('S','N'))			
 )
