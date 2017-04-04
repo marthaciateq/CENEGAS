@@ -62,7 +62,7 @@ namespace Mi.Clases
 	<center id=""center1"">
 		<div id=""div1""/>
 		<table border=""1"" cellpadding=""15"" id=""table1"">
-			<tr><td style=""background-color:blue;font-size:20pt; color:white; text-align:center;"">ERROR NO CONTROLADO</td></tr>
+			<tr><td style=""background-color:#FFC300;font-size:14pt; color:white; text-align:center;"">ERROR NO CONTROLADO</td></tr>
 			<tr><td>Por favor pide ayuda a soporte técnico.<input id=""input1""/></td></tr>
 		</table>
 		<table style=""display:none;"" border=""1"" id=""table2"">

@@ -74,7 +74,7 @@ namespace Mi
 						String msg;
 						if (exception.Message.IndexOf("EXCEPCION USUARIO:") < 0) msg = Config.DefaultErrorMessage;
 						else msg = exception.Message.Replace("EXCEPCION SISTEMA:", "").Replace("EXCEPCION USUARIO:", "");
-						response.Output.Write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>Error en reporte DIETECH</title></head><body><table ;\"><table style=\"width:40%;\" align=\"center\" border=\"1\"><tr><td style=\"text-align:left; background-color:#900; color:white; font-weight:bold;\">Error en reporte</td></tr><tr><td style=\"text-align:left; padding:1cm;\">" + msg + "</td></tr></table></td></tr></table></body></html><!-- " + exception.Message + " --><!-- " + exception.StackTrace + " -->");
+                        response.Output.Write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>Error en reporte DIETECH</title></head><body><table ;\"><table style=\"width:40%;\" align=\"center\" border=\"1\"><tr><td style=\"text-align:left; background-color:#FFC300; color:white; font-weight:bold;\">Error en reporte</td></tr><tr><td style=\"text-align:left; padding:1cm;\">" + msg + "</td></tr></table></td></tr></table></body></html><!-- " + exception.Message + " --><!-- " + exception.StackTrace + " -->");
 
 					}
                     response.Flush();

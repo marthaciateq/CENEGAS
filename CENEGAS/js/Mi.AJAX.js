@@ -3,7 +3,7 @@ Mi.AJAX.request = function (params) {
 	if (!$.isPlainObject(params)) params = {}
 	if ($.type(params.url) != 'string') params.url = Mi.webHome + 'dispatch/ajax.aspx';
 	if ($.type(params.onsuccess) != 'function') params.onsuccess = function () { }
-	if ($.type(params.onerror) != 'function') params.onerror = function (r) { Mi.dialog({ content: r, modal: true }); }
+	if ($.type(params.onerror) != 'function') params.onerror = function (r) { Mi.Modal.alert(r); }
 	if ($.type(params.data) == 'undefined') params.data = null;
 	if (!$.isPlainObject(params.parameters)) params.parameters = null;
 	if (Mi.Cookie.exist('SESIONCENEGAS')) {
