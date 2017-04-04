@@ -1,4 +1,4 @@
-ALTER PROCEDURE sps_reporte_grafico_tendencia
+CREATE PROCEDURE [dbo].[sps_reporte_grafico_tendencia]
 	@idsesion varchar(max),
 	@idbdatos varchar(max),
 	@pmuestreo varchar(max),
@@ -97,6 +97,7 @@ BEGIN
 		select idpmuestreo,min(valor) min_valorY,max(valor) max_valorY
 		into #valoresY
 		from #unpivot
+		where valor is not null
 		group by idpmuestreo,punto,nalterno,descripcion
 		order by punto,nalterno,descripcion
 
@@ -116,8 +117,8 @@ BEGIN
 					and dateadd(dd,-4,a.fecha)<=z.fecha and z.fecha<=a.fecha
 					and z.idelemento=a.idelemento
 			) tendencia,
-			e.min_valorY,
-			e.max_valorY
+			e.min_valorY - (e.min_valorY*.01) as min_valorY,
+			e.max_valorY + (e.max_valorY*.01) as max_valorY
 		from #base_rpromedio a
 			inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
 			inner join elementos c on a.idelemento=c.idelemento
