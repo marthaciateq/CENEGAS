@@ -1,4 +1,4 @@
-ALTER PROCEDURE sps_reporte_falta_informacion
+CREATE PROCEDURE sps_reporte_falta_informacion
 	@idsesion varchar(max),
 	@idbdatos varchar(max),
 	@pmuestreo varchar(max),

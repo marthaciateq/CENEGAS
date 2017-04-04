@@ -72,8 +72,6 @@ namespace cenegas.clases
             const decimal KB = _byte * 1024;
             const decimal MB = KB * 1024;
             decimal FILE_MAX_LENGTH = MB * decimal.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]);
-            int MAX_COLUMNS = 0;
-            int index = 0;
 
             if (csvHours.ContentLength > FILE_MAX_LENGTH)
             {
@@ -125,8 +123,8 @@ namespace cenegas.clases
             recordsByHour.Columns[10].ColumnName = "poderCalorifico";
             recordsByHour.Columns[11].ColumnName = "indiceWoobe";
             recordsByHour.Columns[12].ColumnName = "acidoSulfhidrico";
-            //recordsByHour.Columns[13].ColumnName = "azufreTotal";
-            //recordsByHour.Columns[14].ColumnName = "oxigeno";
+            recordsByHour.Columns[13].ColumnName = "azufreTotal";
+            recordsByHour.Columns[14].ColumnName = "oxigeno";
 
 
             summaryOfRecords.Columns[0].ColumnName = "punto";
@@ -144,32 +142,8 @@ namespace cenegas.clases
             summaryOfRecords.Columns[10].ColumnName = "poderCalorifico";
             summaryOfRecords.Columns[11].ColumnName = "indiceWoobe";
             summaryOfRecords.Columns[12].ColumnName = "acidoSulfhidrico";
-            //summaryOfRecords.Columns[13].ColumnName = "azufreTotal";
-            //summaryOfRecords.Columns[14].ColumnName = "oxigeno";
-
-
-            if (recordsByHour.Columns.Count > 12) {
-
-                MAX_COLUMNS = recordsByHour.Columns.Count - 1;
-                index = MAX_COLUMNS;
-
-                for (index = MAX_COLUMNS; index > 12; index--) {
-                    recordsByHour.Columns.Remove(recordsByHour.Columns[index]);
-                }
-            }
-
-
-            if (summaryOfRecords.Columns.Count > 12)
-            {
-
-                MAX_COLUMNS = summaryOfRecords.Columns.Count - 1;
-                index = MAX_COLUMNS;
-
-                for (index = MAX_COLUMNS; index > 12; index--)
-                {
-                    summaryOfRecords.Columns.Remove(summaryOfRecords.Columns[index]);
-                }
-            }
+            summaryOfRecords.Columns[13].ColumnName = "azufreTotal";
+            summaryOfRecords.Columns[14].ColumnName = "oxigeno";
 
 
 
