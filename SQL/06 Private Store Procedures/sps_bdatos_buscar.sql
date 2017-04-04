@@ -1,7 +1,6 @@
-CREATE PROCEDURE sps_bdatos_buscar 
+CREATE PROCEDURE [dbo].[sps_bdatos_buscar] 
 	@idsesion varchar(max),
-	@fecha datetime,
-	@gmtNow datetime
+	@fecha datetime
 AS
 BEGIN
 	declare @error varchar(max)
@@ -10,14 +9,56 @@ BEGIN
 	
 	begin try
 		execute sp_servicios_validar @idsesion, @@PROCID, @idusuarioSESION output
-		select
-			a.*,
-			dbo.fn_datetimeToString(dbo.fn_utcDatetimeToGMTDatetime(@gmtNow,a.finicial),1) finicialS,
-			dbo.fn_datetimeToString(dbo.fn_utcDatetimeToGMTDatetime(@gmtNow,a.ffinal),1) ffinalS,
-			dbo.fn_dateToString(convert(date,a.fcarga)) fechaS,
-			b.nombres
-		from bdatos a
-			inner join usuarios b on a.idusuario=b.idusuario
+		
+		
+		SELECT 
+			  idHorarios
+			, idPromedios
+			, dbo.fn_dateToString(horariosTable.fcarga) AS fcarga			  
+			, finicial
+			, ffinal
+			, actualizar
+			
+			, horariosInsertados
+			, horariosActualizados
+			, promediosInsertados
+			, promediosActualizados
+			
+			, nombreOriginalArchivoHorarios
+			, nombreOriginalArchivoPromedios
+		FROM (
+			SELECT
+				  horariosTable.idbdatos AS idHorarios
+				, dbo.fn_dateToString(horariosTable.finicial) AS finicial
+				, dbo.fn_dateToString(horariosTable.ffinal)   AS ffinal
+				
+				, horariosTable.actualizar
+				, horariosTable.fcarga
+				, horariosTable.narchivo     AS nombreArchivoHorarios
+				, horariosTable.noriginal    AS nombreOriginalArchivoHorarios
+				, horariosTable.insertados   AS horariosInsertados
+				, horariosTable.actualizados AS horariosActualizados
+			FROM dbo.bdatos AS horariosTable
+			WHERE horariosTable.idusuario = @idusuarioSESION
+					AND tipoArchivo = 'H'
+			) AS horariosTable
+		
+			INNER JOIN (
+				SELECT
+					  promediosTable.idbdatos AS idPromedios
+					, promediosTable.fcarga
+					, promediosTable.narchivo     AS nombreArchivoPromedios
+					, promediosTable.noriginal    AS nombreOriginalArchivoPromedios
+					, promediosTable.insertados   AS promediosInsertados
+					, promediosTable.actualizados AS promediosActualizados
+				FROM dbo.bdatos AS promediosTable
+				WHERE promediosTable.idusuario = @idusuarioSESION
+						AND tipoArchivo = 'P'
+			) AS promediosTable
+		
+			ON horariosTable.fcarga = promediosTable.fcarga
+		
+		
 	end try
 	begin catch
 		set @error = error_message()
