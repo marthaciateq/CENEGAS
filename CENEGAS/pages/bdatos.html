@@ -172,7 +172,7 @@
                 },
                 body: {
                     data: r,
-                    cols: [ 'fcarga', 'actualizar', 'finicial', 'ffinal', 'horariosInsertados', 'horariosActualizados', 'promediosInsertados', 'promediosActualizados', 'nombreOriginalArchivoHorarios', 'nombreOriginalArchivoPromedios', 'linkHorarios', 'linkPromedios']
+                    cols: ['fechaS', 'actualizar', 'finicialS', 'ffinalS', 'horariosInsertados', 'horariosActualizados', 'promediosInsertados', 'promediosActualizados', 'nombreOriginalArchivoHorarios', 'nombreOriginalArchivoPromedios', 'linkHorarios', 'linkPromedios']
                 },
                 addCheckbox: true
             });
@@ -258,7 +258,8 @@
                 Mi.AJAX.request({
                     data: [
                         {
-                            NAME: 'sps_bdatos_buscar'
+                            NAME: 'sps_bdatos_buscar',
+                            gmtNow: Mi.Convert.dateToGMTString(new Date())
                         }
                     ],
                     onsuccess: function (r) {

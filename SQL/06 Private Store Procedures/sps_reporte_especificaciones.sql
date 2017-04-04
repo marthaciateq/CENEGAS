@@ -1,4 +1,4 @@
-ALTER PROCEDURE sps_reporte_especificaciones
+CREATE PROCEDURE sps_reporte_especificaciones
 	@idsesion varchar(max),
 	@idbdatos varchar(max),
 	@pmuestreo varchar(max),

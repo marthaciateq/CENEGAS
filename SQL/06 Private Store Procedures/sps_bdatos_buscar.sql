@@ -1,6 +1,7 @@
 CREATE PROCEDURE sps_bdatos_buscar 
 	@idsesion varchar(max),
-	@fecha datetime
+	@fecha datetime,
+	@gmtNow datetime
 AS
 BEGIN
 	declare @error varchar(max)
@@ -11,6 +12,8 @@ BEGIN
 		execute sp_servicios_validar @idsesion, @@PROCID, @idusuarioSESION output
 		select
 			a.*,
+			dbo.fn_datetimeToString(dbo.fn_utcDatetimeToGMTDatetime(@gmtNow,a.finicial),1) finicialS,
+			dbo.fn_datetimeToString(dbo.fn_utcDatetimeToGMTDatetime(@gmtNow,a.ffinal),1) ffinalS,
 			dbo.fn_dateToString(convert(date,a.fcarga)) fechaS,
 			b.nombres
 		from bdatos a

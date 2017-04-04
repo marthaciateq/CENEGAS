@@ -100,45 +100,45 @@ BEGIN
 		group by idpmuestreo,punto,nalterno,descripcion
 		order by punto,nalterno,descripcion
 
-		--select
-		--	b.punto,
-		--	b.nalterno,
-		--	c.descripcion,
-		--	convert(date,a.fecha) fecha,
-		--	a.promedio,
-		--	convert(float,d.minimo) minimo,
-		--	convert(float,d.maximo) maximo,
-		--	(
-		--		select avg(promedio) 
-		--		from rpromedio z 
-		--		where  
-		--			a.idpmuestreo=z.idpmuestreo
-		--			and dateadd(dd,-4,a.fecha)<=z.fecha and z.fecha<=a.fecha
-		--			and z.idelemento=a.idelemento
-		--	) tendencia,
-		--	e.min_valorY,
-		--	e.max_valorY
-		--from #base_rpromedio a
-		--	inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
-		--	inner join elementos c on a.idelemento=c.idelemento
-		--	inner join especificaciones d on a.idelemento=d.idelemento and b.zona=d.zona
-		--	inner join #valoresY e on a.idpmuestreo=a.idpmuestreo
-		--order by b.nalterno,c.descripcion,convert(date,a.fecha)
+		select
+			b.punto,
+			b.nalterno,
+			c.descripcion,
+			convert(date,a.fecha) fecha,
+			a.promedio,
+			convert(float,d.minimo) minimo,
+			convert(float,d.maximo) maximo,
+			(
+				select avg(promedio) 
+				from rpromedio z 
+				where  
+					a.idpmuestreo=z.idpmuestreo
+					and dateadd(dd,-4,a.fecha)<=z.fecha and z.fecha<=a.fecha
+					and z.idelemento=a.idelemento
+			) tendencia,
+			e.min_valorY,
+			e.max_valorY
+		from #base_rpromedio a
+			inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
+			inner join elementos c on a.idelemento=c.idelemento
+			inner join especificaciones d on a.idelemento=d.idelemento and b.zona=d.zona
+			inner join #valoresY e on a.idpmuestreo=a.idpmuestreo
+		order by b.nalterno,c.descripcion,convert(date,a.fecha)
 
-		set @query=
-		'SELECT 
-				punto,
-				nalterno,
-				descripcion, 
-				concepto,
-				'+@cols+'
-		FROM
-		(
-			select * from #unpivot
-		) UNPIVOT_TABLE
-		PIVOT ( min(UNPIVOT_TABLE.valor) FOR UNPIVOT_TABLE.fecha IN ('+@cols+')) as pivottable'
+		--set @query=
+		--'SELECT 
+		--		punto,
+		--		nalterno,
+		--		descripcion, 
+		--		concepto,
+		--		'+@cols+'
+		--FROM
+		--(
+		--	select * from #unpivot
+		--) UNPIVOT_TABLE
+		--PIVOT ( min(UNPIVOT_TABLE.valor) FOR UNPIVOT_TABLE.fecha IN ('+@cols+')) as pivottable'
 
-		execute(@query)
+		--execute(@query)
 	end try
 	begin catch
 		set @error = error_message()
