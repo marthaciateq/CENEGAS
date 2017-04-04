@@ -5,7 +5,7 @@ CREATE TABLE brpromedio(
 	idelemento char(32) NOT NULL,	
 	fecha datetime NOT NULL,
 	promedio float NOT NULL,
-	valido char(1) NOT NULL,
+	mensaje varchar(32) NOT NULL,
 	CONSTRAINT PK_brpromedio PRIMARY KEY (idbrpromedio)
 )
 GO
