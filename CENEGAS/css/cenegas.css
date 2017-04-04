@@ -96,3 +96,8 @@ hr {
 img {
     border-image-slice: 20;
 }
+
+.download {
+    background:url("..imgs/dowload.png")
+
+}

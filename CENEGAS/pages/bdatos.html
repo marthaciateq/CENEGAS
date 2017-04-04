@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,49 +8,129 @@
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/cenegas.css">
     <link rel="stylesheet" href="../css/chosen.css">
-
-
-
-
+    <link rel="stylesheet" href="../css/bootstrap-datetimepicker.min.css" />
 
 
     <script language="javascript">
-        function guardar() {
+        function guardar(e) {
+
+                $('#guardar').attr('disabled', true);
+                $('#bcancelar').attr('disabled', true);
 
                 var formData = new FormData();
                 var horarios = $("#horarios")[0].files[0];
                 var promedios = $("#promedios")[0].files[0];
 
-                formData.append("initDate", "2017-02-01");
-                formData.append("finalDate", "2017-02-28");
-                formData.append("updateRecords", true);
-                formData.append("horarios", horarios);
-                formData.append("promedios", promedios);
-                
+                var optRango = $("#optRango")[0]
+                    , finicial = $("#finicial")[0]
+                    , ffinal = $("#ffinal")[0]
+                    , optActualizar = $("#optActualizar")[0]
+                    , useRange = false;
 
-                $.ajax({
-                    url: Mi.webHome + 'dispatch/import.aspx', // Url to which the request is send
-                    type: "POST",             // Type of request to be send, called as method
-                    timeout: 20 * 1000 * 60,
-                    //dataType: 'json',
-                    data: formData, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
-                    contentType: false,       // The content type used when sending data to the server.
-                    cache: false,             // To unable request pages to be cached
-                    processData: false,        // To send DOMDocument or non processed data file it is set to false
-                    success: function (data)   // A function to be called if request succeeds
-                    {
-                        if (typeof data.error === 'undefined') {
-                            var r = JSON.parse(data);
+                var continuar = true;
+
+
+          
+                if (horarios == null || promedios == null) {
+                    continuar = false;
+
+                    e.preventDefault();
+
+                    Mi.Modal.error("Es necesario que seleccione ambos archivos de importacion. (CSV por hora y por promedio)");
+                    
+                } else {
+                    if (horarios.name.toUpperCase().lastIndexOf("CSV") < 0 || promedios.name.toUpperCase().lastIndexOf("CSV") < 0) {
+                        continuar = false;
+
+                        e.preventDefault();
+                        Mi.Modal.error("Los archivos requeridos para la importación deben ser del tipo CSV. Favor de verificarlo.");
+                    } else {
+                        useRange = optRango.checked == "checked" || optRango.checked == true;
+
+                        if (useRange) {
+                            if (finicial.value == null || ffinal.value == null || finicial.value == "" || ffinal.value == "") {
+                                continuar = false;
+                                e.preventDefault();
+                                Mi.Modal.error("Es necesario que indique la fecha inicial y final para realizar la importación");
+
+                            }
+                            else {
+                                if (new Date(ffinal.value) < new Date(finicial.value)) {
+                                    continuar = false;
+                                    e.preventDefault();
+                                    Mi.Modal.error("La fecha final debe ser mayor o igual a la fecha inicial. Favor de verificarlo.");
+                                }
+
+                            }
                         }
-                        else {
-                            alert(data.error);
-                        }
-                    },
-                    onerror: function () {
-                        alert("ocurrio un error");
                     }
-                });
+                }
 
+
+                if (continuar) {
+
+                    $("#loading").show();
+
+                    if (useRange) {
+                        formData.append("initDate", finicial.value);//"2017-02-01
+                        formData.append("finalDate", ffinal.value);
+                    }
+
+                    formData.append("useRange", useRange)
+                    formData.append("updateRecords", (optActualizar.value == "1" ? true : false));
+                    formData.append("idsesion", Mi.Cookie.get('SESIONCENEGAS').idsesion);
+                    
+                    formData.append("horarios", horarios);
+                    formData.append("promedios", promedios);
+
+
+
+                    $.ajax({
+                        url: Mi.webHome + 'dispatch/import.aspx', // Url to which the request is send
+                        type: "POST",             // Type of request to be send, called as method
+                        timeout: 20 * 1000 * 60,
+                        //dataType: 'json',
+                        data: formData, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+                        contentType: false,       // The content type used when sending data to the server.
+                        cache: false,             // To unable request pages to be cached
+                        processData: false,        // To send DOMDocument or non processed data file it is set to false
+                        success: function (data)   // A function to be called if request succeeds
+                        {
+                            if (typeof data.error === 'undefined') {
+                                var r = JSON.parse(data);
+
+                                $("#loading").hide();
+
+                                $('#guardar').attr('disabled', false);
+                                $('#bcancelar').attr('disabled', false);
+
+                                buscar();
+                            }
+                            else {
+                                $("#loading").hide();
+
+                                $('#guardar').attr('disabled', false);
+                                $('#bcancelar').attr('disabled', false);
+
+                                Mi.Modal.error(data.error);
+                            }
+                        },
+                        onerror: function () {
+
+                            $("#loading").hide();
+
+                            $('#guardar').attr('disabled', false);
+                            $('#bcancelar').attr('disabled', false);
+
+                            Mi.Modal.error("ocurrio un error");
+                        }
+                    });
+
+
+                }
+
+
+                
         }
 
 
@@ -63,7 +143,7 @@
         function buscar(usuario) {
             Mi.AJAX.request({
                 data: {
-                    NAME: 'sps_usuarios_buscar',
+                    NAME: 'sps_bdatos_buscar',
                     buscar: usuario
                 },
                 onsuccess: function (r) {
@@ -77,16 +157,22 @@
             $("#listado").show();
             $("#top-menu").find('li').removeClass('disabled');
 
+            var link = "";
+
             for (i = 0; i < r.length; i++) {
-                r[i].link = $('<a>Nuevo link</a>');
+                
+
+                r[i].linkHorarios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idHorarios + '">Horarios</a>');
+                r[i].linkPromedios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idPromedios + '">Promedios</a>');
             }
+
             var table = Mi.table({
                 head: {
-                    data: [['', 'Archivo Horarios', 'Archivo Promedios', 'Fecha de Carga', 'Usuario', '# reg. insertados horarios', '# reg. actualizados horarios', '# excepciones horarios', '# reg. insertados promedio', '# reg. actualizados promedio', '# excepciones promedio']]
+                    data: [['','Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Archivo Horarios', 'Archivo Promedios', '', '']]
                 },
                 body: {
                     data: r,
-                    cols: ['idbdatos', 'nombre', 'fechaS', 'nombres','link']
+                    cols: [ 'fcarga', 'actualizar', 'finicial', 'ffinal', 'horariosInsertados', 'horariosActualizados', 'promediosInsertados', 'promediosActualizados', 'nombreOriginalArchivoHorarios', 'nombreOriginalArchivoPromedios', 'linkHorarios', 'linkPromedios']
                 },
                 addCheckbox: true
             });
@@ -99,6 +185,9 @@
 
         function _onload() {
             Mi.Template.load(function () {
+
+                $("#loading").hide();
+
                 Mi.Template.menuTop([
                     {
                         label: "Cargar Base de Datos",
@@ -107,7 +196,7 @@
                             $(this).parent().parent().children('li').addClass("disabled");
                             $(this).parent().removeClass("disabled");
                             cargar();
-                        }, img: "glyphicon glyphicon-circle-arrow-up"
+                        }, img: ""
                     },
                     {
                         label: "Eliminar Base de Datos",
@@ -123,11 +212,11 @@
                             $(this).parent().removeClass("disabled");
                             eliminar();
                         },
-                        img: "glyphicon-remove"
+                        img: ""
                     }
 ,
                     {
-                        label: "Ver informaci&oacute;n faltante ",
+                        label: "Ver informacion faltante ",
                         onclick: function () {
                             var row;
                             row = $("#registros").find('input:checked').first().parent().parent().data('row');
@@ -139,18 +228,31 @@
                             //$(this).parent().parent().children('li').addClass("disabled");
                             $(this).parent().removeClass("disabled");
                         },
-                        img: "glyphicon-search"
+                        img: ""
                     }
 
                 ], "CARGA DE BASES DE DATOS");
+
+
+                var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+                var options = {
+                    format: 'dd/mm/yyyy',
+                    container: container,
+                    todayHighlight: true,
+                    autoclose: true,
+                };
+                $("#finicial").datepicker(options);
+                $("#ffinal").datepicker(options);
+
+
                 $("#bbuscar").click(function () {
                     buscar($("#txtbuscar").val());
                 });
                 $("#bcancelar").click(function () {
                     buscar();
                 });
-                $("#guardar").click(function () {
-                    guardar();
+                $("#guardar").click(function (e) {
+                    guardar(e);
                 });
                 $("#formulario").hide();
                 Mi.AJAX.request({
@@ -164,6 +266,19 @@
                     }
                 });
 
+                $("#optTodo").click(function (e, a) {
+
+                    $("#finicial")[0].disabled = "disabled";
+                    $("#ffinal")[0].disabled = "disabled";
+                });
+
+                $("#optRango").click(function (e, a) {
+                    $("#finicial")[0].disabled = "";
+                    $("#ffinal")[0].disabled = "";
+                });
+
+
+
             });
 
         }
@@ -176,27 +291,79 @@
             <div id="side-menu" class="col-sm-2 hidden-xs" data-spy="affix" data-offset-top="0"></div>
             <div id="opciones" class="col-sm-offset-2 col-sm-10"></div>
             <div id="main" class="col-sm-offset-2 col-sm-10">
+                
+
                 <div id="listado" class="col-sm-10"></div>
+
                 <form id="formulario" class="form-horizontal">
+
+                    <div class="col-md-3 col-md-offset-9 clearfix" id="loading">
+                        <p><img height="42" width="42" src="../imgs/loading.gif" /> Importando datos...</p>
+                    </div>
+
                     <div class="form-group">
-                        <label class="control-label col-sm-2">Horarios:</label>
+                        <label class="control-label col-sm-2">Archivo de Horarios:</label>
                         <div class="col-sm-9">
-                            <input type="file" class="form-control" id="horarios" >
+                            <input type="file" class="form-control" id="horarios" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-sm-2">Promedios:</label>
+                        <label class="control-label col-sm-2">Archivo de Promedios:</label>
                         <div class="col-sm-9">
-                            <input type="file" class="form-control" id="promedios" >
+                            <input type="file" class="form-control" id="promedios" />
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">¿Que acción va a realizar?</label>
+                        <div class="col-sm-7">
+                            <div class="radio">
+                                <label><input type="radio" id="optTodo" name="optAccion" value="todo" checked="checked"/>Importar toda la información del archivo</label>
+                            </div>
+
+                            <div class="radio">
+                                <label><input type="radio" id="optRango" name="optAccion" value="rango" />Importar solo las mediciones que se encuentren entre las siguientes fechas:</label>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Fecha inicial:</label>
+                                <div class="col-sm-3">
+                                    <input class="form-control" id="finicial" name="finicial" placeholder="DD/MM/YYYY" disabled="disabled" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Fecha final:</label>
+                                <div class="col-sm-3">
+                                    <input class="form-control" id="ffinal" name="ffinal" placeholder="DD/MM/YYYY" disabled="disabled" />
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-offset-1 col-sm-10">
-                            <button id="guardar" class="btn btn-success">Subir</button>
-                            <button id="bcancelar" class="btn btn-danger">Cancelar</button>
+                        <label class="control-label col-sm-2">¿Que desea hacer con las mediciones que ya existan en la Base de Datos?</label>
+                 
+
+                        <div class="col-sm-4">
+                            <div class="radio">
+                                <label><input type="radio" id="optIgnorar" name="optActualizar" checked="checked" value="0" />Ignorar los valores del archivo de importación.</label>
+                            </div>
+
+                            <div class="radio">
+                                <label><input type="radio" id="optActualizar" name="optActualizar" value="1" />Actualizar los valores de la Base de Datos con los del archivo de importación.</label>
+                            </div>
                         </div>
+
                     </div>
-                </form>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-1 col-sm-10">
+                                <button id="guardar" class="btn btn-success">Subir</button>
+                                <button id="bcancelar" class="btn btn-danger">Cancelar</button>
+                            </div>
+                        </div>
+            </form>
             </div>
         </div>
     </div>

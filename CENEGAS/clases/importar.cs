@@ -23,17 +23,29 @@ namespace cenegas.clases
         private static string importsDirectory = WebConfigurationManager.AppSettings["importsDirectory"];
 
         // Inicia el proceso de importacion del archivo de mediciones
-        public static void import(HttpPostedFile csvHours, HttpPostedFile csvSummary, DateTime initDate, DateTime finalDate, bool updateRecords, HttpResponse response)
+        public static void import(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, DateTime initDate, DateTime finalDate, HttpResponse response)
         {
             Dictionary<string, object>  result = new Dictionary<string,object>();
             try {
                 int taskTime;
+                string filter = "";
+                
 
                 result.Add("success", true);
 
                 DateTime start = DateTime.Now;
 
-                importCSVFile(csvHours, csvSummary, initDate, finalDate, updateRecords);
+                // Se agrega un dia unicamente para hacer la comparación de registros < a fechaFinal
+                finalDate = finalDate.AddDays(1);
+
+
+                filter = useRange ? " WHERE   Fecha >= CDate('" + initDate.Year + ( initDate.Month < 10 ? "/0" : "/" ) + initDate.Month  +  ( initDate.Day < 10 ? "/0" : "/" ) + initDate.Day + "')   AND   fecha < CDate('" + finalDate.Year + (finalDate.Month < 10 ? "/0" : "/") + finalDate.Month + ( finalDate.Day < 10 ? "/0" : "/" )+ finalDate.Day + "') " : "";
+
+                // Se reestablece la fecha original
+                finalDate = finalDate.AddDays(-1);
+
+
+                importCSVFile(idsesion, csvHours, csvSummary, updateRecords, initDate, finalDate, filter);
 
                 TimeSpan ts = DateTime.Now - start;
 
@@ -50,8 +62,11 @@ namespace cenegas.clases
         
         }
 
+
+      
+
         // Recibe un archivo CSV e importa sus registros a una tabla del servidor
-        private static void importCSVFile(HttpPostedFile csvHours, HttpPostedFile csvSummary, DateTime initDate, DateTime finalDate, bool updateRecords)
+        private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, DateTime? initDate, DateTime? finalDate, string filter)
         {
             const decimal _byte = 8; // bits
             const decimal KB = _byte * 1024;
@@ -70,6 +85,8 @@ namespace cenegas.clases
             string hoursName = "";
             string summaryName = "";
 
+
+
             // Guardar el archivo de horarios
             saveFileInServer(ref csvHours, ref hoursPath);
 
@@ -79,14 +96,10 @@ namespace cenegas.clases
             hoursName = System.IO.Path.GetFileName(hoursPath);
             summaryName = System.IO.Path.GetFileName(summaryPath);
 
-            // Se agrega un dia unicamente para hacer la comparación de registros < a fechaFinal
-            finalDate = finalDate.AddDays(1);
 
-            csvToDataTable(hoursPath, "SELECT * FROM " + hoursName + " WHERE   Fecha >= CDate('" + initDate.Year + "/0" + initDate.Month + "/0" + initDate.Day + "')   AND   fecha < CDate('" + finalDate.Year + "/0" + finalDate.Month + "/" + finalDate.Day + "') ", ref recordsByHour);
-            csvToDataTable(summaryPath, "SELECT * FROM " + summaryName + " WHERE   Fecha >= CDate('" + initDate.Year + "/0" + initDate.Month + "/0" + initDate.Day + "')   AND   fecha < CDate('" + finalDate.Year + "/0" + finalDate.Month + "/" + finalDate.Day + "') ", ref summaryOfRecords);
-            // Se restaura la fecha original
-            finalDate = finalDate.AddDays(-1);
-
+            csvToDataTable(hoursPath, "SELECT * FROM " + hoursName + filter, ref recordsByHour);
+            csvToDataTable(summaryPath, "SELECT * FROM " + summaryName + filter, ref summaryOfRecords);
+          
             // Eliminar las columas de más
             recordsByHour.Columns.RemoveAt(2); // Columna Descripcion del CSV
             //recordsByHour.Columns.RemoveAt(1); // Columna Nombre Alterno del CSV
@@ -134,7 +147,8 @@ namespace cenegas.clases
 
 
 
-            saveRecords(initDate, finalDate, updateRecords, "20160617194441460203936886013010", hoursName, csvHours.FileName, summaryName, csvSummary.FileName, ref recordsByHour, ref summaryOfRecords);
+            saveRecords(idsesion, updateRecords, hoursName, csvHours.FileName, summaryName, csvSummary.FileName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
+            
         }
 
         // Guarda el archivo recibido en la ruta especificada
@@ -180,14 +194,21 @@ namespace cenegas.clases
         }
 
         // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
-        private static void saveRecords(  DateTime      initDate     , DateTime      finalDate
-                                        , bool          updateRecords, string        userId
-                                        , string        hoursName    , string        originalHoursName
-                                        , string        summaryName  , string        originalSummaryName
-                                        , ref DataTable recordsByHour, ref DataTable summaryOfRecords)
+        private static void saveRecords( string idsesion             , bool updateRecords
+                                        , string hoursName, string originalHoursName
+                                        , string summaryName, string originalSummaryName
+                                        , ref DataTable recordsByHour, ref DataTable summaryOfRecords
+                                        , DateTime?      initDate    , DateTime?      finalDate
+                                        )
         {
+            
+
+            SqlConnection adminConnection = BD.Connection("Admin");
+
             SqlConnection cnn = new SqlConnection();
             SqlCommand cmd = new SqlCommand();
+
+            int idlog = -1;
 
             try
             {
@@ -198,7 +219,7 @@ namespace cenegas.clases
                 cmd.Parameters.Add("@finalDate", SqlDbType.DateTime);
 
                 cmd.Parameters.Add("@updateRecords", SqlDbType.Bit);
-                cmd.Parameters.Add("@userId", SqlDbType.VarChar);
+                cmd.Parameters.Add("@idsesion", SqlDbType.VarChar);
 
                 cmd.Parameters.Add("@hoursName", SqlDbType.VarChar);
                 cmd.Parameters.Add("@originalHoursName", SqlDbType.VarChar);
@@ -214,7 +235,7 @@ namespace cenegas.clases
                 cmd.Parameters["@finalDate"].Value = finalDate;
 
                 cmd.Parameters["@updateRecords"].Value = updateRecords;
-                cmd.Parameters["@userId"].Value = userId;
+                cmd.Parameters["@idsesion"].Value = idsesion;
 
                 cmd.Parameters["@hoursName"].Value = hoursName;
                 cmd.Parameters["@originalHoursName"].Value = originalHoursName;
@@ -229,12 +250,15 @@ namespace cenegas.clases
                 cmd.CommandTimeout = 180;
                 cmd.CommandText = "sps_import";
                 cmd.CommandType = CommandType.StoredProcedure;
+
+                idlog = BD.LogInit(cmd, adminConnection);
                 cmd.ExecuteNonQuery();
 
-                
+               BD.LogOk(idlog, adminConnection);
             }
             catch (Exception e)
             {
+                BD.LogException(idlog, e, adminConnection);
                 throw(e);
             }
             finally {
@@ -244,6 +268,107 @@ namespace cenegas.clases
                         cnn.Dispose();
                     }
                 }
+
+                if (adminConnection != null) {
+                    if (adminConnection.State == ConnectionState.Open) {
+                        adminConnection.Close();
+                        adminConnection.Dispose();
+                    }
+                }
+            }
+
+
+        }
+
+        public static Mi.Control.Files.File getFile(string idDownload)
+        {
+           string importsDirectory = WebConfigurationManager.AppSettings["importsDirectory"];
+
+           Mi.Control.Files.File file = new Files.File();
+
+
+           string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
+            string fileName = getFileName(idDownload);
+
+           byte[] bytesFile = fileToBytes(path + fileName);
+
+           file.clength = bytesFile.Length;
+           file.ctype = "csv";
+           file.data = bytesFile;
+           file.name = fileName;
+
+           return file ;
+        }
+
+
+
+        public static byte[] fileToBytes(String path)
+        {
+
+            MemoryStream destination = new MemoryStream();
+
+            FileStream source = new FileStream(path, FileMode.Open);
+
+            // Copy source to destination.
+
+            source.CopyTo(destination);
+
+            source.Close();
+            source.Dispose();
+
+            return destination.ToArray();
+
+        }
+
+
+        // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
+        public static string getFileName(string idbdatos)
+        {
+
+
+            SqlConnection cnn = new SqlConnection();
+            SqlCommand cmd = new SqlCommand();
+            SqlDataReader dr = null;
+
+            try
+            {
+
+                cnn = BD.Connection();
+
+                cmd.Parameters.Add("@idbdatos", SqlDbType.VarChar);
+
+
+                cmd.Parameters["@idbdatos"].Value = idbdatos;
+
+                cmd.Connection = cnn;
+                cmd.CommandTimeout = 180;
+                cmd.CommandText = "sps_getFileName";
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                dr = cmd.ExecuteReader();
+
+                dr.Read();
+
+                string narchivo = (string)dr["narchivo"];
+
+                return narchivo;
+
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
+            finally
+            {
+                if (cnn != null)
+                {
+                    if (cnn.State == ConnectionState.Open)
+                    {
+                        cnn.Close();
+                        cnn.Dispose();
+                    }
+                }
+
             }
 
 
@@ -251,4 +376,6 @@ namespace cenegas.clases
 
 
     }
+
+
 }

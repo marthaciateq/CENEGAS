@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
+
+using System.IO;
+
 namespace cenegas.clases
 {
     public class utils
@@ -30,5 +33,9 @@ namespace cenegas.clases
 
             return rnd.Next(MIN, MAX);
         }
+
+
+
+        
     }
 }

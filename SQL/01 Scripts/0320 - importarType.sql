@@ -1,9 +1,9 @@
 
 
 CREATE TYPE [dbo].[importarType] AS TABLE(
-	[punto] [char](32) NOT NULL,
-	[nombreAlterno] [varchar](256) NOT NULL,
-	[fecha] [datetime] NOT NULL,
+	[punto] [char](32) NULL,
+	[nombreAlterno] [varchar](256) NULL,
+	[fecha] [datetime] NULL,
 	[metano] [decimal](18, 10) NULL,
 	[bioxidoCarbono] [decimal](18, 10) NULL,
 	[nitrogeno] [decimal](18, 10) NULL,
