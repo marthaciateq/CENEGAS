@@ -64,7 +64,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="css\bootstrap-datetimepicker.min.css" />
+    <Content Include="css\bootstrap-datepicker.min.css" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\cenegas.css" />
     <Content Include="css\chosen-sprite%402x.png" />

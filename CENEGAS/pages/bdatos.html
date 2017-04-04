@@ -35,6 +35,8 @@
                 continuar = false;
 
                 e.preventDefault();
+                $('#guardar').attr('disabled', false);
+                $('#bcancelar').attr('disabled', false);
 
                 Mi.Modal.error("Es necesario que seleccione ambos archivos de importacion. (CSV por hora y por promedio)");
 
@@ -43,6 +45,8 @@
                     continuar = false;
 
                     e.preventDefault();
+                    $('#guardar').attr('disabled', false);
+                    $('#bcancelar').attr('disabled', false);
                     Mi.Modal.error("Los archivos requeridos para la importación deben ser del tipo CSV. Favor de verificarlo.");
                 } else {
                     useRange = optRango.checked == "checked" || optRango.checked == true;
@@ -51,6 +55,8 @@
                         if (finicial.value == null || ffinal.value == null || finicial.value == "" || ffinal.value == "") {
                             continuar = false;
                             e.preventDefault();
+                            $('#guardar').attr('disabled', false);
+                            $('#bcancelar').attr('disabled', false);
                             Mi.Modal.error("Es necesario que indique la fecha inicial y final para realizar la importación");
 
                         }
@@ -58,6 +64,8 @@
                             if (new Date(ffinal.value) < new Date(finicial.value)) {
                                 continuar = false;
                                 e.preventDefault();
+                                $('#guardar').attr('disabled', false);
+                                $('#bcancelar').attr('disabled', false);
                                 Mi.Modal.error("La fecha final debe ser mayor o igual a la fecha inicial. Favor de verificarlo.");
                             }
 
@@ -77,7 +85,7 @@
                 }
 
                 formData.append("useRange", useRange)
-                formData.append("updateRecords", (optActualizar.value == "1" ? true : false));
+                formData.append("updateRecords", optActualizar.checked);
                 formData.append("idsesion", Mi.Cookie.get('SESIONCENEGAS').idsesion);
 
                 formData.append("horarios", horarios);
@@ -96,26 +104,22 @@
                     processData: false,        // To send DOMDocument or non processed data file it is set to false
                     success: function (data)   // A function to be called if request succeeds
                     {
-                        if (typeof data.error === 'undefined') {
-                            var r = JSON.parse(data);
+                        debugger;
+                        var r = JSON.parse(data);
 
-                            $("#loading").hide();
-
-                            $('#guardar').attr('disabled', false);
-                            $('#bcancelar').attr('disabled', false);
-
+                        if ( typeof r.error === 'undefined') {
                             buscar();
                         }
                         else {
-                            $("#loading").hide();
-
-                            $('#guardar').attr('disabled', false);
-                            $('#bcancelar').attr('disabled', false);
-
-                            Mi.Modal.error(data.error);
+                            Mi.Modal.error(r.error);
                         }
+
+                        $("#loading").hide();
+
+                        $('#guardar').attr('disabled', false);
+                        $('#bcancelar').attr('disabled', false);
                     },
-                    onerror: function () {
+                    error: function (data) {
 
                         $("#loading").hide();
 
@@ -149,6 +153,9 @@
                 onsuccess: function (r) {
                     listado(r);
                 }
+                , onerror: function (data) {
+                    
+                }
             });
         }
         function listado(r) {
@@ -168,11 +175,11 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Archivo Horarios', 'Archivo Promedios', '', '']]
+                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. ignorados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. ignorados', 'Promedios - Reg. fuera de fecha',  'Archivo Horarios', 'Archivo Promedios']]
                 },
                 body: {
                     data: r,
-                    cols: ['fechaS', 'actualizar', 'finicialS', 'ffinalS', 'horariosInsertados', 'horariosActualizados', 'promediosInsertados', 'promediosActualizados', 'nombreOriginalArchivoHorarios', 'nombreOriginalArchivoPromedios', 'linkHorarios', 'linkPromedios']
+                    cols: ['fechaS', 'actualizar', 'finicialS', 'ffinalS', 'horariosInsertados', 'horariosActualizados', 'horariosIgnorados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosIgnorados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
                 },
                 addCheckbox: true
             });
@@ -185,7 +192,7 @@
 
         function _onload() {
             Mi.Template.load(function () {
-
+                $("#formulario").hide();
                 $("#loading").hide();
 
                 Mi.Template.menuTop([
@@ -254,7 +261,7 @@
                 $("#guardar").click(function (e) {
                     guardar(e);
                 });
-                $("#formulario").hide();
+                
                 Mi.AJAX.request({
                     data: [
                         {

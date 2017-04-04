@@ -55,7 +55,9 @@ namespace cenegas.clases
             }
             catch (Exception e)
             {
-                result.Add("success", false);
+                result["success"]=false;
+                
+                result.Add("error", e.Message);
 
                 response.Output.Write(JSON.Serialize(result));
             }
@@ -75,116 +77,136 @@ namespace cenegas.clases
             int MAX_COLUMNS = 0;
             int index = 0;
 
-            if (csvHours.ContentLength > FILE_MAX_LENGTH)
-            {
-                // Tamaño de archivo excedido
-            }
-
-            DataTable recordsByHour = new DataTable();
-            DataTable summaryOfRecords = new DataTable();
-            string hoursPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
-            string summaryPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
-            string hoursName = "";
-            string summaryName = "";
-
-
-
-            // Guardar el archivo de horarios
-            saveFileInServer(ref csvHours, ref hoursPath);
-
-            // Guardar el archivo de horarios
-            saveFileInServer(ref csvSummary, ref summaryPath);
-
-            hoursName = System.IO.Path.GetFileName(hoursPath);
-            summaryName = System.IO.Path.GetFileName(summaryPath);
-
-
-            csvToDataTable(hoursPath, "SELECT * FROM " + hoursName + filter, ref recordsByHour);
-            csvToDataTable(summaryPath, "SELECT * FROM " + summaryName + filter, ref summaryOfRecords);
-          
-            // Eliminar las columas de más
-            recordsByHour.Columns.RemoveAt(2); // Columna Descripcion del CSV
-            //recordsByHour.Columns.RemoveAt(1); // Columna Nombre Alterno del CSV
-
-            // Eliminar las columas de más
-            summaryOfRecords.Columns.RemoveAt(2); // Columna Descripcion del CSV
-            //summaryOfRecords.Columns.RemoveAt(1); // Columna Nombre Alterno del CSV
-
-            recordsByHour.Columns[0].ColumnName = "punto";
-            recordsByHour.Columns[1].ColumnName = "nombreAlterno";
-            recordsByHour.Columns[2].ColumnName = "fecha";
-            recordsByHour.Columns[3].ColumnName = "metano";
-            recordsByHour.Columns[4].ColumnName = "bioxidoCarbono";
-
-            recordsByHour.Columns[5].ColumnName = "nitrogeno";
-            recordsByHour.Columns[6].ColumnName = "totalInertes";
-            recordsByHour.Columns[7].ColumnName = "etano";
-            recordsByHour.Columns[8].ColumnName = "tempRocio";
-            recordsByHour.Columns[9].ColumnName = "humedad";
-
-            recordsByHour.Columns[10].ColumnName = "poderCalorifico";
-            recordsByHour.Columns[11].ColumnName = "indiceWoobe";
-            recordsByHour.Columns[12].ColumnName = "acidoSulfhidrico";
-            //recordsByHour.Columns[13].ColumnName = "azufreTotal";
-            //recordsByHour.Columns[14].ColumnName = "oxigeno";
-
-
-            summaryOfRecords.Columns[0].ColumnName = "punto";
-            summaryOfRecords.Columns[1].ColumnName = "nombreAlterno";
-            summaryOfRecords.Columns[2].ColumnName = "fecha";
-            summaryOfRecords.Columns[3].ColumnName = "metano";
-            summaryOfRecords.Columns[4].ColumnName = "bioxidoCarbono";
-
-            summaryOfRecords.Columns[5].ColumnName = "nitrogeno";
-            summaryOfRecords.Columns[6].ColumnName = "totalInertes";
-            summaryOfRecords.Columns[7].ColumnName = "etano";
-            summaryOfRecords.Columns[8].ColumnName = "tempRocio";
-            summaryOfRecords.Columns[9].ColumnName = "humedad";
-
-            summaryOfRecords.Columns[10].ColumnName = "poderCalorifico";
-            summaryOfRecords.Columns[11].ColumnName = "indiceWoobe";
-            summaryOfRecords.Columns[12].ColumnName = "acidoSulfhidrico";
-            //summaryOfRecords.Columns[13].ColumnName = "azufreTotal";
-            //summaryOfRecords.Columns[14].ColumnName = "oxigeno";
-
-
-            if (recordsByHour.Columns.Count > 12) {
-
-                MAX_COLUMNS = recordsByHour.Columns.Count - 1;
-                index = MAX_COLUMNS;
-
-                for (index = MAX_COLUMNS; index > 12; index--) {
-                    recordsByHour.Columns.Remove(recordsByHour.Columns[index]);
-                }
-            }
-
-
-            if (summaryOfRecords.Columns.Count > 12)
+            try
             {
 
-                MAX_COLUMNS = summaryOfRecords.Columns.Count - 1;
-                index = MAX_COLUMNS;
-
-                for (index = MAX_COLUMNS; index > 12; index--)
+                if (csvHours.ContentLength > FILE_MAX_LENGTH)
                 {
-                    summaryOfRecords.Columns.Remove(summaryOfRecords.Columns[index]);
+                    // Tamaño de archivo excedido
                 }
+
+                DataTable recordsByHour = new DataTable();
+                DataTable summaryOfRecords = new DataTable();
+                string hoursPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
+                string summaryPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
+                string hoursName = "";
+                string summaryName = "";
+
+
+
+                // Guardar el archivo de horarios
+                saveFileInServer(ref csvHours, ref hoursPath);
+
+                // Guardar el archivo de horarios
+                saveFileInServer(ref csvSummary, ref summaryPath);
+
+                hoursName = System.IO.Path.GetFileName(hoursPath);
+                summaryName = System.IO.Path.GetFileName(summaryPath);
+
+
+                csvToDataTable(hoursPath, "SELECT * FROM " + hoursName + filter, ref recordsByHour);
+                csvToDataTable(summaryPath, "SELECT * FROM " + summaryName + filter, ref summaryOfRecords);
+
+                // Eliminar las columas de más
+                recordsByHour.Columns.RemoveAt(2); // Columna Descripcion del CSV
+                //recordsByHour.Columns.RemoveAt(1); // Columna Nombre Alterno del CSV
+
+                // Eliminar las columas de más
+                summaryOfRecords.Columns.RemoveAt(2); // Columna Descripcion del CSV
+                //summaryOfRecords.Columns.RemoveAt(1); // Columna Nombre Alterno del CSV
+
+                recordsByHour.Columns[0].ColumnName = "punto";
+                recordsByHour.Columns[1].ColumnName = "nombreAlterno";
+                recordsByHour.Columns[2].ColumnName = "fecha";
+                recordsByHour.Columns[3].ColumnName = "metano";
+                recordsByHour.Columns[4].ColumnName = "bioxidoCarbono";
+
+                recordsByHour.Columns[5].ColumnName = "nitrogeno";
+                recordsByHour.Columns[6].ColumnName = "totalInertes";
+                recordsByHour.Columns[7].ColumnName = "etano";
+                recordsByHour.Columns[8].ColumnName = "tempRocio";
+                recordsByHour.Columns[9].ColumnName = "humedad";
+
+                recordsByHour.Columns[10].ColumnName = "poderCalorifico";
+                recordsByHour.Columns[11].ColumnName = "indiceWoobe";
+                recordsByHour.Columns[12].ColumnName = "acidoSulfhidrico";
+                //recordsByHour.Columns[13].ColumnName = "azufreTotal";
+                //recordsByHour.Columns[14].ColumnName = "oxigeno";
+
+
+                summaryOfRecords.Columns[0].ColumnName = "punto";
+                summaryOfRecords.Columns[1].ColumnName = "nombreAlterno";
+                summaryOfRecords.Columns[2].ColumnName = "fecha";
+                summaryOfRecords.Columns[3].ColumnName = "metano";
+                summaryOfRecords.Columns[4].ColumnName = "bioxidoCarbono";
+
+                summaryOfRecords.Columns[5].ColumnName = "nitrogeno";
+                summaryOfRecords.Columns[6].ColumnName = "totalInertes";
+                summaryOfRecords.Columns[7].ColumnName = "etano";
+                summaryOfRecords.Columns[8].ColumnName = "tempRocio";
+                summaryOfRecords.Columns[9].ColumnName = "humedad";
+
+                summaryOfRecords.Columns[10].ColumnName = "poderCalorifico";
+                summaryOfRecords.Columns[11].ColumnName = "indiceWoobe";
+                summaryOfRecords.Columns[12].ColumnName = "acidoSulfhidrico";
+                //summaryOfRecords.Columns[13].ColumnName = "azufreTotal";
+                //summaryOfRecords.Columns[14].ColumnName = "oxigeno";
+
+
+                if (recordsByHour.Columns.Count > 12)
+                {
+
+                    MAX_COLUMNS = recordsByHour.Columns.Count - 1;
+                    index = MAX_COLUMNS;
+
+                    for (index = MAX_COLUMNS; index > 12; index--)
+                    {
+                        recordsByHour.Columns.Remove(recordsByHour.Columns[index]);
+                    }
+                }
+
+
+                if (summaryOfRecords.Columns.Count > 12)
+                {
+
+                    MAX_COLUMNS = summaryOfRecords.Columns.Count - 1;
+                    index = MAX_COLUMNS;
+
+                    for (index = MAX_COLUMNS; index > 12; index--)
+                    {
+                        summaryOfRecords.Columns.Remove(summaryOfRecords.Columns[index]);
+                    }
+                }
+
+
+                saveRecords(idsesion, updateRecords, hoursName, csvHours.FileName, summaryName, csvSummary.FileName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
+            }
+            catch(Exception e) {
+
+                throw (e);
             }
 
-
-
-            saveRecords(idsesion, updateRecords, hoursName, csvHours.FileName, summaryName, csvSummary.FileName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
             
         }
 
         // Guarda el archivo recibido en la ruta especificada
         private static void saveFileInServer(ref HttpPostedFile csvFile, ref string destinyPath)
         {
-            utils utils = new utils();
+            try 
+            { 
+                utils utils = new utils();
 
-            destinyPath += utils.GUID() + ".csv";
+                double mileseconds = DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
 
-            csvFile.SaveAs(destinyPath);
+                destinyPath += mileseconds.ToString().Replace(".","") + ".csv";
+
+                csvFile.SaveAs(destinyPath);
+            }
+            catch (Exception e)
+            {
+
+                throw (e);
+            }
         }
 
         // Lee los datos de un archivo CSV y los vuelca en un DataTable
@@ -196,27 +218,33 @@ namespace cenegas.clases
             //////- IIS > Application Pools > DefaultAppPool > Advanced Settings > Enable 32-Bit Applications 
             //////-      Cambiar el valor a TRUE
 
+            try { 
+                string path = System.IO.Path.GetDirectoryName(pathFile);
 
-            string path = System.IO.Path.GetDirectoryName(pathFile);
+                ////Guardamos el tiempo antes del proceso a cronometrar
+                //DateTime tiempoinicial = DateTime.Now;
 
-            ////Guardamos el tiempo antes del proceso a cronometrar
-            //DateTime tiempoinicial = DateTime.Now;
+                using (OleDbConnection conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source='" + path + "';Extended Properties='text;HDR=Yes;FMT=Delimited'"))
+                {
 
-            using (OleDbConnection conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source='" + path + "';Extended Properties='text;HDR=Yes;FMT=Delimited'"))
+                    OleDbDataAdapter da = new OleDbDataAdapter(query, conn);
+                    da.Fill(dt);
+                }
+
+                ////Guardamos el tiempo al finalizar todas las instrucciones
+                //DateTime tiempofinal = DateTime.Now;
+
+                ////Creamos el intervalo de tiempo con una resta
+                //TimeSpan total = new TimeSpan(tiempofinal.Ticks - tiempoinicial.Ticks);
+
+                ////Mostramos por pantalla el tiempo que ha tardado el proceso
+                //System.Console.WriteLine(total.ToString());
+            }
+            catch (Exception e)
             {
 
-                OleDbDataAdapter da = new OleDbDataAdapter(query, conn);
-                da.Fill(dt);
+                throw (e);
             }
-
-            ////Guardamos el tiempo al finalizar todas las instrucciones
-            //DateTime tiempofinal = DateTime.Now;
-
-            ////Creamos el intervalo de tiempo con una resta
-            //TimeSpan total = new TimeSpan(tiempofinal.Ticks - tiempoinicial.Ticks);
-
-            ////Mostramos por pantalla el tiempo que ha tardado el proceso
-            //System.Console.WriteLine(total.ToString());
         }
 
         // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
@@ -227,8 +255,8 @@ namespace cenegas.clases
                                         , DateTime?      initDate    , DateTime?      finalDate
                                         )
         {
-            
 
+            
             SqlConnection adminConnection = BD.Connection("Admin");
 
             SqlConnection cnn = new SqlConnection();
@@ -308,41 +336,56 @@ namespace cenegas.clases
 
         public static Mi.Control.Files.File getFile(string idDownload)
         {
-           string importsDirectory = WebConfigurationManager.AppSettings["importsDirectory"];
+            try 
+            { 
+               string importsDirectory = WebConfigurationManager.AppSettings["importsDirectory"];
 
-           Mi.Control.Files.File file = new Files.File();
+               Mi.Control.Files.File file = new Files.File();
 
 
-           string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
-            string fileName = getFileName(idDownload);
+               string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
+                string fileName = getFileName(idDownload);
 
-           byte[] bytesFile = fileToBytes(path + fileName);
+               byte[] bytesFile = fileToBytes(path + fileName);
 
-           file.clength = bytesFile.Length;
-           file.ctype = "csv";
-           file.data = bytesFile;
-           file.name = fileName;
+               file.clength = bytesFile.Length;
+               file.ctype = "csv";
+               file.data = bytesFile;
+               file.name = fileName;
 
-           return file ;
+               return file ;
+            }
+            catch (Exception e)
+            {
+
+                throw (e);
+            }
         }
 
 
 
         public static byte[] fileToBytes(String path)
         {
+            try 
+            { 
+                MemoryStream destination = new MemoryStream();
 
-            MemoryStream destination = new MemoryStream();
+                FileStream source = new FileStream(path, FileMode.Open);
 
-            FileStream source = new FileStream(path, FileMode.Open);
+                // Copy source to destination.
 
-            // Copy source to destination.
+                source.CopyTo(destination);
 
-            source.CopyTo(destination);
+                source.Close();
+                source.Dispose();
 
-            source.Close();
-            source.Dispose();
+                return destination.ToArray();
+            }
+            catch (Exception e)
+            {
 
-            return destination.ToArray();
+                throw (e);
+            }
 
         }
 
