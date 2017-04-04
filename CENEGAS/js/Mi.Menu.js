@@ -1,7 +1,6 @@
 ﻿Mi.Menu = {};
 Mi.Menu.menu = { 'caption': '', 'url': null, 'servicios': [] }
 Mi.Menu.menu.administracion = { 'caption': 'Análisis de Calidad del Gas', 'url': null, 'servicios': [] }
-Mi.Menu.menu.administracion.roles = { 'caption': 'Roles', 'url': 'pages/roles.html', 'servicios': [] }
 Mi.Menu.menu.administracion.usuarios = { 'caption': 'Usuarios', 'url': 'pages/usuarios.html', 'servicios': [] }
 Mi.Menu.menu.administracion.bdatos = { 'caption': 'Carga de Bases de Datos', 'url': 'pages/bdatos.html', 'servicios': [] }
 Mi.Menu.menu.administracion.reportes = { 'caption': 'Reportes', 'url': 'pages/reportes.html', 'servicios': [] }

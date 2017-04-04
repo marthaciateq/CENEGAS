@@ -107,7 +107,7 @@
                             $(this).parent().parent().children('li').addClass("disabled");
                             $(this).parent().removeClass("disabled");
                             cargar();
-                        }, img: ""
+                        }, img: "glyphicon glyphicon-circle-arrow-up"
                     },
                     {
                         label: "Eliminar Base de Datos",
@@ -123,11 +123,11 @@
                             $(this).parent().removeClass("disabled");
                             eliminar();
                         },
-                        img: ""
+                        img: "glyphicon-remove"
                     }
 ,
                     {
-                        label: "Ver información faltante ",
+                        label: "Ver informaci&oacute;n faltante ",
                         onclick: function () {
                             var row;
                             row = $("#registros").find('input:checked').first().parent().parent().data('row');
@@ -139,7 +139,7 @@
                             //$(this).parent().parent().children('li').addClass("disabled");
                             $(this).parent().removeClass("disabled");
                         },
-                        img: ""
+                        img: "glyphicon-search"
                     }
 
                 ], "CARGA DE BASES DE DATOS");

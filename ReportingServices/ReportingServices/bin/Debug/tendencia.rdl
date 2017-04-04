@@ -558,30 +558,37 @@
     <DataSet Name="DataSet1">
       <Query>
         <DataSourceName>DataSource1</DataSourceName>
-        <CommandText>select 
-	b.punto,
-	b.nalterno,
-	c.descripcion,
-	a.fecha,
-	a.valor,
-	d.minimo,
-	d.maximo,
-	(
-		select avg(valor) 
-		from registros z 
-		where  
-			a.idpmuestreo=z.idpmuestreo
-			and dateadd(hh,-4,a.fecha)&lt;=z.fecha and z.fecha&lt;=a.fecha
-			and z.idpmuestreo='20170309043836120310017353923134' and z.idelemento='20170309015853370572487661852156'
-	) tendencia
-from registros a
-	inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
-	inner join elementos c on a.idelemento=c.idelemento
-	inner join especificaciones d on a.idelemento=d.idelemento and b.zona=d.zona
-where a.idpmuestreo='20170309043836120310017353923134' and a.idelemento='20170309015853370572487661852156'
-order by fecha
-
-</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@idsesion">
+            <Value>=Parameters!idsesion.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@idbdatos">
+            <Value>=Parameters!idbdatos.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@pmuestreo">
+            <Value>=Parameters!pmuestreo.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@elementos">
+            <Value>=Parameters!elementos.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@finicial">
+            <Value>=Parameters!finicial.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@ffinal">
+            <Value>=Parameters!ffinal.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@formato">
+            <Value>=Parameters!formato.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@resultado">
+            <Value>=Parameters!resultado.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@reporte">
+            <Value>=Parameters!reporte.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>sps_reporte_grafico_tendencia</CommandText>
       </Query>
       <Fields>
         <Field Name="punto">
@@ -600,25 +607,71 @@ order by fecha
           <DataField>fecha</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
-        <Field Name="valor">
-          <DataField>valor</DataField>
+        <Field Name="promedio">
+          <DataField>promedio</DataField>
           <rd:TypeName>System.Double</rd:TypeName>
         </Field>
         <Field Name="minimo">
           <DataField>minimo</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
         <Field Name="maximo">
           <DataField>maximo</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
+          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
         <Field Name="tendencia">
           <DataField>tendencia</DataField>
           <rd:TypeName>System.Double</rd:TypeName>
         </Field>
+        <Field Name="min_valorY">
+          <DataField>min_valorY</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="max_valorY">
+          <DataField>max_valorY</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="idsesion">
+      <DataType>String</DataType>
+      <Prompt>idsesion</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="idbdatos">
+      <DataType>String</DataType>
+      <Prompt>idbdatos</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="pmuestreo">
+      <DataType>String</DataType>
+      <Prompt>pmuestreo</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="elementos">
+      <DataType>String</DataType>
+      <Prompt>elementos</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="finicial">
+      <DataType>String</DataType>
+      <Prompt>finicial</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ffinal">
+      <DataType>String</DataType>
+      <Prompt>ffinal</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="formato">
+      <DataType>String</DataType>
+      <Prompt>formato</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="resultado">
+      <DataType>String</DataType>
+      <Prompt>resultado</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="reporte">
+      <DataType>String</DataType>
+      <Prompt>reporte</Prompt>
+    </ReportParameter>
+  </ReportParameters>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>4d7319b9-30d2-4532-8673-6cd9f5929e5e</rd:ReportID>
 </Report>
