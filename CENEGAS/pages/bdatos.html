@@ -1,136 +1,136 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
--->    
+    <!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    -->
     <title>Usuarios</title>
-    <link rel="stylesheet" href="../css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/cenegas.css">
-    <link rel="stylesheet" href="../css/chosen.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../css/cenegas.css" />
+    <link rel="stylesheet" href="../css/chosen.css" />
     <link rel="stylesheet" href="../css/bootstrap-datetimepicker.min.css" />
 
     <!-- Comentarios-->
     <script language="javascript">
         function guardar(e) {
 
-                $('#guardar').attr('disabled', true);
-                $('#bcancelar').attr('disabled', true);
+            $('#guardar').attr('disabled', true);
+            $('#bcancelar').attr('disabled', true);
 
-                var formData = new FormData();
-                var horarios = $("#horarios")[0].files[0];
-                var promedios = $("#promedios")[0].files[0];
+            var formData = new FormData();
+            var horarios = $("#horarios")[0].files[0];
+            var promedios = $("#promedios")[0].files[0];
 
-                var optRango = $("#optRango")[0]
-                    , finicial = $("#finicial")[0]
-                    , ffinal = $("#ffinal")[0]
-                    , optActualizar = $("#optActualizar")[0]
-                    , useRange = false;
+            var optRango = $("#optRango")[0]
+                , finicial = $("#finicial")[0]
+                , ffinal = $("#ffinal")[0]
+                , optActualizar = $("#optActualizar")[0]
+                , useRange = false;
 
-                var continuar = true;
+            var continuar = true;
 
 
-          
-                if (horarios == null || promedios == null) {
+
+            if (horarios == null || promedios == null) {
+                continuar = false;
+
+                e.preventDefault();
+
+                Mi.Modal.error("Es necesario que seleccione ambos archivos de importacion. (CSV por hora y por promedio)");
+
+            } else {
+                if (horarios.name.toUpperCase().lastIndexOf("CSV") < 0 || promedios.name.toUpperCase().lastIndexOf("CSV") < 0) {
                     continuar = false;
 
                     e.preventDefault();
-
-                    Mi.Modal.error("Es necesario que seleccione ambos archivos de importacion. (CSV por hora y por promedio)");
-                    
+                    Mi.Modal.error("Los archivos requeridos para la importación deben ser del tipo CSV. Favor de verificarlo.");
                 } else {
-                    if (horarios.name.toUpperCase().lastIndexOf("CSV") < 0 || promedios.name.toUpperCase().lastIndexOf("CSV") < 0) {
-                        continuar = false;
+                    useRange = optRango.checked == "checked" || optRango.checked == true;
 
-                        e.preventDefault();
-                        Mi.Modal.error("Los archivos requeridos para la importación deben ser del tipo CSV. Favor de verificarlo.");
-                    } else {
-                        useRange = optRango.checked == "checked" || optRango.checked == true;
+                    if (useRange) {
+                        if (finicial.value == null || ffinal.value == null || finicial.value == "" || ffinal.value == "") {
+                            continuar = false;
+                            e.preventDefault();
+                            Mi.Modal.error("Es necesario que indique la fecha inicial y final para realizar la importación");
 
-                        if (useRange) {
-                            if (finicial.value == null || ffinal.value == null || finicial.value == "" || ffinal.value == "") {
+                        }
+                        else {
+                            if (new Date(ffinal.value) < new Date(finicial.value)) {
                                 continuar = false;
                                 e.preventDefault();
-                                Mi.Modal.error("Es necesario que indique la fecha inicial y final para realizar la importación");
-
+                                Mi.Modal.error("La fecha final debe ser mayor o igual a la fecha inicial. Favor de verificarlo.");
                             }
-                            else {
-                                if (new Date(ffinal.value) < new Date(finicial.value)) {
-                                    continuar = false;
-                                    e.preventDefault();
-                                    Mi.Modal.error("La fecha final debe ser mayor o igual a la fecha inicial. Favor de verificarlo.");
-                                }
 
-                            }
                         }
                     }
                 }
+            }
 
 
-                if (continuar) {
+            if (continuar) {
 
-                    $("#loading").show();
+                $("#loading").show();
 
-                    if (useRange) {
-                        formData.append("initDate", finicial.value);//"2017-02-01
-                        formData.append("finalDate", ffinal.value);
-                    }
+                if (useRange) {
+                    formData.append("initDate", finicial.value);//"2017-02-01
+                    formData.append("finalDate", ffinal.value);
+                }
 
-                    formData.append("useRange", useRange)
-                    formData.append("updateRecords", (optActualizar.value == "1" ? true : false));
-                    formData.append("idsesion", Mi.Cookie.get('SESIONCENEGAS').idsesion);
-                    
-                    formData.append("horarios", horarios);
-                    formData.append("promedios", promedios);
+                formData.append("useRange", useRange)
+                formData.append("updateRecords", (optActualizar.value == "1" ? true : false));
+                formData.append("idsesion", Mi.Cookie.get('SESIONCENEGAS').idsesion);
+
+                formData.append("horarios", horarios);
+                formData.append("promedios", promedios);
 
 
 
-                    $.ajax({
-                        url: Mi.webHome + 'dispatch/import.aspx', // Url to which the request is send
-                        type: "POST",             // Type of request to be send, called as method
-                        timeout: 20 * 1000 * 60,
-                        //dataType: 'json',
-                        data: formData, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
-                        contentType: false,       // The content type used when sending data to the server.
-                        cache: false,             // To unable request pages to be cached
-                        processData: false,        // To send DOMDocument or non processed data file it is set to false
-                        success: function (data)   // A function to be called if request succeeds
-                        {
-                            if (typeof data.error === 'undefined') {
-                                var r = JSON.parse(data);
-
-                                $("#loading").hide();
-
-                                $('#guardar').attr('disabled', false);
-                                $('#bcancelar').attr('disabled', false);
-
-                                buscar();
-                            }
-                            else {
-                                $("#loading").hide();
-
-                                $('#guardar').attr('disabled', false);
-                                $('#bcancelar').attr('disabled', false);
-
-                                Mi.Modal.error(data.error);
-                            }
-                        },
-                        onerror: function () {
+                $.ajax({
+                    url: Mi.webHome + 'dispatch/import.aspx', // Url to which the request is send
+                    type: "POST",             // Type of request to be send, called as method
+                    timeout: 20 * 1000 * 60,
+                    //dataType: 'json',
+                    data: formData, // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+                    contentType: false,       // The content type used when sending data to the server.
+                    cache: false,             // To unable request pages to be cached
+                    processData: false,        // To send DOMDocument or non processed data file it is set to false
+                    success: function (data)   // A function to be called if request succeeds
+                    {
+                        if (typeof data.error === 'undefined') {
+                            var r = JSON.parse(data);
 
                             $("#loading").hide();
 
                             $('#guardar').attr('disabled', false);
                             $('#bcancelar').attr('disabled', false);
 
-                            Mi.Modal.error("ocurrio un error");
+                            buscar();
                         }
-                    });
+                        else {
+                            $("#loading").hide();
+
+                            $('#guardar').attr('disabled', false);
+                            $('#bcancelar').attr('disabled', false);
+
+                            Mi.Modal.error(data.error);
+                        }
+                    },
+                    onerror: function () {
+
+                        $("#loading").hide();
+
+                        $('#guardar').attr('disabled', false);
+                        $('#bcancelar').attr('disabled', false);
+
+                        Mi.Modal.error("ocurrio un error");
+                    }
+                });
 
 
-                }
+            }
 
 
-                
+
         }
 
 
@@ -138,7 +138,7 @@
             $("#formulario").show()
             $("#listado").hide()
         }
-        function eliminar() { 
+        function eliminar() {
         }
         function buscar(usuario) {
             Mi.AJAX.request({
@@ -160,7 +160,7 @@
             var link = "";
 
             for (i = 0; i < r.length; i++) {
-                
+
 
                 r[i].linkHorarios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idHorarios + '">Horarios</a>');
                 r[i].linkPromedios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idPromedios + '">Promedios</a>');
@@ -168,7 +168,7 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['','Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Archivo Horarios', 'Archivo Promedios', '', '']]
+                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Archivo Horarios', 'Archivo Promedios', '', '']]
                 },
                 body: {
                     data: r,
@@ -292,7 +292,7 @@
             <div id="side-menu" class="col-sm-2 hidden-xs" data-spy="affix" data-offset-top="0"></div>
             <div id="opciones" class="col-sm-offset-2 col-sm-10"></div>
             <div id="main" class="col-sm-offset-2 col-sm-10">
-                
+
 
                 <div id="listado" class="col-sm-10"></div>
 
@@ -319,7 +319,7 @@
                         <label class="control-label col-sm-2">¿Que acción va a realizar?</label>
                         <div class="col-sm-7">
                             <div class="radio">
-                                <label><input type="radio" id="optTodo" name="optAccion" value="todo" checked="checked"/>Importar toda la información del archivo</label>
+                                <label><input type="radio" id="optTodo" name="optAccion" value="todo" checked="checked" />Importar toda la información del archivo</label>
                             </div>
 
                             <div class="radio">
@@ -344,7 +344,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-sm-2">¿Que desea hacer con las mediciones que ya existan en la Base de Datos?</label>
-                 
+
 
                         <div class="col-sm-4">
                             <div class="radio">
@@ -358,13 +358,13 @@
 
                     </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-offset-1 col-sm-10">
-                                <button id="guardar" class="btn btn-success">Subir</button>
-                                <button id="bcancelar" class="btn btn-danger">Cancelar</button>
-                            </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <button id="guardar" class="btn btn-success">Subir</button>
+                            <button id="bcancelar" class="btn btn-danger">Cancelar</button>
                         </div>
-            </form>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
