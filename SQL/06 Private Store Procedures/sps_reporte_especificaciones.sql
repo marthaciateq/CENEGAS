@@ -110,7 +110,7 @@ BEGIN
 			from #base_registros a
 				inner join #fespecificacion b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and convert(date,a.fecha)=convert(date,b.fecha)
 				inner join elementos c on a.idelemento=c.idelemento
-			order by a.idpmuestreo,a.idelemento,a.fecha
+			order by b.nalterno,c.descripcion,a.fecha
 		end
 	end try
 	begin catch

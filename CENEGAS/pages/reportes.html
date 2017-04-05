@@ -75,28 +75,7 @@
         function _onload() {
             Mi.Template.load(function () {
                 Mi.Template.menuTop([
-                    //{
-                    //    label: "Validar Información",
-                    //    onclick: function () {
-                    //        if ($(this).parent().hasClass('disabled')) return;
-                    //        $(this).parent().parent().children('li').addClass("disabled");
-                    //        $(this).parent().removeClass("disabled");
-                    //        validar();
-                    //    }, img: ""
-                    //},
-                    //{
-                    //    label: "Cancelar Información",
-                    //    onclick: function () {
-                    //        var row;
-                    //        row = $("#registros").find('input:checked').first().parent().parent().data('row');
-                    //        if ($(this).parent().hasClass('disabled')) return;
-                    //        $(this).parent().removeClass("disabled");
-                    //        cancelar();
-                    //    },
-                    //    img: ""
-                    //}
                 ], "Reportes del Registro de propiedades fuera de especificaciones ( NOM-001-SECRE-2010 )");
-
 
                 $("#loading").hide();
 
@@ -135,9 +114,9 @@
                         console.log('processed all items');
                         console.log(files.length);
                     }
-                    var formato = $("#formato").MiVal() == null ? 'EXCEL' : $("#formato").MiVal()
+                     var formato = $("#formato").MiVal() == null ? 'EXCEL' : $("#formato").MiVal()
 
-                    if (formato == 'PDF' && ($("#reporte").MiVal() == 'G' || $("#reporte").MiVal() == 'D')) {
+                     if (formato == 'PDF' && ($("#reporte").MiVal() == 'G' || $("#reporte").MiVal() == 'D' || $("#reporte").MiVal() == 'T')) {
 
                         var processItemsDeferred = [];
                         $('#bgenerar').attr('disabled', true);
@@ -184,8 +163,6 @@
                                 $('#bgenerar').attr('disabled', false);
                             } 
                         });
-
-
                     } 
                     else {
                         generarReporte($("#idpmuestreo").val(), null, formato);

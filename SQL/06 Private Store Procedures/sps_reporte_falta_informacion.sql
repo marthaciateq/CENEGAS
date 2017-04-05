@@ -204,7 +204,7 @@ BEGIN
 		else
 		begin
 			select * from #horarios
-			order by punto,nalterno,descripcion,fecha
+			order by nalterno,descripcion,fecha
 		end
 		
 	end try

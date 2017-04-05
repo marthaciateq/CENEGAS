@@ -157,7 +157,7 @@
     <Folder Include="documents\imports\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\proyectos\MiControl\MiControl\MiControl.csproj">
+    <ProjectReference Include="..\..\MiControl\MiControl\MiControl.csproj">
       <Project>{3f972c25-c060-46b5-ab6f-376c1df6f245}</Project>
       <Name>MiControl</Name>
     </ProjectReference>
