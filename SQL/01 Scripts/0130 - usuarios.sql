@@ -17,6 +17,7 @@ GO
 
 BEGIN
 	insert into usuarios values('20160617194441460203936886013010','Administrador','.','.','admin@gmail.com','admin','0OstU0qU6t5','N')
+	insert into usuarios values('20170405155332240873987667335604','Cenegas','.','.','admin@gmail.com','cenegas','0OstU0qU6t5','N')
 END
 
 
