@@ -38,6 +38,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MiControl">
+      <HintPath>..\..\..\cenegas\Otros\Librerias\MiControl.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -167,12 +170,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="documents\imports\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\MiControl\MiControl\MiControl.csproj">
-      <Project>{3f972c25-c060-46b5-ab6f-376c1df6f245}</Project>
-      <Name>MiControl</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
