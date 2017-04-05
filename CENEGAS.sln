@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CENEGAS", "CENEGAS\CENEGAS.csproj", "{91DD667F-7C06-4506-822D-CF59F6D59453}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiControl", "..\MiControl\MiControl\MiControl.csproj", "{3F972C25-C060-46B5-AB6F-376C1DF6F245}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiControl", "..\proyectos\MiControl\MiControl\MiControl.csproj", "{3F972C25-C060-46B5-AB6F-376C1DF6F245}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
