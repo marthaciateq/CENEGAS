@@ -1,0 +1,14 @@
+C:\proyectos\output\cenegas\CENEGAS\bin\CENEGAS.dll.config
+C:\proyectos\output\cenegas\CENEGAS\bin\CENEGAS.dll
+C:\proyectos\output\cenegas\CENEGAS\bin\CENEGAS.pdb
+C:\proyectos\output\cenegas\CENEGAS\bin\MiControl.dll
+C:\proyectos\output\cenegas\CENEGAS\bin\Microsoft.ReportViewer.Common.dll
+C:\proyectos\output\cenegas\CENEGAS\bin\Microsoft.ReportViewer.ProcessingObjectModel.DLL
+C:\proyectos\output\cenegas\CENEGAS\bin\Microsoft.ReportViewer.WebForms.DLL
+C:\proyectos\output\cenegas\CENEGAS\bin\Microsoft.SqlServer.Types.dll
+C:\proyectos\output\cenegas\CENEGAS\bin\MiCrypt.dll
+C:\proyectos\output\cenegas\CENEGAS\bin\MySql.Data.dll
+C:\proyectos\output\cenegas\CENEGAS\bin\MiCrypt.pdb
+C:\proyectos\output\cenegas\CENEGAS\obj\Debug\CENEGAS.csprojResolveAssemblyReference.cache
+C:\proyectos\output\cenegas\CENEGAS\obj\Debug\CENEGAS.dll
+C:\proyectos\output\cenegas\CENEGAS\obj\Debug\CENEGAS.pdb
