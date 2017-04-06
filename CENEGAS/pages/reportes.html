@@ -32,6 +32,11 @@
                 },
                 onsuccess: function (r) {
                    dfd.resolve(r);
+                },
+                onerror: function (data) {
+                    Mi.Modal.alert(data);
+                    $('#bgenerar').attr('disabled', false);
+                  //  dfd.reject();
                 }
             });
             return dfd.promise();
@@ -68,6 +73,11 @@
                         apmuestreo[data] = punto;
                         files.push(data);
                         dfd.resolve(data);
+                    },
+                    onerror: function (data) {
+                        Mi.Modal.alert(data);
+                        $('#bgenerar').attr('disabled', false);
+                      //  dfd.reject();
                     }
                 });
                 return dfd.promise();
@@ -77,7 +87,7 @@
                 Mi.Template.menuTop([
                 ], "Reportes del Registro de propiedades fuera de especificaciones ( NOM-001-SECRE-2010 )");
 
-                $("#loading").hide();
+                Mi.Modal.hidePleaseWait();
 
                 pmuestreo = Mi.Input.comboPmuestreo({ multiple: "true" });
                 pmuestreo.appendTo("#divpmuestreo");
@@ -121,15 +131,20 @@
                         var processItemsDeferred = [];
                         $('#bgenerar').attr('disabled', true);
 
+                        var error = false;
+
                         $.when(getPuntosMuestreoConInformacion($("#idpmuestreo").val(), formato)).then(function (data) {
 
                             if (data.length != 0) {
-                                $("#loading").show();
+
+                                Mi.Modal.showPleaseWait();
                                 $.each(data, function (index, value) {
                                     processItemsDeferred.push(generarReporte(value.idpmuestreo, value.pmuestreo, formato, 'S'));
                                 });
 
                                 $.when.apply($, processItemsDeferred).then(function () {
+
+                                    if (error) return;
 
                                     var formData = new FormData();
                                     $.each(files, function (index, value) {
@@ -156,7 +171,9 @@
                                     frm01.submit();
                                     document.body.removeChild(frm01);
                                     $('#bgenerar').attr('disabled', false);
-                                    $("#loading").hide();
+                                    Mi.Modal.hidePleaseWait();
+                                }).fail(function () {
+                                    error = true;
                                 });
                             } else {
                                 Mi.Modal.alert("No hay información fuera de especificacion en las fechas seleccionadas");
@@ -180,9 +197,6 @@
             <div id="side-menu" class="col-sm-2 hidden-xs" data-spy="affix" data-offset-top="0"></div>
             <div id="opciones" class="col-sm-offset-2 col-sm-10"></div>
             <div id="main" class="col-sm-offset-2 col-sm-10">
-                    <div class="col-md-3 col-md-offset-9 clearfix" id="loading">
-                        <p><img height="42" width="42" src="../imgs/loading.gif" /> Generando archivo...</p>
-                    </div>
                     <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Punto(s) de Muestreo:</label>
                         <div id="divpmuestreo" class="col-sm-4">

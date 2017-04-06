@@ -33,7 +33,7 @@ Mi.Reports.request = function (params) {
         document.body.removeChild(frm01);
     } else {
         if ($.type(params.onsuccess) != 'function') params.onsuccess = function () { }
-        if ($.type(params.onerror) != 'function') params.onerror = function (r) { Mi.dialog({ content: r, modal: true }); }
+        if ($.type(params.onerror) != 'function') params.onerror = function (r) { Mi.Modal.alert(r); }
         request.data.toFile = 'S';
         request.cache = false;
         request.type = 'post';
