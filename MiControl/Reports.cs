@@ -14,24 +14,6 @@ namespace Mi
 
 		public class Reports
 		{
-            public static void prueba(HttpRequest request, HttpResponse response){
-				ReportViewer reportViewer = null;
-				Warning[] warnings = null;
-				string[] streams = null;
-				string mimeType = null;
-				string encoding = null;
-				string fileNameExtension = null;
-				byte[] bytes = null;
-
-                reportViewer = new ReportViewer();
-                reportViewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
-				reportViewer.LocalReport.ReportPath = "pmuestreo.rdl";
-                bytes = reportViewer.LocalReport.Render("PDF", null, out mimeType, out encoding, out fileNameExtension, out streams, out warnings);
-                response.ContentType = mimeType;
-                response.AddHeader("Content-disposition", "attachment; filename=prueba.pdf");
-                response.OutputStream.Write(bytes, 0, bytes.Length);
-            }
-
 			public static void Dispatch(HttpRequest request, HttpResponse response, Dictionary<String, String> querys)
 			{
 				String nombre = null;
