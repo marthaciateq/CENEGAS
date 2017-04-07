@@ -1,4 +1,4 @@
-CREATE PROCEDURE sps_reporte_especificaciones
+ALTER PROCEDURE sps_reporte_especificaciones
 	@idsesion varchar(max),
 	@idbdatos varchar(max),
 	@pmuestreo varchar(max),
@@ -72,9 +72,9 @@ BEGIN
 			inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
 			inner join especificaciones c on a.idelemento=c.idelemento and b.zona=c.zona
 		where 
-			(c.minimo is null or a.promedio<c.minimo)
-			or (c.maximo is null or a.promedio>c.maximo)
+			(a.promedio<c.minimo or a.promedio>c.maximo)
 			
+		select * from #fespecificacion
 		
 		if @resultado=1
 		begin
