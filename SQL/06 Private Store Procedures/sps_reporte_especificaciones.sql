@@ -73,7 +73,7 @@ BEGIN
 			inner join especificaciones c on a.idelemento=c.idelemento and b.zona=c.zona
 		where 
 			(c.minimo is null or a.promedio<c.minimo)
-			and (c.maximo is null or a.promedio>c.maximo)
+			or (c.maximo is null or a.promedio>c.maximo)
 			
 		
 		if @resultado=1

@@ -27,3 +27,8 @@ C:\proyectos\MiControl\MiControl\bin\Debug\zh-CHT\Microsoft.ReportViewer.WebForm
 C:\proyectos\MiControl\MiControl\obj\Debug\MiControl.dll
 C:\proyectos\MiControl\MiControl\obj\Debug\MiControl.pdb
 C:\proyectos\MiControl\MiControl\obj\Debug\MiControl.csprojResolveAssemblyReference.cache
+C:\proyectos\cenegas\MiControl\bin\Debug\MiControl.dll
+C:\proyectos\cenegas\MiControl\bin\Debug\MiControl.pdb
+C:\proyectos\cenegas\MiControl\obj\Debug\MiControl.csprojResolveAssemblyReference.cache
+C:\proyectos\cenegas\MiControl\obj\Debug\MiControl.dll
+C:\proyectos\cenegas\MiControl\obj\Debug\MiControl.pdb
