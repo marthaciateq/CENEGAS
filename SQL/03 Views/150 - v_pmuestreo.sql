@@ -6,11 +6,13 @@ CREATE VIEW v_pmuestreo (
 	zona,
 	deleted,
 	deletedS,
-	zonaS
+	zonaS,
+	pmuestreo
 ) AS
 	select 
 		a.*,
 		dbo.fn_deleted(a.deleted) deletedS,
-		case when zona='S' then 'SUR' else 'RESTO DEL PAIS' end
+		case when zona='S' then 'SUR' else 'RESTO DEL PAIS' end,
+		a.punto + ' ' + a.nalterno + ' ' + case when zona='S' then 'SUR' else 'RESTO DEL PAIS' end
 	from pmuestreo a
 		

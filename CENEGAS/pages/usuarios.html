@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="../css/chosen.css">
     <script language="javascript">
         function guardar() {
-            row = $("#registros").MiSelection({ onlyFirst: true }).eq(0).data('row');
-            if ($("#password").val() != null && $("#password").val() != $("#password2").val()) {
+            row = $("#registros").find('input:checked').first().parent().parent().data('row');
+            if (Mi.MiTextVal($("#password")) != null && $("#password").val() != $("#password2").val()) {
                 Mi.Modal.error('La confirmación de la contraseña no coincide');
                 return;
             }
@@ -55,7 +55,7 @@
                 $("#password2").val("");
                 $("#roles").val("");
 
-                $("#guardar").click(guardar);
+                $("#guardar").click(function () { guardar()});
 
                 $("#formulario").show();
 
@@ -87,8 +87,6 @@
             }
 
             $("#listado").hide();
-
-
             if (row) {
                 Mi.AJAX.request({
                     data: {
@@ -128,7 +126,7 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['','NombreEEEE', 'Apellido Paterno', 'Apellido Materno', 'Estado']]
+                    data: [['','Nombre', 'Apellido Paterno', 'Apellido Materno', 'Estado']]
                 },
                 body: {
                     data: r,
@@ -153,7 +151,7 @@
                             $(this).parent().parent().children('li').addClass("disabled");
                             $(this).parent().removeClass("disabled");
                             editar();
-                        }, img: ""
+                        }, img: "glyphicon-file"
                     },
                     {
                         label: "Editar Registro",
@@ -169,7 +167,7 @@
                             $(this).parent().removeClass("disabled");
                             editar(row);
                         },
-                        img: "glyphicon-home"
+                        img: "glyphicon-edit"
                     },
                     {
                         label: "Borrar Registro",
@@ -185,7 +183,7 @@
                                     function () {
                                         var ids = [];
                                         $("#registros").find('input:checked').each(function () {
-                                            ids.push($(this).data('row').idusuario);
+                                            ids.push($(this).first().parent().parent().data('row').idusuario);
                                         });
                                         Mi.AJAX.request({
                                             data: {
@@ -202,7 +200,7 @@
                                     }
                           );
 
-                        }, img: ""
+                        }, img: "glyphicon glyphicon-trash"
                     }
                 ], "USUARIOS");
                 $("#bbuscar").click(function () {

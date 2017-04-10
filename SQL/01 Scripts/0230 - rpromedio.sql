@@ -23,9 +23,14 @@ GO
 ALTER TABLE rpromedio ADD CONSTRAINT FK_rpromedios_elementos FOREIGN KEY(idelemento) REFERENCES elementos(idelemento)
 GO
 
-ALTER TABLE registros ADD CONSTRAINT FK_rpromedio_usuarios_1 FOREIGN KEY(iduaprobo) REFERENCES usuarios(idusuario)
+ALTER TABLE rpromedio ADD CONSTRAINT FK_rpromedio_usuarios_1 FOREIGN KEY(iduaprobo) REFERENCES usuarios(idusuario)
 GO
 
-ALTER TABLE registros ADD CONSTRAINT FK_rpromedio_usuarios_2 FOREIGN KEY(iducancelo) REFERENCES usuarios(idusuario)
+ALTER TABLE rpromedio ADD CONSTRAINT FK_rpromedio_usuarios_2 FOREIGN KEY(iducancelo) REFERENCES usuarios(idusuario)
 GO
 
+CREATE INDEX FK_rpromedio_01 on rpromedio(idpmuestreo)
+CREATE INDEX FK_rpromedio_02 on rpromedio(idpmuestreo,idelemento)
+CREATE INDEX FK_rpromedio_03 on rpromedio(fecha,idpmuestreo)
+CREATE INDEX FK_rpromedio_04 on rpromedio(fecha,idpmuestreo,idelemento)
+GO

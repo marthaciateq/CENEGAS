@@ -169,7 +169,7 @@ Mi.Template.oneAutentication = function (onload) {
             },
             onerror: function (r) {
                 $("#acceso").MiWait(false);
-                Mi.dialog({ content: r, modal: true });
+                Mi.Modal.alert(r);
             }
         });
     });

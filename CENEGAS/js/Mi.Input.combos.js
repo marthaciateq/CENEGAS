@@ -57,6 +57,12 @@ Mi.Input.comboDeleted = function (params) {
 	e.MiFill([['N', 'Activo'], ['S', 'Borrado']]);
 	return e;
 }
+Mi.Input.comboZonas = function (params) {
+    var e = $('<select/>');
+    e.MiInputCombo(params);
+    e.MiFill([['S', 'Sur'], ['R', 'Resto del País']]);
+    return e;
+}
 Mi.Input.comboReportes = function (params) {
     var e = $('<select/>');
     e.MiInputCombo(params);

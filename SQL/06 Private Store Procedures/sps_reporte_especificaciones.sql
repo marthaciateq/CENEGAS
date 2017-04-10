@@ -1,4 +1,4 @@
-ALTER PROCEDURE sps_reporte_especificaciones
+CREATE PROCEDURE sps_reporte_especificaciones
 	@idsesion varchar(max),
 	@idbdatos varchar(max),
 	@pmuestreo varchar(max),
@@ -31,27 +31,11 @@ BEGIN
 			fecha datetime
 		)
 		
-		select *
-		into #base_registros
-		from registros
-		where 
-			(
-			  (@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal)) 
-			   or idbdatos=@idbdatos
-			)
-			and estado=1
-			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
-			and (@elementos is null or idelemento in ( select col1 from dbo.fn_table(1,@elementos)))
-
-		select *
+		select idpmuestreo,punto,nalterno,idelemento,fecha,zona,valor
 		into #base_rpromedio
-		from rpromedio
+		from v_promedios
 		where 
-			(
-			  (@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
-			   or idbdatos=@idbdatos
-			)
-			and estado=1
+			(@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
 			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
 			and (@elementos is null or idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
 
@@ -60,32 +44,33 @@ BEGIN
 		
 		--PROMEDIOS FUERA DE ESPECIFICACION
 
-		select a.*,
-			b.punto,
-			b.nalterno,
-			b.zona
-			--b.minimo,
-			--b.maximo,
+		select a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.fecha,a.valor
 			into #fespecificacion
 		from
 			#base_rpromedio a 
-			inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
-			inner join especificaciones c on a.idelemento=c.idelemento and b.zona=c.zona
+			inner join especificaciones c on a.idelemento=c.idelemento and a.zona=c.zona 
+				and c.fecha=(select max(z.fecha) from especificaciones z where z.idelemento=a.idelemento and z.zona=a.zona and convert(date,a.fecha)>=z.fecha)
 		where 
-			(a.promedio<c.minimo or a.promedio>c.maximo)
+			(a.valor<c.minimo or a.valor>c.maximo)
 			
-		select * from #fespecificacion
-		
 		if @resultado=1
 		begin
 			select 
-				distinct idpmuestreo idpmuestreo,
+				distinct idpmuestreo,
 				punto+'_'+replace(replace(replace(replace(replace(nalterno,' ',''),'"',''),'(',''),')',''),'Ú','U') pmuestreo
 			from 
 				#fespecificacion
 		end	
 		else
 		begin
+			select *
+			into #base_registros
+			from v_horarios
+			where 
+				(@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal)) 
+				and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
+				and (@elementos is null or idelemento in ( select col1 from dbo.fn_table(1,@elementos)))	
+					
 			select 
 				a.idpmuestreo,
 				a.idelemento,	
@@ -94,14 +79,14 @@ BEGIN
 				a.valor,
 				convert(date,a.fecha) fpromedio,	
 				dbo.fn_dateToString(convert(date,a.fecha)) fpromedioS,						
-				b.punto,
-				b.nalterno,
-				c.descripcion,
-				b.promedio,
-				b.zona,
+				a.punto,
+				a.nalterno,
+				a.elemento descripcion,
+				b.valor promedio,
+				a.zona,
 				case 
-					when b.zona='S' then 'SUR' 
-					when b.zona='R' then 'RESTO DEL PAIS'
+					when a.zona='S' then 'SUR' 
+					when a.zona='R' then 'RESTO DEL PAIS'
 				end zonaS,
 				@formato formato,
 				@finicial finicial,
@@ -109,8 +94,7 @@ BEGIN
 				@reporte reporte
 			from #base_registros a
 				inner join #fespecificacion b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and convert(date,a.fecha)=convert(date,b.fecha)
-				inner join elementos c on a.idelemento=c.idelemento
-			order by b.nalterno,c.descripcion,a.fecha
+			order by b.nalterno,a.fecha
 		end
 	end try
 	begin catch

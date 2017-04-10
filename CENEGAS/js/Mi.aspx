@@ -26,7 +26,8 @@
 		"Mi.Text.js",
 		"Mi.Util.js",
 		"Mi.Val.js",
-		"Mi.windows.js"
+		"Mi.windows.js",
+		"Mi.Cenegas.js"        
 	};
 	foreach (String libreria in librerias)
 	{

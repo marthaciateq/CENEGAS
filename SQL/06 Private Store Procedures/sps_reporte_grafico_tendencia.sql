@@ -1,4 +1,4 @@
-CREATE PROCEDURE sps_reporte_grafico_tendencia
+ALTER PROCEDURE sps_reporte_grafico_tendencia
 	@idsesion varchar(max),
 	@idbdatos varchar(max),
 	@pmuestreo varchar(max),
@@ -34,13 +34,9 @@ BEGIN
 		
 		select *
 		into #base_rpromedio
-		from rpromedio
+		from v_promedios
 		where 
-			(
-			  (@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
-			   or idbdatos=@idbdatos
-			)
-			and estado=1
+	        (@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
 			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
 			and (@elementos is null or idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
 		
@@ -51,11 +47,9 @@ BEGIN
 				punto+'_'+replace(replace(replace(replace(replace(nalterno,' ',''),'"',''),'(',''),')',''),'Ú','U') pmuestreo
 			from 
 				#base_rpromedio a
-					inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo  and b.deleted='N'
 		end
 		else
 		begin
-		
 			declare @fechaCero date
 			set @fechaCero=@d_finicial
 			while @fechaCero<=@d_ffinal
@@ -76,58 +70,58 @@ BEGIN
 				idelemento,
 				descripcion,
 				fecha,
-				concepto,
-				valor
+				concept,
+				value
 			into #unpivot
 			from(
 				select
 					a.idpmuestreo,
-					b.punto,
-					b.nalterno,
+					a.punto,
+					a.nalterno,
 					a.idelemento,
-					c.descripcion,
+					a.elemento descripcion,
 					replace(convert(varchar(max),a.fecha,103),'/','-') fecha,
-					a.promedio,
+					convert(float,a.valor) promedio,
 					convert(float,d.minimo) minimo,
 					convert(float,d.maximo) maximo,
 					(
-						select avg(promedio) 
-						from rpromedio z 
+						select convert(float,avg(valor))
+						from v_promedios z 
 						where  
 							a.idpmuestreo=z.idpmuestreo
 							and a.idelemento=z.idelemento
-							and dateadd(dd,-4,a.fecha)<=z.fecha and z.fecha<=a.fecha
+							and dateadd(dd,-4,a.fecha)<=z.fecha 
+							and z.fecha<=a.fecha
 					) tendencia
 					
 				from #base_rpromedio a
-					inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
-					inner join elementos c on a.idelemento=c.idelemento
-					inner join especificaciones d on a.idelemento=d.idelemento and b.zona=d.zona
+					inner join especificaciones d on a.idelemento=d.idelemento and a.zona=d.zona
 			) SOURCE
-			unpivot (valor FOR concepto IN ( tendencia,promedio,minimo,maximo )) as pivottable
+			unpivot (value FOR concept IN ( tendencia,promedio,minimo,maximo )) as pivottable
 			
-			select idpmuestreo,idelemento,descripcion,min(valor) min_valorY,max(valor) max_valorY
+			select idpmuestreo,idelemento,descripcion,min(value) min_valorY,max(value) max_valorY
 			into #valoresY
 			from #unpivot
-			where valor is not null 
+			where value is not null 
 			group by idpmuestreo,punto,nalterno,idelemento,descripcion
 			order by punto,nalterno,idelemento,descripcion
 
 			select
-				b.punto,
-				b.nalterno,
-				c.descripcion,
+				a.punto,
+				a.nalterno,
+				a.elemento descripcion,
 				convert(date,a.fecha) fecha,
 				dbo.fn_dateToString(convert(date,a.fecha)) fechaS,
-				a.promedio,
+				a.valor promedio,
 				convert(float,d.minimo) minimo,
 				convert(float,d.maximo) maximo,
 				(
-					select avg(promedio) 
-					from rpromedio z 
+					select avg(z.valor) 
+					from v_promedios z 
 					where  
 						a.idpmuestreo=z.idpmuestreo
-						and dateadd(dd,-4,a.fecha)<=z.fecha and z.fecha<=a.fecha
+						and dateadd(dd,-4,a.fecha)<=z.fecha 
+						and z.fecha<=a.fecha
 						and z.idelemento=a.idelemento
 				) tendencia,
 				e.min_valorY - (e.min_valorY*0.1) as min_valorY,
@@ -136,11 +130,10 @@ BEGIN
 				@ffinal ffinal,
 				@formato formato
 			from #base_rpromedio a
-				inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo
-				inner join elementos c on a.idelemento=c.idelemento
-				inner join especificaciones d on a.idelemento=d.idelemento and b.zona=d.zona
+				inner join especificaciones d on a.idelemento=d.idelemento and a.zona=d.zona 
+					and d.fecha=(select max(z.fecha) from especificaciones z where z.idelemento=a.idelemento and z.zona=a.zona and convert(date,a.fecha)>=z.fecha)
 				inner join #valoresY e on a.idpmuestreo=e.idpmuestreo and a.idelemento=e.idelemento
-			order by b.nalterno,c.descripcion,convert(date,a.fecha)
+			order by a.nalterno,a.elemento,convert(date,a.fecha)
 
 		end
 	end try

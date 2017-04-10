@@ -108,6 +108,7 @@
     <Content Include="imgs\cenagas-transporte.jpg" />
     <Content Include="imgs\landscape.jpg" />
     <Content Include="index.html" />
+    <Content Include="js\bootstrap-datepicker.es.min.js" />
     <Content Include="js\bootstrap-datepicker.min.js" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\chosen.jquery.min.js" />
@@ -117,6 +118,7 @@
     <Content Include="js\Mi.AJAX.js" />
     <Content Include="js\Mi.aspx" />
     <Content Include="js\Mi.calendar.js" />
+    <Content Include="js\Mi.Cenegas.js" />
     <Content Include="js\Mi.Convert.js" />
     <Content Include="js\Mi.Cookie.js" />
     <Content Include="js\Mi.css.js" />
@@ -134,8 +136,8 @@
     <Content Include="js\Mi.Val.js" />
     <Content Include="js\Mi.windows.js" />
     <Content Include="pages\bdatos.html" />
+    <Content Include="pages\elementos.html" />
     <Content Include="pages\reportes.html" />
-    <Content Include="pages\usuarios.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

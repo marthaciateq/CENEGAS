@@ -2,6 +2,9 @@
 Mi.Menu.menu = { 'caption': '', 'url': null, 'servicios': [] }
 Mi.Menu.menu.administracion = { 'caption': 'Análisis de Calidad del Gas', 'url': null, 'servicios': [] }
 Mi.Menu.menu.administracion.usuarios = { 'caption': 'Usuarios', 'url': 'pages/usuarios.html', 'servicios': [] }
+Mi.Menu.menu.administracion.pmuestreo = { 'caption': 'Puntos de Muestreo', 'url': 'pages/pmuestreo.html', 'servicios': [] }
+Mi.Menu.menu.administracion.elementos = { 'caption': 'Elementos', 'url': 'pages/elementos.html', 'servicios': [] }
+Mi.Menu.menu.administracion.especificaciones = { 'caption': 'Especificaciones', 'url': 'pages/especificaciones.html', 'servicios': [] }
 Mi.Menu.menu.administracion.bdatos = { 'caption': 'Carga de Bases de Datos', 'url': 'pages/bdatos.html', 'servicios': [] }
 Mi.Menu.menu.administracion.reportes = { 'caption': 'Reportes', 'url': 'pages/reportes.html', 'servicios': [] }
 Mi.Menu.menu.administracion.salir = {
@@ -108,5 +111,6 @@ Mi.Menu.load = function () {
             recorreMenu(Mi.Menu.menu, ul);
             ul.appendTo($('#side-menu'));
         }
+
 
 

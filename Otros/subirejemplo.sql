@@ -1,2 +1,0 @@
-select * from valores4
-
