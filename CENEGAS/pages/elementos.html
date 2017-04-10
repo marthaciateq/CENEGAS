@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Puntos de Muestreo</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/cenegas.css">
+    <link rel="stylesheet" href="../css/chosen.css">
+    <script language="javascript">
+        function guardar() {
+            row = $("#registros").find('input:checked').first().parent().parent().data('row');
+            $("#formulario").hide();
+            Mi.AJAX.request({
+                data: {
+                    NAME: 'sps_elementos_guardar',
+                    idelemento: row ? row.idelemento : null,
+                    descripcion: Mi.MiTextVal($("#descripcion")),
+                    simbolo: Mi.MiTextVal($("#simbolo")),
+                    unidad: Mi.MiTextVal($("#unidad")),
+                    deleted: $("#deleted").val()
+                },
+                onsuccess: function (r) {
+                    buscar();
+                    $("#formulario").hide();
+                    $("#listado").show();
+                },
+                onerror: function (r) {
+                    $("#formulario").show();
+                    Mi.Modal.error(r);
+                }
+            });
+        }
+        function editar(row) {
+            function f1() {
+                $("#divEstados").empty();
+                $("#descripcion").val("");
+                $("#simbolo").val("");
+                $("#unidad").val("");
+
+                $("#guardar").click(function () { guardar()});
+
+                $("#formulario").show();
+
+                deleted = Mi.Input.comboDeleted().appendTo("#divEstados");
+                deleted.prop("id", "deleted");
+
+                if (row) {
+                    $("#descripcion").val(row.descripcion);
+                    $("#simbolo").val(row.simbolo);
+                    $("#unidad").val(row.unidad);
+                    $("#deleted").val(row.deleted);
+                }
+            }
+
+            $("#listado").hide();
+            f1();
+        }
+        function buscar(elementos) {
+            Mi.AJAX.request({
+                data: {
+                    NAME: 'sps_elementos_buscar',
+                    buscar: elementos
+                },
+                onsuccess: function (r) {
+                    listado(r);
+                }
+            });
+        }
+        function listado(r) {
+            $("#listado").empty();
+            $("#formulario").hide();
+            $("#listado").show();
+            $("#top-menu").find('li').removeClass('disabled');
+
+            var table = Mi.table({
+                head: {
+                    data: [['','Descripción','Simbolo','Unidad','Estado']]
+                },
+                body: {
+                    data: r,
+                    cols: ['descripcion','simbolo','unidad','deletedS']
+                },
+                addCheckbox: true
+            });
+
+            table.children('thead').children('tr').addClass('table-header');
+            table.appendTo($("#listado"))
+            table.prop("id", "registros")
+
+        }
+
+        function _onload() {
+            Mi.Template.load(function () {
+                Mi.Template.menuTop([
+                    {
+                        label: "Nuevo Registro",
+                        onclick: function () {
+                            if ($(this).parent().hasClass('disabled')) return;
+                            $(this).parent().parent().children('li').addClass("disabled");
+                            $(this).parent().removeClass("disabled");
+                            editar();
+                        }, img: "glyphicon-file"
+                    },
+                    {
+                        label: "Editar Registro",
+                        onclick: function () {
+                            var row;
+                            row = $("#registros").find('input:checked').first().parent().parent().data('row');
+                            if ($(this).parent().hasClass('disabled')) return;
+                            if (!row) {
+                                Mi.Modal.alert("Por favor seleccione un registro");
+                                return;
+                            }
+                            $(this).parent().parent().children('li').addClass("disabled");
+                            $(this).parent().removeClass("disabled");
+                            editar(row);
+                        },
+                        img: "glyphicon-edit"
+                    },
+                    {
+                        label: "Borrar Registro",
+                        onclick: function () {
+                            if ($(this).parent().hasClass('disabled')) return;
+                            if (!$("#registros").find('input:checked').first().parent().parent().data('row')) {
+                                Mi.Modal.alert("Por favor seleccione un registro");
+                                return;
+                            }
+                            $(this).parent().parent().children('li').addClass("disabled");
+                            $(this).parent().removeClass("disabled");
+                            Mi.Modal.confirm('¿Está usted seguro que desea borrar los registros seleccionados?',
+                                    function () {
+                                        var ids = [];
+                                        $("#registros").find('input:checked').each(function () {
+                                            ids.push($(this).first().parent().parent().data('row').idelemento);
+                                        });
+                                        Mi.AJAX.request({
+                                            data: {
+                                                NAME: 'sps_elementos_borrar',
+                                                elemento: ids
+                                            },
+                                            onsuccess: function (r) {
+                                                buscar();
+                                            },
+                                            onerror: function (r) {
+                                                Mi.Modal.error(r);
+                                            }
+                                        });
+                                    }
+                          );
+
+                        }, img: "glyphicon glyphicon-trash"
+                    }
+                ], "ELEMENTOS");
+                $("#bbuscar").click(function () {
+                    buscar($("#txtbuscar").val());
+                });
+                $("#bcancelar").click(function () {
+                    buscar();
+                });
+                $("#formulario").hide();
+                Mi.AJAX.request({
+                    data: [
+                        {
+                            NAME: 'sps_elementos_buscar'
+                        }
+                    ],
+                    onsuccess: function (r) {
+                        listado(r);
+                    }
+                });
+
+            });
+
+        }
+
+    </script>
+</head>
+<body onload="Mi.onload();">
+    <div id="div_principal" class="container-fluid">
+        <div id="row_principal" class="row">
+            <div id="side-menu" class="col-sm-2 hidden-xs" data-spy="affix" data-offset-top="0"></div>
+            <div id="opciones" class="col-sm-offset-2 col-sm-10"></div>
+            <div id="main" class="col-sm-offset-2 col-sm-10">
+                <div id="listado" class="col-sm-offset-1 col-sm-8"></div>
+                <form id="formulario" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Punto:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="punto" placeholder="Nombre">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Nombre Alterno:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="nalterno" placeholder="Nombre alterno">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Descripción:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="descripcion" placeholder="Descripción">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Zona</label>
+                        <div id="divZonas" class="col-sm-4">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Estado:</label>
+                        <div id="divEstados" class="col-sm-4">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <button id="guardar" class="btn btn-success">Guardar</button>
+                            <button id="bcancelar" class="btn btn-danger">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="../js/Mi.aspx"></script>
+
+
