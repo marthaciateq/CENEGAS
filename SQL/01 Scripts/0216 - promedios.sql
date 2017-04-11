@@ -1,20 +1,20 @@
-CREATE TABLE PROMEDIOS(
-	punto nvarchar(50) NOT NULL,
-	nalterno nvarchar(100) NOT NULL,
-	fecha nvarchar(100) NOT NULL,	
-	metano decimal(10,4),
-	bcarbono decimal(10,4),
-	nitrogeno decimal(10,4),
-	totalinertes decimal(10,4),
-	etano decimal(10,4),
-	temprocio decimal(10,4),
-	humedad decimal(10,4),
-	podercalorifico decimal(10,4),
-	indicewoobe decimal(10,4),
-	acidosulfidrico decimal(10,4),
-	oxigeno decimal(10,4),
-	azufretotal decimal(10,4)
-)
-GO
-CREATE CLUSTERED INDEX IX_PROMEDIOS
-    ON PROMEDIOS (punto,nalterno,fecha);   
+CREATE TABLE [dbo].[PROMEDIOS](
+	[idbdatos] [char](32) NOT NULL,
+	[idpmuestreo] [char](32) NOT NULL,
+	[fecha] [datetime] NOT NULL,
+	[metano] [decimal](18, 10) NULL,
+	[bioxidoCarbono] [decimal](18, 10) NULL,
+	[nitrogeno] [decimal](18, 10) NULL,
+	[totalInertes] [decimal](18, 10) NULL,
+	[etano] [decimal](18, 10) NULL,
+	[tempRocio] [decimal](18, 10) NULL,
+	[humedad] [decimal](18, 10) NULL,
+	[poderCalorifico] [decimal](18, 10) NULL,
+	[indiceWoobe] [decimal](18, 10) NULL,
+	[acidoSulfhidrico] [decimal](18, 10) NULL,
+	[azufreTotal] [decimal](18, 10) NULL,
+	[oxigeno] [decimal](18, 10) NULL
+) ON [PRIMARY]
+
+
+

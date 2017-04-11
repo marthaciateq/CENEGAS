@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[HORARIOS](
+CREATE TABLE [dbo].[BPROMEDIOS](
 	[idbdatos] [char](32) NOT NULL,
 	[idpmuestreo] [char](32) NOT NULL,
 	[fecha] [datetime] NOT NULL,
@@ -13,5 +13,7 @@ CREATE TABLE [dbo].[HORARIOS](
 	[indiceWoobe] [decimal](18, 10) NULL,
 	[acidoSulfhidrico] [decimal](18, 10) NULL,
 	[azufreTotal] [decimal](18, 10) NULL,
-	[oxigeno] [decimal](18, 10) NULL
+	[oxigeno] [decimal](18, 10) NULL,
+	[estatus] [char](1) NULL
 ) ON [PRIMARY]
+
