@@ -92,10 +92,16 @@ Mi.Template.value = function (key) {
 }
 Mi.Template.load = function (onload, id, noAutenticacion) {
 	if ($.type(onload) != 'function') onload = function () { };
-	if (noAutenticacion) Mi.Template.principal(onload);
+	if (noAutenticacion) {
+	    Mi.Template.principal(onload);
+	}
 	else {
-	    if (Mi.Cookie.exist('SESIONCENEGAS')) Mi.Template.principal(onload);
-		else Mi.Template.oneAutentication(onload);
+	    if (Mi.Cookie.exist('SESIONCENEGAS')) {
+	        Mi.Template.principal(onload);
+	    }
+	    else {
+	        Mi.Template.oneAutentication(onload)
+	    };
 	}
 }
 Mi.Template.principal = function (onload) {

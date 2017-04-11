@@ -9,15 +9,19 @@
     <script type="text/javascript">
         var files = [];
         var apmuestreo = new Array();
-        function getPuntosMuestreoConInformacion(pmuestreo, formato) {
+        function getPuntosMuestreoConInformacion(pmuestreo, reporte,formato) {
             var nombre = 'especificaciones';
             var procedimiento = 'sps_reporte_especificaciones';
             var dfd = $.Deferred();
-            if ($("#reporte").MiVal() == 'F') {
+
+            if ($("#finicial").val() == "") { Mi.Modal.alert("Favor de capturar fecha inicial"); return }
+            if ($("#ffinal").val() == "") { Mi.Modal.alert("Favor de capturar fecha final"); return }
+
+            if (reporte == 'F') {
                 nombre = 'falta_informacion';
                 procedimiento = 'sps_reporte_falta_informacion'
             }
-            else if($("#reporte").MiVal() == 'T') {
+            else if (reporte == 'T') {
                 nombre = 'tendencia';
                 procedimiento = 'sps_reporte_grafico_tendencia'
             }
@@ -41,16 +45,20 @@
             });
             return dfd.promise();
         }
-        function generarReporte(pmuestreo,punto,formato, ptoFile) {
+        function generarReporte(pmuestreo,punto,reporte,formato, ptoFile) {
            
             var nombre = 'especificaciones';
             var procedimiento = 'sps_reporte_especificaciones';
             var dfd = $.Deferred();
-            if ($("#reporte").MiVal() == 'F') {
+
+            if ($("#finicial").val() == "") { Mi.Modal.alert("Favor de capturar fecha inicial"); return }
+            if ($("#ffinal").val() == "") { Mi.Modal.alert("Favor de capturar fecha final"); return }
+
+            if (reporte == 'F') {
                 nombre = 'falta_informacion';
                 procedimiento = 'sps_reporte_falta_informacion'
             }
-            else if ($("#reporte").MiVal() == 'T') {
+            else if (reporte == 'T') {
                 nombre = 'tendencia';
                 procedimiento = 'sps_reporte_grafico_tendencia'
             }
@@ -64,7 +72,7 @@
                         ffinal: $("#ffinal").val() == "" ? null : $("#ffinal").val(),
                         formato: formato,
                         resultado: 2,
-                        reporte: $('#reporte').val() == "" ? 'D': $("#reporte").val()
+                        reporte: reporte == "" ? 'D' : reporte
                     },
                     nombre: nombre,
                     format: formato,
@@ -97,14 +105,6 @@
                 elementos.appendTo("#divElementos");
                 elementos.prop("id", "idelemento");
 
-                reportes = Mi.Input.comboReportes();
-                reportes.appendTo("#divReportes");
-                reportes.prop("id", "reporte");
-
-                formatos= Mi.Input.comboFormatos();
-                formatos.appendTo("#divFormatos");
-                formatos.prop("id", "formato");
-
                 var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
                 var options = {
                     format: 'dd/mm/yyyy',
@@ -117,29 +117,30 @@
                 $("#ffinal").datepicker(options);
 
                 $("#bgenerar").click(function () {
-                    files = [];
-                    apmuestreo = new Array();
-
                      function everythingDone() {
                         console.log('processed all items');
                         console.log(files.length);
-                    }
-                     var formato = $("#formato").MiVal() == null ? 'EXCEL' : $("#formato").MiVal()
+                     }
+                     files = [];
+                     apmuestreo = new Array();
 
-                     if (formato == 'PDF' && ($("#reporte").MiVal() == 'G' || $("#reporte").MiVal() == 'D' || $("#reporte").MiVal() == 'T')) {
+                     var formato = $("#formato:checked").val();
+                     var reporte = $("#reporte:checked").val();
+
+                     if (formato == 'PDF' && (reporte == 'G' || reporte == 'D' || reporte == 'T')) {
 
                         var processItemsDeferred = [];
                         $('#bgenerar').attr('disabled', true);
 
                         var error = false;
 
-                        $.when(getPuntosMuestreoConInformacion($("#idpmuestreo").val(), formato)).then(function (data) {
+                        $.when(getPuntosMuestreoConInformacion($("#idpmuestreo").val(),reporte,formato)).then(function (data) {
 
                             if (data.length != 0) {
 
                                 Mi.Modal.showPleaseWait();
                                 $.each(data, function (index, value) {
-                                    processItemsDeferred.push(generarReporte(value.idpmuestreo, value.pmuestreo, formato, 'S'));
+                                    processItemsDeferred.push(generarReporte(value.idpmuestreo, value.pmuestreo, reporte, formato, 'S'));
                                 });
 
                                 $.when.apply($, processItemsDeferred).then(function () {
@@ -182,7 +183,7 @@
                         });
                     } 
                     else {
-                        generarReporte($("#idpmuestreo").val(), null, formato);
+                        generarReporte($("#idpmuestreo").val(), null, reporte, formato);
                    }
                 });
 
@@ -209,7 +210,20 @@
                     </div>
                     <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Reporte:</label>
+
                         <div id="divReportes" class="col-sm-4">
+                            <div class="radio">
+                                <label><input type="radio" id="reporte" name="optradio" value="D" checked="checked" />NOM-001-SECRE-2010</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" id="reporte"  name="optradio" value="G" />NOM-001-SECRE-2010 (Solo punto A y B)</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" id="reporte"  name="optradio" value="F" />Información Faltante</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" id="reporte"  name="optradio" value="T" />Gráfico de Tendencia</label>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group clearfix">
@@ -227,6 +241,8 @@
                     <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Formato del Reporte:</label>
                         <div id="divFormatos" class="col-sm-4">
+                            <label class="radio-inline"><input type="radio" id="formato" name="optradio2" value="EXCEL" checked="checked" />EXCEL</label>
+                            <label class="radio-inline"><input type="radio" id="formato" name="optradio2" value="PDF" />PDF</label>
                         </div>
                     </div>
                     <div class="form-group clearfix">
