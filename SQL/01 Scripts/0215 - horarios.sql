@@ -15,3 +15,8 @@ CREATE TABLE [dbo].[HORARIOS](
 	[azufreTotal] [decimal](18, 10) NULL,
 	[oxigeno] [decimal](18, 10) NULL
 ) ON [PRIMARY]
+GO
+
+CREATE CLUSTERED INDEX Horarios_01
+    ON Horarios (idpmuestreo,fecha);   
+GO 

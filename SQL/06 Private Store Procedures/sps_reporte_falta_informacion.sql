@@ -1,4 +1,4 @@
-ALTER PROCEDURE sps_reporte_falta_informacion
+CREATE PROCEDURE sps_reporte_falta_informacion
 	@idsesion varchar(max),
 	@idbdatos varchar(max),
 	@pmuestreo varchar(max),
@@ -20,11 +20,13 @@ BEGIN
 		if @finicial is null execute sp_error 'U','Favor de seleccionar fecha inicial'
 		if @ffinal is null execute sp_error 'U','Favor de seleccionar fecha final'
 		
-		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
-		if DATEDIFF(day,@d_finicial,@d_ffinal)>15 execute sp_error 'U','El máximo rango de consulta son 15 días'		
-		
 		set @d_finicial=convert(date,@finicial,103)
 		set @d_ffinal=convert(date,@ffinal,103)	
+		
+		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
+		if ( (@pmuestreo is null and DATEDIFF(day,@d_finicial,@d_ffinal)>15) or (@pmuestreo is not null and DATEDIFF(day,@d_finicial,@d_ffinal)>90) )
+			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo son 15 dias y con puntos de muestreo 3 meses'
+		
 		
 		declare @t_pmuestreo table(
 			idpmuestreo char(32),

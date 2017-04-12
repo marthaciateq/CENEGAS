@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -225,7 +225,7 @@
                         }, img: ""
                     },
                     {
-                        label: "Eliminar Base de Datos",
+                        label: "Reestablecer ultima actualización",
                         onclick: function () {
                             var row;
                             row = $("#registros").find('input:checked').first().parent().parent().data('row');
@@ -240,23 +240,6 @@
                         },
                         img: ""
                     }
-,
-                    {
-                        label: "Ver informacion faltante ",
-                        onclick: function () {
-                            var row;
-                            row = $("#registros").find('input:checked').first().parent().parent().data('row');
-                            if ($(this).parent().hasClass('disabled')) return;
-                            if (!row) {
-                                Mi.Modal.alert("Por favor seleccione un registro");
-                                return;
-                            }
-                            //$(this).parent().parent().children('li').addClass("disabled");
-                            $(this).parent().removeClass("disabled");
-                        },
-                        img: ""
-                    }
-
                 ], "CARGA DE BASES DE DATOS");
 
 

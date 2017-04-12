@@ -24,14 +24,15 @@ BEGIN
 		set @d_ffinal=convert(date,@ffinal,103)		
 		
 		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
-		if DATEDIFF(day,@d_finicial,@d_ffinal)>15 execute sp_error 'U','El máximo rango de consulta son 15 días'
+		if ( (@pmuestreo is null and DATEDIFF(day,@d_finicial,@d_ffinal)>15) or (@pmuestreo is not null and DATEDIFF(day,@d_finicial,@d_ffinal)>90) )
+			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo son 15 dias y con puntos de muestreo 3 meses'
 	
 		declare @fcero datetime
 		declare @fechas table(
 			fecha datetime
 		)
 		
-		select idpmuestreo,punto,nalterno,idelemento,fecha,zona,valor
+		select idpmuestreo,punto,nalterno,idelemento,fecha,zona,promedio
 		into #base_rpromedio
 		from v_promedios
 		where 
@@ -44,14 +45,14 @@ BEGIN
 		
 		--PROMEDIOS FUERA DE ESPECIFICACION
 
-		select a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.fecha,a.valor
+		select a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.fecha,a.promedio
 			into #fespecificacion
 		from
 			#base_rpromedio a 
 			inner join especificaciones c on a.idelemento=c.idelemento and a.zona=c.zona 
 				and c.fecha=(select max(z.fecha) from especificaciones z where z.idelemento=a.idelemento and z.zona=a.zona and convert(date,a.fecha)>=z.fecha)
 		where 
-			(a.valor<c.minimo or a.valor>c.maximo)
+			(a.promedio<c.minimo or a.promedio>c.maximo)
 			
 		if @resultado=1
 		begin
@@ -82,7 +83,7 @@ BEGIN
 				a.punto,
 				a.nalterno,
 				a.elemento descripcion,
-				b.valor promedio,
+				b.promedio,
 				a.zona,
 				case 
 					when a.zona='S' then 'SUR' 

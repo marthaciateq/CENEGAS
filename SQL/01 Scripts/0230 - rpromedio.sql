@@ -31,6 +31,5 @@ GO
 
 CREATE INDEX FK_rpromedio_01 on rpromedio(idpmuestreo)
 CREATE INDEX FK_rpromedio_02 on rpromedio(idpmuestreo,idelemento)
-CREATE INDEX FK_rpromedio_03 on rpromedio(fecha,idpmuestreo)
-CREATE INDEX FK_rpromedio_04 on rpromedio(fecha,idpmuestreo,idelemento)
+CREATE INDEX FK_rpromedio_03 on rpromedio(idpmuestreo,idelemento,fecha)
 GO

@@ -1,4 +1,4 @@
-ALTER PROCEDURE sps_reporte_grafico_tendencia
+CREATE PROCEDURE sps_reporte_grafico_tendencia
 	@idsesion varchar(max),
 	@idbdatos varchar(max),
 	@pmuestreo varchar(max),
@@ -24,7 +24,8 @@ BEGIN
 		set @d_ffinal=convert(date,@ffinal,103)		
 		
 		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
-		if DATEDIFF(day,@d_finicial,@d_ffinal)>30 execute sp_error 'U','El máximo rango de consulta son 30 días'
+		if ( (@pmuestreo is null and DATEDIFF(day,@d_finicial,@d_ffinal)>10) or (@pmuestreo is not null and DATEDIFF(day,@d_finicial,@d_ffinal)>90) )
+			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo son 10 dias y con puntos de muestreo 3 meses'
 			
 		declare @query varchar(max)
 		declare @cols varchar(max)
@@ -81,11 +82,11 @@ BEGIN
 					a.idelemento,
 					a.elemento descripcion,
 					replace(convert(varchar(max),a.fecha,103),'/','-') fecha,
-					convert(float,a.valor) promedio,
+					convert(float,a.promedio) promedio,
 					convert(float,d.minimo) minimo,
 					convert(float,d.maximo) maximo,
 					(
-						select convert(float,avg(valor))
+						select convert(float,avg(promedio))
 						from v_promedios z 
 						where  
 							a.idpmuestreo=z.idpmuestreo
@@ -112,11 +113,11 @@ BEGIN
 				a.elemento descripcion,
 				convert(date,a.fecha) fecha,
 				dbo.fn_dateToString(convert(date,a.fecha)) fechaS,
-				a.valor promedio,
+				a.promedio,
 				convert(float,d.minimo) minimo,
 				convert(float,d.maximo) maximo,
 				(
-					select avg(z.valor) 
+					select avg(z.promedio) 
 					from v_promedios z 
 					where  
 						a.idpmuestreo=z.idpmuestreo

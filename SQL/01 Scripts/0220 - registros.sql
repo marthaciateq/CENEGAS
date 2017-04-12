@@ -31,6 +31,6 @@ GO
 
 CREATE INDEX FK_registros_01 on registros(idpmuestreo)
 CREATE INDEX FK_registros_02 on registros(idpmuestreo,idelemento)
-CREATE INDEX FK_registros_03 on registros(fecha,idpmuestreo)
-CREATE INDEX FK_registros_04 on registros(fecha,idpmuestreo,idelemento)
-GO
+CREATE INDEX FK_registros_03 on registros(idpmuestreo,idelemento,fecha)
+GO 
+

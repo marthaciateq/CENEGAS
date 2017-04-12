@@ -94,10 +94,7 @@
                     data: r,
                     cols: ['elemento', 'zonaS', 'maximo','minimo','max_diaria','deletedS']
                 },
-                addCheckbox: true,
-                format: function (element, type, section, row, col, value) {
-                    if (type == 'TD' && section == 'TBODY' && (col == 2)) element.css('text-align', 'right');
-                }
+                addCheckbox: true
             });
 
             table.children('thead').children('tr').addClass('table-header');
