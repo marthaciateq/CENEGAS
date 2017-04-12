@@ -194,14 +194,20 @@
         function cargar() {
             $("#formulario").show()
             $("#listado").hide()
+            //$("#registros").hide()
         }
         function eliminar() {
         }
-        function buscar(usuario) {
+        function buscar(fechaInicial, fechaFinal) {
+
+            fechaInicial || (fechaInicial = null);
+            fechaFinal || (fechaFinal =  null);
+
             Mi.AJAX.request({
                 data: {
-                    NAME: 'sps_bdatos_buscar',
-                    buscar: usuario
+                    NAME: 'sps_bdatos_buscar'
+                    , fechaInicial: fechaInicial
+                    , fechaFinal: fechaFinal
                 },
                 onsuccess: function (r) {
                     listado(r);
@@ -212,7 +218,7 @@
             });
         }
         function listado(r) {
-            $("#listado").empty();
+            $("#registros").empty();
             $("#formulario").hide();
             $("#listado").show();
             $("#top-menu").find('li').removeClass('disabled');
@@ -228,17 +234,17 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. ignorados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. ignorados', 'Promedios - Reg. fuera de fecha', 'Archivo Horarios', 'Archivo Promedios']]
+                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Carga', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. fuera de fecha', 'Archivo Horarios', 'Archivo Promedios']]
                 },
                 body: {
                     data: r,
-                    cols: ['fechaS', 'actualizar', 'finicial', 'ffinal', 'horariosInsertados', 'horariosActualizados', 'horariosIgnorados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosIgnorados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
+                    cols: ['fechaS', 'actualizar', 'fcarga', 'finicial', 'ffinal', 'horariosInsertados', 'horariosActualizados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
                 },
                 addCheckbox: true
             });
 
             table.children('thead').children('tr').addClass('table-header');
-            table.appendTo($("#listado"))
+            table.appendTo($("#registros"))
             table.prop("id", "registros")
 
         }
@@ -274,22 +280,6 @@
                         },
                         img: ""
                     }
-,
-                    {
-                        label: "Ver informacion faltante ",
-                        onclick: function () {
-                            var row;
-                            row = $("#registros").find('input:checked').first().parent().parent().data('row');
-                            if ($(this).parent().hasClass('disabled')) return;
-                            if (!row) {
-                                Mi.Modal.alert("Por favor seleccione un registro");
-                                return;
-                            }
-                            //$(this).parent().parent().children('li').addClass("disabled");
-                            $(this).parent().removeClass("disabled");
-                        },
-                        img: ""
-                    }
 
                 ], "CARGA DE BASES DE DATOS");
 
@@ -304,21 +294,38 @@
                 $("#finicial").datepicker(options);
                 $("#ffinal").datepicker(options);
 
+                $("#filtroFechaInicial").datepicker(options);
+                $("#filtroFechaFinal").datepicker(options);
 
-                $("#bbuscar").click(function () {
-                    buscar($("#txtbuscar").val());
-                });
-                $("#bcancelar").click(function () {
+
+                $("#bcancelar").click(function (e) {
                     buscar();
+
+                    e.preventDefault();
                 });
                 $("#guardar").click(function (e) {
                     guardar(e);
+
+                    e.preventDefault();
+
                 });
 
                 $("#verCambios").click(function (e) {
                     guardar(e, true, null);
+
+                    e.preventDefault();
                 });
                 
+
+                $("#buscar").click(function (e) {
+
+                    var filtroFechaInicial = $("#filtroFechaInicial")[0]
+                        , filtroFechaFinal = $("#filtroFechaFinal")[0];
+
+                    buscar(filtroFechaInicial.value, filtroFechaFinal.value);
+
+                    e.preventDefault();
+                });
 
                 Mi.AJAX.request({
                     data: [
@@ -329,6 +336,9 @@
                     ],
                     onsuccess: function (r) {
                         listado(r);
+                    },
+                    onerror: function (r) {
+                        debugger;
                     }
                 });
 
@@ -359,7 +369,40 @@
             <div id="main" class="col-sm-offset-2 col-sm-10">
 
 
-                <div id="listado" class="col-sm-10"></div>
+                <div id="listado" class="col-sm-10">
+
+                    
+
+                    <form >
+                        
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Fecha Inicial:</label>
+                            <div class="col-sm-2">
+                                <input class="form-control" id="filtroFechaInicial" name="filtroFechaInicial" placeholder="DD/MM/YYYY" />
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">Fecha Final:</label>
+                            <div class="col-sm-2">
+                                <input class="form-control" id="filtroFechaFinal" name="filtroFechaFinal" placeholder="DD/MM/YYYY" />
+                            </div>
+
+
+                            <div class="col-sm-1">
+                                <button id="buscar" class="btn btn-success">Buscar</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div id="registros" class="col-sm-10">
+
+
+                    </div>
+
+                   
+                </div>
 
                 <form id="formulario" class="form-horizontal">
                     <div class="form-group">
