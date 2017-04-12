@@ -11,6 +11,7 @@ BEGIN
 		execute sp_servicios_validar @idsesion, @@PROCID, @idusuarioSESION output
 		select
 			a.*,
+			dbo.fn_dateToString(a.fecha) fechaS,
 			b.descripcion elemento
 		from v_especificaciones a
 			inner join v_elementos b on a.idelemento=b.idelemento

@@ -46,7 +46,8 @@
 
                 $("#formulario").show();
 
-                var idelemento = Mi.Input.comboElementos().appendTo("#divElementos");
+                var idelemento = Mi.Input.comboElementos();
+                idelemento.appendTo("#divElementos");
                 idelemento.prop("id", "idelemento");
 
                 var zona = Mi.Input.comboZonas().appendTo("#divZonas");
@@ -55,13 +56,15 @@
                 var deleted = Mi.Input.comboDeleted().appendTo("#divEstados");
                 deleted.prop("id", "deleted");
 
+                $('#idelemento').val("20170309015951417199240994016694").trigger('chosen:updated');
+
                 if (row) {
-                    alert(row.idelemento);
-                    $("#idelemento").val(row.idelemento).trigger("chosen:updated");;
+
                     $("#zona").val(row.zona);
                     $("#minimo").val(row.minimo);
                     $("#maximo").val(row.maximo);
                     $("#max_diaria").val(row.max_diaria);
+                    $("#fecha").val(row.fechaS);
                     $("#deleted").val(row.deleted);
                 }
             }
@@ -88,18 +91,20 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['','Elemento', 'Zona', 'Máximo','Minimo','Desviación Máxima','Estatus']]
+                    data: [['','Elemento', 'Zona', 'Máximo','Minimo','Desv. máxima','Fecha','Estatus']]
                 },
                 body: {
                     data: r,
-                    cols: ['elemento', 'zonaS', 'maximo','minimo','max_diaria','deletedS']
+                    cols: ['elemento', 'zonaS', 'maximo','minimo','max_diaria','fechaS','deletedS']
                 },
                 addCheckbox: true
             });
 
             table.children('thead').children('tr').addClass('table-header');
+            table.find('tbody td:nth-child(4)').css('text-align', 'right')
+            table.find('tbody td:nth-child(5)').css('text-align', 'right')
+            table.find('tbody td:nth-child(6)').css('text-align', 'right')
             table.appendTo($("#listado"))
-            r
             table.prop("id", "registros")
 
         }
@@ -207,7 +212,7 @@
             <div id="side-menu" class="col-sm-2 hidden-xs" data-spy="affix" data-offset-top="0"></div>
             <div id="opciones" class="col-sm-offset-2 col-sm-10"></div>
             <div id="main" class="col-sm-offset-2 col-sm-10">
-                <div id="listado" class="col-sm-offset-1 col-sm-10"></div>
+                <div id="listado" class="col-sm-offset-1 col-sm-9"></div>
                 <form id="formulario" class="form-horizontal">
                     <div class="form-group">
                         <label class="control-label col-sm-2">Elemento:</label>
