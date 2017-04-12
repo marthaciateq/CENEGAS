@@ -1,4 +1,4 @@
-CREATE TABLE PROMEDIOS
+CREATE TABLE PROMEDIOS(
 	[idbdatos] [char](32) NOT NULL,
 	[idpmuestreo] [char](32) NOT NULL,
 	[fecha] [datetime] NOT NULL,
