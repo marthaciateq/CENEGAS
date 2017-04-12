@@ -8,11 +8,10 @@
     <link rel="stylesheet" href="../css/bootstrap.min.css" />
     <link rel="stylesheet" href="../css/cenegas.css" />
     <link rel="stylesheet" href="../css/chosen.css" />
-    <link rel="stylesheet" href="../css/bootstrap-datetimepicker.min.css" />
 
     <!-- Comentarios-->
     <script language="javascript">
-        function guardar(e) {
+        function guardar(e, viewHowChanges, actionForNewPoints) {
 
             $('#guardar').attr('disabled', true);
             $('#bcancelar').attr('disabled', true);
@@ -87,12 +86,13 @@
                 formData.append("useRange", useRange)
                 formData.append("updateRecords", optActualizar.checked);
                 formData.append("idsesion", Mi.Cookie.get('SESIONCENEGAS').idsesion);
-                //formData.append("actionForNewPoints", "V");
+                formData.append("viewHowChanges", (typeof(viewHowChanges) === "undefined" ? false : viewHowChanges));
+                formData.append("actionForNewPoints", (typeof(actionForNewPoints) === "undefined" ? "V" : actionForNewPoints));
 
                 formData.append("horarios", horarios);
                 formData.append("promedios", promedios);
 
-
+                var me = this;
 
                 $.ajax({
                     url: Mi.webHome + 'dispatch/import.aspx', // Url to which the request is send
@@ -107,29 +107,63 @@
                     {
                         //debugger;
                         var r = JSON.parse(data)
-                            , TAG_USER_VALIDATION = "VALIDATION_NEW_POINTS:";
+                            , TAG_NEW_POINTS = "VALIDATION_NEW_POINTS:"
+                            , TAG_HOW_CHANGE = "VALIDATION_HOW_CHANGE:";
 
                         if (typeof r.error === 'undefined') {
                             buscar();
                         }
                         else {
-                            var hasValidation = r.error.indexOf(TAG_USER_VALIDATION);
+                            var hasNewPoints = r.error.indexOf(TAG_NEW_POINTS);
+                            var hasHowChange = r.error.indexOf(TAG_HOW_CHANGE);
 
-                            if (hasValidation > 0) {
-                                hasValidation = hasValidation + TAG_USER_VALIDATION.length;
+                            if (hasNewPoints > 0) {
+                                hasNewPoints = hasNewPoints + TAG_NEW_POINTS.length;
 
-                                message = r.error.substring(hasValidation, r.error.length);
-                                response = "";
+                                message = r.error.substring(hasNewPoints, r.error.length);
 
                                 records = message.split("||");
-                              
 
-                                Mi.Modal.confirm('En el archivo CSV de origen se detectó que los siguientes puntos de muestreo no existen en el catalogo de la Base de Datos: <br>' + records.join("\r") + ' ¿Desea agregalos y realizar la importacion?',
-                                   function (a, b) {
-                                       
-                                   });
+                                
 
-                            } else 
+                                message = "<tr><th>Punto</th> <th>Nombre Alterno</th> </tr><tr><td>" + records.join("</td></tr><tr><td>") + '</td></tr>';
+
+                                message = message.split("|").join("</td><td>");
+
+
+                                message = '<table width="100%" style="border-collapse:collapse;width:100%"> <caption> Se detectó que los siguientes puntos de muestreo del archivo CSV no existen en el catálogo de la Base de Datos.</caption>' + message + '<tr><th> ¿Que acción desea realizar? </th></tr></table>';
+
+                                var params = {};
+                                
+                                params.content = $(message);
+                                params.buttons = $('<button type="button" class="btn btn-default" data-dismiss="modal">Agregarlos e importar</button><button type="button" class="btn btn-default" data-dismiss="modal">Ignorarlos e importar</button><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>');
+                                params.buttons.eq(0).click(function () {
+                                    me.guardar(e, false, 'C');  // Crear
+                                });
+
+                                params.buttons.eq(1).click(function () {
+                                    me.guardar(e, false, null); // ignorar
+                                });
+
+
+                                Mi.Modal.modal(params);
+
+                            }
+                            else if (hasHowChange > 0) {
+                                hasHowChange = hasHowChange + TAG_HOW_CHANGE.length;
+
+                                var response = $.parseJSON(r.error.substring(hasHowChange, r.error.length));
+
+                                message = '<table width="100%" style="border-collapse:collapse;border:1px solid #000;width:100%"> <caption>El proceso de importacion de estos CSV realizará las siguientes acciones:</caption><tr> <th>Archivo CSV</th> <th> Inserciones </th> <th> Actualizaciones </th></tr>';
+
+                                message += '<tr><td>' + response.CSVs.horarios + '</td> <td>' + response.horarios.inserts + ' </td> <td> ' + response.horarios.updates + '</td></tr> ';
+                                message += '<tr><td>' + response.CSVs.promedios + '</td> <td>' + response.promedios.inserts + ' </td> <td> ' + response.promedios.updates + '</td></tr> ';
+
+
+                                message += "</table>";
+
+                                Mi.Modal.alert($(message));
+                            }else
                                 Mi.Modal.error(r.error);
                         }
 
@@ -153,7 +187,7 @@
             }
 
 
-
+            e.preventDefault();
         }
 
 
@@ -225,7 +259,7 @@
                         }, img: ""
                     },
                     {
-                        label: "Reestablecer ultima actualización",
+                        label: "Eliminar Base de Datos",
                         onclick: function () {
                             var row;
                             row = $("#registros").find('input:checked').first().parent().parent().data('row');
@@ -240,6 +274,23 @@
                         },
                         img: ""
                     }
+,
+                    {
+                        label: "Ver informacion faltante ",
+                        onclick: function () {
+                            var row;
+                            row = $("#registros").find('input:checked').first().parent().parent().data('row');
+                            if ($(this).parent().hasClass('disabled')) return;
+                            if (!row) {
+                                Mi.Modal.alert("Por favor seleccione un registro");
+                                return;
+                            }
+                            //$(this).parent().parent().children('li').addClass("disabled");
+                            $(this).parent().removeClass("disabled");
+                        },
+                        img: ""
+                    }
+
                 ], "CARGA DE BASES DE DATOS");
 
 
@@ -263,6 +314,11 @@
                 $("#guardar").click(function (e) {
                     guardar(e);
                 });
+
+                $("#verCambios").click(function (e) {
+                    guardar(e, true, null);
+                });
+                
 
                 Mi.AJAX.request({
                     data: [
@@ -364,6 +420,7 @@
 
                     <div class="form-group">
                         <div class="col-sm-offset-1 col-sm-10">
+                            <button id="verCambios" class="btn btn-success">Ver cambios</button>
                             <button id="guardar" class="btn btn-success">Subir</button>
                             <button id="bcancelar" class="btn btn-danger">Cancelar</button>
                         </div>
