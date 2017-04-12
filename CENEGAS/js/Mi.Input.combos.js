@@ -63,18 +63,6 @@ Mi.Input.comboZonas = function (params) {
     e.MiFill([['S', 'Sur'], ['R', 'Resto del País']]);
     return e;
 }
-Mi.Input.comboReportes = function (params) {
-    var e = $('<select/>');
-    e.MiInputCombo(params);
-    e.MiFill([['D', 'NOM-001-SECRE-2010'], ['G', 'NOM-001-SECRE-2010 (Solo punto A y B)'], ['F', 'Información Faltante'], ['T', 'Gráfico de Tendencia']]);
-    return e;
-}
-Mi.Input.comboFormatos = function (params) {
-    var e = $('<select/>');
-    e.MiInputCombo(params);
-    e.MiFill([['EXCEL', 'EXCEL'], ['PDF', 'PDF']]);
-    return e;
-}
 Mi.Input.comboUsuarios = function (params) {
 	if (!$.isPlainObject(params)) params = {};
 	if (!$.isPlainObject(params.data)) params.data = {};

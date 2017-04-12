@@ -55,7 +55,7 @@
                 $("#password2").val("");
                 $("#roles").val("");
 
-                $("#guardar").click(function () { guardar()});
+                $("#guardar").click(function (e) { e.preventDefault(); guardar() });
 
                 $("#formulario").show();
 

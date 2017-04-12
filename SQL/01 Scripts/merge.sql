@@ -1,6 +1,6 @@
 MERGE HORARIOS AS a
 USING OPENROWSET (
-    BULK 'C:\proyectos\cenegas\otros\mzohorarios.csv',
+    BULK 'C:\proyectos\cenegas\otros\febreropromedio.csv',
     FORMATFILE = 'C:\proyectos\cenegas\otros\bcp.xml'
     ) AS b
 ON a.punto = b.punto and a.nalterno=b.nalterno and a.fecha=b.fecha

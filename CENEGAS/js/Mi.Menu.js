@@ -1,10 +1,10 @@
 ﻿Mi.Menu = {};
 Mi.Menu.menu = { 'caption': '', 'url': null, 'servicios': [] }
 Mi.Menu.menu.administracion = { 'caption': 'Análisis de Calidad del Gas', 'url': null, 'servicios': [] }
-Mi.Menu.menu.administracion.usuarios = { 'caption': 'Usuarios', 'url': 'pages/usuarios.html', 'servicios': [] }
-Mi.Menu.menu.administracion.pmuestreo = { 'caption': 'Puntos de Muestreo', 'url': 'pages/pmuestreo.html', 'servicios': [] }
-Mi.Menu.menu.administracion.elementos = { 'caption': 'Elementos', 'url': 'pages/elementos.html', 'servicios': [] }
-Mi.Menu.menu.administracion.especificaciones = { 'caption': 'Especificaciones', 'url': 'pages/especificaciones.html', 'servicios': [] }
+Mi.Menu.menu.administracion.usuarios = { 'caption': 'Usuarios', 'url': 'pages/usuarios.html', 'servicios': ['sps_usuarios_guardar','sps_usuarios_borrar'] }
+Mi.Menu.menu.administracion.pmuestreo = { 'caption': 'Puntos de Muestreo', 'url': 'pages/pmuestreo.html', 'servicios': ['sps_pmuestreo_guardar','sps_pmuestreo_borrar'] }
+Mi.Menu.menu.administracion.elementos = { 'caption': 'Elementos', 'url': 'pages/elementos.html', 'servicios': ['sps_elementos_guardar','sps_elementos_borrar'] }
+Mi.Menu.menu.administracion.especificaciones = { 'caption': 'Especificaciones', 'url': 'pages/especificaciones.html', 'servicios': ['sps_especificaciones_guardar','sps_especificaciones_borrar'] }
 Mi.Menu.menu.administracion.bdatos = { 'caption': 'Carga de Bases de Datos', 'url': 'pages/bdatos.html', 'servicios': [] }
 Mi.Menu.menu.administracion.reportes = { 'caption': 'Reportes', 'url': 'pages/reportes.html', 'servicios': [] }
 Mi.Menu.menu.administracion.salir = {
@@ -72,7 +72,7 @@ Mi.Menu.load = function () {
                     if (!validarRamasVacias(menu[p])) delete menu[p]
 
                 }
-                Mi.Menu.servicios = Mi.Cookie.exist('SESIONFORMS') ? Mi.Cookie.get('SESIONFORMS').servicios : {};
+                Mi.Menu.servicios = Mi.Cookie.exist('SESIONCENEGAS') ? Mi.Cookie.get('SESIONCENEGAS').servicios : {};
                 filtrarMenuPorServiciosRequeridos(Mi.Menu.menu)
                 filtrarMenuPorRamasVacias(Mi.Menu.menu)
             }

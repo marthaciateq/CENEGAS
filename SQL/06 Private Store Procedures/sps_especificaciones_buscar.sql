@@ -1,0 +1,24 @@
+CREATE PROCEDURE sps_especificaciones_buscar 
+	@idsesion varchar(max),
+	@buscar varchar(max) = null
+AS
+BEGIN
+	declare @error varchar(max)
+	declare @idusuarioSESION varchar(max)
+	declare @idempresaSESION varchar(max)
+	
+	begin try
+		execute sp_servicios_validar @idsesion, @@PROCID, @idusuarioSESION output
+		select
+			a.*,
+			b.descripcion elemento
+		from v_especificaciones a
+			inner join v_elementos b on a.idelemento=b.idelemento
+		where (@buscar is null or dbo.fn_buscar(@buscar, b.elemento,null,null,null,null) = 'S') 
+		order by a.zona,b.elemento,a.fecha
+	end try
+	begin catch
+		set @error = error_message()
+		execute sp_error 'S', @error
+	end catch
+END

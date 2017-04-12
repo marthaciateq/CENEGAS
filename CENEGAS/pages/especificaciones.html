@@ -11,12 +11,14 @@
             $("#formulario").hide();
             Mi.AJAX.request({
                 data: {
-                    NAME: 'sps_pmuestreo_guardar',
-                    idpmuestreo: row ? row.idpmuestreo : null,
-                    punto: Mi.MiTextVal($("#punto")),
-                    nalterno: Mi.MiTextVal($("#nalterno")),
-                    descripcion: Mi.MiTextVal($("#descripcion")),
+                    NAME: 'sps_especificaciones_guardar',
+                    idespecificacion: row ? row.idespecificacion : null,
+                    idelemento: $("#idelemento").val(),
                     zona: $("#zona").val(),
+                    minimo: Mi.MiTextVal($("#minimo")),
+                    maximo: Mi.MiTextVal($("#maximo")),
+                    max_diaria: Mi.MiTextVal($("#max_diaria")),
+                    fecha: $("#finicial").val(),
                     deleted: $("#deleted").val()
                 },
                 onsuccess: function (r) {
@@ -32,27 +34,34 @@
         }
         function editar(row) {
             function f1() {
-                $("#divEstados").empty();
+                $("#divElementos").empty();
                 $("#divZonas").empty();
-                $("#punto").val("");
-                $("#nalterno").val("");
-                $("#descripcion").val("");
+                $("#divEstados").empty();
+
+                $("#minimo").val("");
+                $("#maximo").val("");
+                $("#max_diaria").val("");
 
                 $("#guardar").click(function () { e.preventDefault();guardar()});
 
                 $("#formulario").show();
 
-                zona = Mi.Input.comboZonas().appendTo("#divZonas");
+                var idelemento = Mi.Input.comboElementos().appendTo("#divElementos");
+                idelemento.prop("id", "idelemento");
+
+                var zona = Mi.Input.comboZonas().appendTo("#divZonas");
                 zona.prop("id", "zona");
 
-                deleted = Mi.Input.comboDeleted().appendTo("#divEstados");
+                var deleted = Mi.Input.comboDeleted().appendTo("#divEstados");
                 deleted.prop("id", "deleted");
 
                 if (row) {
-                    $("#punto").val(row.punto);
-                    $("#nalterno").val(row.nalterno);
-                    $("#descripcion").val(row.descripcion);
+                    alert(row.idelemento);
+                    $("#idelemento").val(row.idelemento).trigger("chosen:updated");;
                     $("#zona").val(row.zona);
+                    $("#minimo").val(row.minimo);
+                    $("#maximo").val(row.maximo);
+                    $("#max_diaria").val(row.max_diaria);
                     $("#deleted").val(row.deleted);
                 }
             }
@@ -60,11 +69,11 @@
             $("#listado").hide();
             f1();
         }
-        function buscar(pmuestreo) {
+        function buscar(especificacion) {
             Mi.AJAX.request({
                 data: {
-                    NAME: 'sps_pmuestreo_buscar',
-                    buscar: pmuestreo
+                    NAME: 'sps_especificaciones_buscar',
+                    buscar: especificacion
                 },
                 onsuccess: function (r) {
                     listado(r);
@@ -79,17 +88,21 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['','Punto', 'Nombre Alterno', 'Descripcion','Zona','Estado']]
+                    data: [['','Elemento', 'Zona', 'Máximo','Minimo','Desviación Máxima','Estatus']]
                 },
                 body: {
                     data: r,
-                    cols: ['punto', 'nalterno', 'descripcion','zonaS','deletedS']
+                    cols: ['elemento', 'zonaS', 'maximo','minimo','max_diaria','deletedS']
                 },
-                addCheckbox: true
+                addCheckbox: true,
+                format: function (element, type, section, row, col, value) {
+                    if (type == 'TD' && section == 'TBODY' && (col == 2)) element.css('text-align', 'right');
+                }
             });
 
             table.children('thead').children('tr').addClass('table-header');
             table.appendTo($("#listado"))
+            r
             table.prop("id", "registros")
 
         }
@@ -136,12 +149,12 @@
                                     function () {
                                         var ids = [];
                                         $("#registros").find('input:checked').each(function () {
-                                            ids.push($(this).first().parent().parent().data('row').idpmuestreo);
+                                            ids.push($(this).first().parent().parent().data('row').idespecificacion);
                                         });
                                         Mi.AJAX.request({
                                             data: {
-                                                NAME: 'sps_pmuestreo_borrar',
-                                                pmuestreo: ids
+                                                NAME: 'sps_especificaciones_borrar',
+                                                especificacion: ids
                                             },
                                             onsuccess: function (r) {
                                                 buscar();
@@ -155,7 +168,18 @@
 
                         }, img: "glyphicon glyphicon-trash"
                     }
-                ], "PUNTOS DE MUESTREO");
+                ], "ESPECIFICACIONES");
+
+                var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+                var options = {
+                    format: 'dd/mm/yyyy',
+                    container: container,
+                    todayHighlight: true,
+                    autoclose: true,
+                    language: 'es'
+                };
+                $("#fecha").datepicker(options);
+
                 $("#bbuscar").click(function () {
                     buscar($("#txtbuscar").val());
                 });
@@ -166,7 +190,7 @@
                 Mi.AJAX.request({
                     data: [
                         {
-                            NAME: 'sps_pmuestreo_buscar'
+                            NAME: 'sps_especificaciones_buscar'
                         }
                     ],
                     onsuccess: function (r) {
@@ -189,26 +213,37 @@
                 <div id="listado" class="col-sm-offset-1 col-sm-10"></div>
                 <form id="formulario" class="form-horizontal">
                     <div class="form-group">
-                        <label class="control-label col-sm-2">Punto:</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="punto" placeholder="Nombre">
+                        <label class="control-label col-sm-2">Elemento:</label>
+                        <div id="divElementos" class="col-sm-4">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-sm-2">Nombre Alterno:</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="nalterno" placeholder="Nombre alterno">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-sm-2">Descripción:</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="descripcion" placeholder="Descripción">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-sm-2">Zona</label>
+                        <label class="control-label col-sm-2">Zona:</label>
                         <div id="divZonas" class="col-sm-4">
+                        </div>                    
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Máximo:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="maximo" placeholder="Máximo" />
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Minimo</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="minimo" placeholder="Minimo" />
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Desviación diaria:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="max_diaria" placeholder="Desviación máxima diaria" />
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Fecha a partir de la cual se toma la especificación:</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" id="fecha" name="fecha" placeholder="DD/MM/YYY" />
                         </div>
                     </div>
                     <div class="form-group">
