@@ -36,7 +36,7 @@
                 $("#simbolo").val("");
                 $("#unidad").val("");
 
-                $("#guardar").click(function () { guardar()});
+                $("#guardar").click(function (e) { e.preventDefault(); guardar() });
 
                 $("#formulario").show();
 
