@@ -29,7 +29,6 @@
             var continuar = true;
 
 
-
             if (horarios == null || promedios == null) {
                 continuar = false;
 
@@ -86,8 +85,8 @@
                 formData.append("useRange", useRange)
                 formData.append("updateRecords", optActualizar.checked);
                 formData.append("idsesion", Mi.Cookie.get('SESIONCENEGAS').idsesion);
-                formData.append("viewHowChanges", (typeof(viewHowChanges) === "undefined" ? false : viewHowChanges));
-                formData.append("actionForNewPoints", (typeof(actionForNewPoints) === "undefined" ? "V" : actionForNewPoints));
+                formData.append("viewHowChanges", (typeof (viewHowChanges) === "undefined" ? false : viewHowChanges));
+                formData.append("actionForNewPoints", (typeof (actionForNewPoints) === "undefined" ? "V" : actionForNewPoints));
 
                 formData.append("horarios", horarios);
                 formData.append("promedios", promedios);
@@ -124,17 +123,17 @@
 
                                 records = message.split("||");
 
-                                
+
 
                                 message = "<tr><th>Punto</th> <th>Nombre Alterno</th> </tr><tr><td>" + records.join("</td></tr><tr><td>") + '</td></tr>';
 
                                 message = message.split("|").join("</td><td>");
 
 
-                                message = '<table width="100%" style="border-collapse:collapse;width:100%"> <caption> Se detectó que los siguientes puntos de muestreo del archivo CSV no existen en el catálogo de la Base de Datos.</caption>' + message + '<tr><th> ¿Que acción desea realizar? </th></tr></table>';
+                                message = '<table width="100%" style="border-collapse:collapse;width:100%"> <caption> Se detectó que los siguientes puntos de muestreo de los archivos CSV no existen en el catálogo de la Base de Datos.</caption>' + message + '<tr><td colspan="2">&nbsp;</td></tr><tr><th colspan="2"> ¿Que acción desea realizar? </th></tr></table>';
 
                                 var params = {};
-                                
+
                                 params.content = $(message);
                                 params.buttons = $('<button type="button" class="btn btn-default" data-dismiss="modal">Agregarlos e importar</button><button type="button" class="btn btn-default" data-dismiss="modal">Ignorarlos e importar</button><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>');
                                 params.buttons.eq(0).click(function () {
@@ -160,10 +159,10 @@
                                 message += '<tr><td>' + response.CSVs.promedios + '</td> <td>' + response.promedios.inserts + ' </td> <td> ' + response.promedios.updates + '</td></tr> ';
 
 
-                                message += "</table>";
+                                message += '<tr><td colspan="3">&nbsp;</td></tr><tr><td colspan="3">NOTA: Los registros de mediciones de los CSV que correspondan a puntos de muestreo que no existen en la Base de Datos, NO son considerados en el conteo de inserciones/actualizaciones. </td></tr></table>';
 
                                 Mi.Modal.alert($(message));
-                            }else
+                            } else
                                 Mi.Modal.error(r.error);
                         }
 
@@ -201,7 +200,7 @@
         function buscar(fechaInicial, fechaFinal) {
 
             fechaInicial || (fechaInicial = null);
-            fechaFinal || (fechaFinal =  null);
+            fechaFinal || (fechaFinal = null);
 
             Mi.AJAX.request({
                 data: {
@@ -315,7 +314,7 @@
 
                     e.preventDefault();
                 });
-                
+
 
                 $("#buscar").click(function (e) {
 
@@ -371,10 +370,10 @@
 
                 <div id="listado" class="col-sm-10">
 
-                    
 
-                    <form >
-                        
+
+                    <form>
+
                         <div class="form-group">
                             <label class="control-label col-sm-2">Fecha Inicial:</label>
                             <div class="col-sm-2">
@@ -401,7 +400,7 @@
 
                     </div>
 
-                   
+
                 </div>
 
                 <form id="formulario" class="form-horizontal">
@@ -447,7 +446,6 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label col-sm-2">¿Que desea hacer con las mediciones que ya existan en la Base de Datos?</label>
-
 
                         <div class="col-sm-4">
                             <div class="radio">
