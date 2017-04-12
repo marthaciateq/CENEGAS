@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -87,6 +87,7 @@
                 formData.append("useRange", useRange)
                 formData.append("updateRecords", optActualizar.checked);
                 formData.append("idsesion", Mi.Cookie.get('SESIONCENEGAS').idsesion);
+                //formData.append("actionForNewPoints", "V");
 
                 formData.append("horarios", horarios);
                 formData.append("promedios", promedios);
@@ -104,14 +105,32 @@
                     processData: false,        // To send DOMDocument or non processed data file it is set to false
                     success: function (data)   // A function to be called if request succeeds
                     {
-                        debugger;
-                        var r = JSON.parse(data);
+                        //debugger;
+                        var r = JSON.parse(data)
+                            , TAG_USER_VALIDATION = "VALIDATION_NEW_POINTS:";
 
                         if (typeof r.error === 'undefined') {
                             buscar();
                         }
                         else {
-                            Mi.Modal.error(r.error);
+                            var hasValidation = r.error.indexOf(TAG_USER_VALIDATION);
+
+                            if (hasValidation > 0) {
+                                hasValidation = hasValidation + TAG_USER_VALIDATION.length;
+
+                                message = r.error.substring(hasValidation, r.error.length);
+                                response = "";
+
+                                records = message.split("||");
+                              
+
+                                Mi.Modal.confirm('En el archivo CSV de origen se detectó que los siguientes puntos de muestreo no existen en el catalogo de la Base de Datos: <br>' + records.join("\r") + ' ¿Desea agregalos y realizar la importacion?',
+                                   function (a, b) {
+                                       
+                                   });
+
+                            } else 
+                                Mi.Modal.error(r.error);
                         }
 
                         Mi.Modal.hidePleaseWait();

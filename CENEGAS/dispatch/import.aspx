@@ -8,6 +8,8 @@
     bool updateRecords = bool.Parse(Request.Params["updateRecords"]);
     bool useRange = bool.Parse(Request.Params["useRange"]);
     
+    string actionForNewPoints = Request.Params["actionForNewPoints"];
+    
     DateTime initDate = DateTime.Now;
     DateTime finalDate = initDate;
 
@@ -19,6 +21,6 @@
     
 
     if (csvHours != null && csvSummary != null)
-        cenegas.clases.importar.import(idsesion, csvHours, csvSummary, updateRecords, useRange, initDate, finalDate, Response);
+        cenegas.clases.importar.import(idsesion, csvHours, csvSummary, updateRecords, useRange, actionForNewPoints, initDate, finalDate, Response);
                                                                                      
 %>

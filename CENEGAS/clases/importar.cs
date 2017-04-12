@@ -23,7 +23,7 @@ namespace cenegas.clases
         private static string importsDirectory = WebConfigurationManager.AppSettings["importsDirectory"];
 
         // Inicia el proceso de importacion del archivo de mediciones
-        public static void import(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, DateTime initDate, DateTime finalDate, HttpResponse response)
+        public static void import(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, string actionForNewPoints, DateTime initDate, DateTime finalDate, HttpResponse response)
         {
             Dictionary<string, object> result = new Dictionary<string, object>();
             try
@@ -46,7 +46,7 @@ namespace cenegas.clases
                 finalDate = finalDate.AddDays(-1);
 
 
-                importCSVFile(idsesion, csvHours, csvSummary, updateRecords, useRange, initDate, finalDate, filter);
+                importCSVFile(idsesion, csvHours, csvSummary, updateRecords, useRange, actionForNewPoints, initDate, finalDate, filter);
 
                 TimeSpan ts = DateTime.Now - start;
 
@@ -69,7 +69,7 @@ namespace cenegas.clases
 
 
         // Recibe un archivo CSV e importa sus registros a una tabla del servidor *
-        private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, DateTime? initDate, DateTime? finalDate, string filter)
+        private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, string actionForNewPoints, DateTime? initDate, DateTime? finalDate, string filter)
         {
             const decimal _byte = 8; // bits
             const decimal KB = _byte * 1024;
@@ -180,7 +180,7 @@ namespace cenegas.clases
                 }
 
 
-                saveRecords(idsesion, updateRecords, useRange, hoursName, csvHours.FileName, summaryName, csvSummary.FileName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
+                saveRecords(idsesion, updateRecords, useRange, actionForNewPoints, hoursName, csvHours.FileName, summaryName, csvSummary.FileName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
             }
             catch (Exception e)
             {
@@ -251,7 +251,7 @@ namespace cenegas.clases
         }
 
         // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
-        private static void saveRecords(string idsesion, bool updateRecords, bool useRange
+        private static void saveRecords(string idsesion, bool updateRecords, bool useRange, string actionForNewPoints
                                         , string hoursName, string originalHoursName
                                         , string summaryName, string originalSummaryName
                                         , ref DataTable recordsByHour, ref DataTable summaryOfRecords
@@ -292,6 +292,8 @@ namespace cenegas.clases
                 cmd.Parameters.Add("@summaryName", SqlDbType.VarChar);
                 cmd.Parameters.Add("@originalSummaryName", SqlDbType.VarChar);
 
+                cmd.Parameters.Add("@actionForNewPoints", SqlDbType.VarChar);
+
                 cmd.Parameters.Add("@recordsByHour", SqlDbType.Structured);
                 cmd.Parameters.Add("@summaryOfRecords", SqlDbType.Structured);
 
@@ -306,6 +308,8 @@ namespace cenegas.clases
 
                 cmd.Parameters["@summaryName"].Value = summaryName;
                 cmd.Parameters["@originalSummaryName"].Value = originalSummaryName;
+
+                cmd.Parameters["@actionForNewPoints"].Value = actionForNewPoints;
 
                 cmd.Parameters["@recordsByHour"].Value = recordsByHour;
                 cmd.Parameters["@summaryOfRecords"].Value = summaryOfRecords;
