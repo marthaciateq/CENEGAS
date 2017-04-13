@@ -71,10 +71,10 @@ namespace cenegas.clases
         // Recibe un archivo CSV e importa sus registros a una tabla del servidor *
         private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, bool viewHowChanges, string actionForNewPoints, DateTime? initDate, DateTime? finalDate, string filter)
         {
-            const decimal _byte = 8; // bits
-            const decimal KB = _byte * 1024;
-            const decimal MB = KB * 1024;
-            decimal FILE_MAX_LENGTH = MB * decimal.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]);
+            //const decimal _byte = 8; // bits
+            const double KB = 1024.0;
+            const double MB = KB * 1024.0;
+            double FILE_MAX_LENGTH = MB * double.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]);
             int MAX_COLUMNS = 0;
             int index = 0;
 
@@ -84,6 +84,17 @@ namespace cenegas.clases
                 if (csvHours.ContentLength > FILE_MAX_LENGTH)
                 {
                     // Tamaño de archivo excedido
+                    Exception e = new Exception("No es posible realizar la importación, ya que el peso del archivo de horarios es de " + Math.Round((csvHours.ContentLength / MB), 2).ToString() + " MB, lo que excede el tamaño máximo permitido, que es de " + decimal.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]).ToString() + " MB.");
+
+                    throw(e);
+                }
+
+                if (csvSummary.ContentLength > FILE_MAX_LENGTH)
+                {
+                    // Tamaño de archivo excedido
+                    Exception e = new Exception("No es posible realizar la importación, ya que el peso del archivo de promedios es de " + Math.Round((csvSummary.ContentLength / MB),2).ToString() + " MB, lo que excede el tamaño permitido, que es de " + decimal.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]).ToString() + " MB.");
+
+                    throw (e);
                 }
 
                 DataTable recordsByHour = new DataTable();
