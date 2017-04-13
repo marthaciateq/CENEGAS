@@ -24,8 +24,8 @@ BEGIN
 		set @d_ffinal=convert(date,@ffinal,103)		
 		
 		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
-		if ( (@pmuestreo is null and DATEDIFF(day,@d_finicial,@d_ffinal)>10) or (@pmuestreo is not null and DATEDIFF(day,@d_finicial,@d_ffinal)>90) )
-			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo son 10 dias y con puntos de muestreo 3 meses'
+		if ( (@pmuestreo is null and DATEDIFF(day,@d_finicial,@d_ffinal)>7) or (@pmuestreo is not null and DATEDIFF(day,@d_finicial,@d_ffinal)>90) )
+			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo es una semana y con puntos de muestreo 3 meses'
 			
 		declare @query varchar(max)
 		declare @cols varchar(max)

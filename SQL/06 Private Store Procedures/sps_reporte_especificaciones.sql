@@ -32,9 +32,9 @@ BEGIN
 			fecha datetime
 		)
 		
-		select idpmuestreo,punto,nalterno,idelemento,fecha,zona,promedio
+		select a.*
 		into #base_rpromedio
-		from v_promedios
+		from v_promedios a
 		where 
 			(@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
 			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
@@ -45,7 +45,7 @@ BEGIN
 		
 		--PROMEDIOS FUERA DE ESPECIFICACION
 
-		select a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.fecha,a.promedio
+		select a.*
 			into #fespecificacion
 		from
 			#base_rpromedio a 
@@ -64,26 +64,19 @@ BEGIN
 		end	
 		else
 		begin
-			select *
-			into #base_registros
-			from v_horarios
-			where 
-				(@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal)) 
-				and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
-				and (@elementos is null or idelemento in ( select col1 from dbo.fn_table(1,@elementos)))	
-					
+
 			select 
 				a.idpmuestreo,
 				a.idelemento,	
-				a.fecha,		
-				dbo.fn_datetimeToString(a.fecha,2) fechaS,
-				a.valor,
+				b.fecha,		
+				dbo.fn_datetimeToString(b.fecha,2) fechaS,
+				b.valor,
 				convert(date,a.fecha) fpromedio,	
 				dbo.fn_dateToString(convert(date,a.fecha)) fpromedioS,						
 				a.punto,
 				a.nalterno,
 				a.elemento descripcion,
-				b.promedio,
+				a.promedio,
 				a.zona,
 				case 
 					when a.zona='S' then 'SUR' 
@@ -93,9 +86,9 @@ BEGIN
 				@finicial finicial,
 				@ffinal ffinal,
 				@reporte reporte
-			from #base_registros a
-				inner join #fespecificacion b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and convert(date,a.fecha)=convert(date,b.fecha)
-			order by b.nalterno,a.fecha
+			from #fespecificacion a
+				left join v_horarios b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and convert(date,a.fecha)=convert(date,b.fecha)
+			order by b.nalterno,a.fecha,b.fecha
 		end
 	end try
 	begin catch
