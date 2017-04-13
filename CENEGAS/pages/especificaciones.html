@@ -18,7 +18,7 @@
                     minimo: Mi.MiTextVal($("#minimo")),
                     maximo: Mi.MiTextVal($("#maximo")),
                     max_diaria: Mi.MiTextVal($("#max_diaria")),
-                    fecha: $("#finicial").val(),
+                    fecha: $("#fecha").val(),
                     deleted: $("#deleted").val()
                 },
                 onsuccess: function (r) {
@@ -42,7 +42,7 @@
                 $("#maximo").val("");
                 $("#max_diaria").val("");
 
-                $("#guardar").click(function () { e.preventDefault();guardar()});
+                $("#guardar").click(function (e) { e.preventDefault();guardar()});
 
                 $("#formulario").show();
 
