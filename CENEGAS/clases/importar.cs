@@ -93,6 +93,9 @@ namespace cenegas.clases
                 string hoursName = "";
                 string summaryName = "";
 
+                string originalHoursName = "";
+                string originalSummaryName = "";
+                int charDirectory = 0;
 
 
                 // Guardar el archivo de horarios
@@ -179,8 +182,19 @@ namespace cenegas.clases
                     }
                 }
 
+                originalHoursName = csvHours.FileName;
+                originalSummaryName = csvSummary.FileName;
+                
+                
+                charDirectory = originalHoursName.LastIndexOf("\\");
+                if (charDirectory > 0)
+                    originalHoursName = originalHoursName.Substring(charDirectory + 1, (originalHoursName.Length - 1) - charDirectory);
 
-                saveRecords(idsesion, updateRecords, useRange, viewHowChanges, actionForNewPoints, hoursName, csvHours.FileName, summaryName, csvSummary.FileName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
+                charDirectory = originalSummaryName.LastIndexOf("\\");
+                if (charDirectory > 0)
+                    originalSummaryName = originalSummaryName.Substring(charDirectory + 1, (originalSummaryName.Length - 1) - charDirectory);
+
+                saveRecords(idsesion, updateRecords, useRange, viewHowChanges, actionForNewPoints, hoursName, originalHoursName, summaryName, originalSummaryName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
             }
             catch (Exception e)
             {
