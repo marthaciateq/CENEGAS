@@ -51,6 +51,17 @@ Mi.Input.comboElementos = function (params) {
     });
     return e;
 }
+Mi.Input.comboElementosSimple = function (params) {
+    var e = $('<select/>');
+    e.MiInputCombo(params);
+    Mi.AJAX.request({
+        data: { NAME: 'spp_elementos_buscar' },
+        onsuccess: function (r) {
+            e.MiFill(r, { value: 'idelemento', text: 'elemento' });
+        }
+    });
+    return e;
+}
 Mi.Input.comboDeleted = function (params) {
 	var e = $('<select/>');
 	e.MiInputCombo(params);

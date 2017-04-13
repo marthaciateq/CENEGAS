@@ -15,9 +15,9 @@
                     idespecificacion: row ? row.idespecificacion : null,
                     idelemento: $("#idelemento").val(),
                     zona: $("#zona").val(),
-                    minimo: Mi.MiTextVal($("#minimo")),
-                    maximo: Mi.MiTextVal($("#maximo")),
-                    max_diaria: Mi.MiTextVal($("#max_diaria")),
+                    minimo: Mi.MiNumberMiVal($("#minimo")),
+                    maximo: Mi.MiNumberMiVal($("#maximo")),
+                    max_diaria: Mi.MiNumberMiVal($("#max_diaria")),
                     fecha: $("#fecha").val(),
                     deleted: $("#deleted").val()
                 },
@@ -25,10 +25,13 @@
                     buscar();
                     $("#formulario").hide();
                     $("#listado").show();
+                    $("#guardar").attr('disabled', false)
                 },
                 onerror: function (r) {
                     $("#formulario").show();
+                    $("#guardar").attr('disabled', false)
                     Mi.Modal.error(r);
+
                 }
             });
         }
@@ -42,11 +45,11 @@
                 $("#maximo").val("");
                 $("#max_diaria").val("");
 
-                $("#guardar").click(function (e) { e.preventDefault();guardar()});
+                $("#guardar").click(function (e) { e.preventDefault(); $("#guardar").attr('disabled', true); guardar() });
 
                 $("#formulario").show();
 
-                var idelemento = Mi.Input.comboElementos();
+                var idelemento = Mi.Input.comboElementosSimple();
                 idelemento.appendTo("#divElementos");
                 idelemento.prop("id", "idelemento");
 
@@ -56,10 +59,9 @@
                 var deleted = Mi.Input.comboDeleted().appendTo("#divEstados");
                 deleted.prop("id", "deleted");
 
-                $('#idelemento').val("20170309015951417199240994016694").trigger('chosen:updated');
-
                 if (row) {
-
+                    alert(row.idelemento);
+                    $("#idelemento").val(row.idelemento);
                     $("#zona").val(row.zona);
                     $("#minimo").val(row.minimo);
                     $("#maximo").val(row.maximo);
@@ -156,7 +158,7 @@
                                         Mi.AJAX.request({
                                             data: {
                                                 NAME: 'sps_especificaciones_borrar',
-                                                especificacion: ids
+                                                especificaciones: ids
                                             },
                                             onsuccess: function (r) {
                                                 buscar();
@@ -227,19 +229,19 @@
                     <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Máximo:</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="maximo" placeholder="Máximo" />
+                            <input type="text" class="form-control MiInputNumber" id="maximo" placeholder="Máximo" />
                         </div>
                     </div>
                     <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Minimo</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="minimo" placeholder="Minimo" />
+                            <input type="text" class="form-control MiInputNumber" id="minimo" placeholder="Minimo" />
                         </div>
                     </div>
                     <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Desviación diaria:</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="max_diaria" placeholder="Desviación máxima diaria" />
+                            <input type="text" class="form-control MiInputNumber" id="max_diaria" placeholder="Desviación máxima diaria" />
                         </div>
                     </div>
                     <div class="form-group clearfix">

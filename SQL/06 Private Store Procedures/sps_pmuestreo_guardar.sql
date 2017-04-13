@@ -18,7 +18,7 @@ BEGIN
 		if @nalterno is null execute sp_error 'U', 'Campo nombre alterno requerido.'
 		if @descripcion is null execute sp_error 'U', 'Campo descripcion requerido.'		
 		
-		if (select COUNT(*) from pmuestreo where punto = @punto and (@idpmuestreo is null or idpmuestreo <> @idpmuestreo)) > 0
+		if (select COUNT(*) from pmuestreo where punto = @punto and nalterno=@nalterno and (@idpmuestreo is null or idpmuestreo <> @idpmuestreo)) > 0
 				execute sp_error 'U', 'Ya existe un punto de muestreo con el mismo punto y descripcion.'
 				
 		begin try

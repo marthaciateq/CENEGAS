@@ -23,9 +23,11 @@
                     buscar();
                     $("#formulario").hide();
                     $("#listado").show();
+                    $("#guardar").attr('disabled', false);
                 },
                 onerror: function (r) {
                     $("#formulario").show();
+                    $("#guardar").attr('disabled',false);
                     Mi.Modal.error(r);
                 }
             });
@@ -38,7 +40,7 @@
                 $("#nalterno").val("");
                 $("#descripcion").val("");
 
-                $("#guardar").click(function (e) { e.preventDefault();guardar()});
+                $("#guardar").click(function (e) { e.preventDefault(); $("#guardar").attr('disabled',true);guardar() });
 
                 $("#formulario").show();
 

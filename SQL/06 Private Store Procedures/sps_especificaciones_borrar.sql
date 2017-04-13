@@ -17,14 +17,14 @@ BEGIN
 		begin
 				begin try
 					begin transaction
-						delete from especifiaciones where idespecificacion = @idespecificacion
+						delete from especificaciones where idespecificacion = @idespecificacion
 					commit
 				end try
 				begin catch
 					rollback
 					begin try
 						begin transaction
-							update especifiaciones set deleted = 'S' where idespecifiacion = @idespecificacion
+							update especificaciones set deleted = 'S' where idespecificacion = @idespecificacion
 						commit
 					end try
 					begin catch

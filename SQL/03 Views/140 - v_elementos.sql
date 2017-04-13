@@ -11,6 +11,6 @@ CREATE VIEW v_elementos (
 	select 
 		a.*,
 		dbo.fn_deleted(a.deleted) deletedS,
-		descripcion + ' (' + simbolo+ ') ' unidad
+		descripcion + ' (' + isnull(simbolo,'')+ ') ' unidad
 	from elementos a
 		

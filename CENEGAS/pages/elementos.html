@@ -14,6 +14,7 @@
                     NAME: 'sps_elementos_guardar',
                     idelemento: row ? row.idelemento : null,
                     descripcion: Mi.MiTextVal($("#descripcion")),
+                    codigo: Mi.MiTextVal($("#codigo")),
                     simbolo: Mi.MiTextVal($("#simbolo")),
                     unidad: Mi.MiTextVal($("#unidad")),
                     deleted: $("#deleted").val()
@@ -22,9 +23,11 @@
                     buscar();
                     $("#formulario").hide();
                     $("#listado").show();
+                    $("#guardar").attr('disabled', false)
                 },
                 onerror: function (r) {
                     $("#formulario").show();
+                    $("#guardar").attr('disabled', false)
                     Mi.Modal.error(r);
                 }
             });
@@ -36,7 +39,7 @@
                 $("#simbolo").val("");
                 $("#unidad").val("");
 
-                $("#guardar").click(function (e) { e.preventDefault(); guardar() });
+                $("#guardar").click(function (e) { e.preventDefault(); $("#guardar").attr('disabled', true); guardar() });
 
                 $("#formulario").show();
 
@@ -47,6 +50,7 @@
                     $("#descripcion").val(row.descripcion);
                     $("#simbolo").val(row.simbolo);
                     $("#unidad").val(row.unidad);
+                    $("#codigo").val(row.codigo);
                     $("#deleted").val(row.deleted);
                 }
             }
@@ -73,7 +77,7 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['','Descripción','Simbolo','Unidad','Estado']]
+                    data: [['','Nombre','Simbolo','Unidad','Estado']]
                 },
                 body: {
                     data: r,
@@ -135,7 +139,7 @@
                                         Mi.AJAX.request({
                                             data: {
                                                 NAME: 'sps_elementos_borrar',
-                                                elemento: ids
+                                                elementos: ids
                                             },
                                             onsuccess: function (r) {
                                                 buscar();
@@ -183,26 +187,27 @@
                 <div id="listado" class="col-sm-offset-1 col-sm-5"></div>
                 <form id="formulario" class="form-horizontal">
                     <div class="form-group">
-                        <label class="control-label col-sm-2">Punto:</label>
+                        <label class="control-label col-sm-2">Nombre:</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="punto" placeholder="Nombre">
+                            <input type="text" class="form-control" id="descripcion" placeholder="Nombre">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-sm-2">Nombre Alterno:</label>
+                        <label class="control-label col-sm-2">Simbolo:</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="nalterno" placeholder="Nombre alterno">
+                            <input type="text" class="form-control" id="simbolo" placeholder="Simbolo">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-sm-2">Descripción:</label>
+                        <label class="control-label col-sm-2">Unidad:</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" id="descripcion" placeholder="Descripción">
+                            <input type="text" class="form-control" id="unidad" placeholder="Unidad">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-sm-2">Zona</label>
-                        <div id="divZonas" class="col-sm-4">
+                        <label class="control-label col-sm-2">Código (para control de importación):</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="codigo" placeholder="Código" />
                         </div>
                     </div>
                     <div class="form-group">

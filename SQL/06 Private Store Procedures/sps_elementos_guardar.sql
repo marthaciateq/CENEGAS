@@ -14,11 +14,11 @@ BEGIN
 	begin try
 		execute sp_servicios_validar @idsesion, @@PROCID, @idusuarioSESION output
 		
-		if @idelemento is null execute sp_error 'U', 'Campo elemento requerido.'		
-		if @descripcion is null execute sp_error 'U', 'Descripción requerida.'
+		if @descripcion is null execute sp_error 'U', 'Nombre requerido.'
 		if @unidad is null execute sp_error 'U', 'Unidad requerida.'		
+		if @codigo is null execute sp_error 'U', 'Código requerido.'				
 		
-		if (select COUNT(*) from idelemento where descripcion = @descripcion and (@idelemento is null or (idelemento<>@idelemento))) > 0
+		if (select COUNT(*) from elementos where descripcion = @descripcion and (@idelemento is null or (idelemento<>@idelemento))) > 0
 				execute sp_error 'U', 'Ya existe el elemento'
 				
 		begin try

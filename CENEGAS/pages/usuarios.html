@@ -34,9 +34,11 @@
                     buscar();
                     $("#formulario").hide();
                     $("#listado").show();
+                    $("#guardar").attr('disabled',false);
                 },
                 onerror: function (r) {
                     $("#formulario").show();
+                    $("#guardar").attr('disabled', false);
                     Mi.Modal.error(r);
                 }
             });
@@ -55,7 +57,7 @@
                 $("#password2").val("");
                 $("#roles").val("");
 
-                $("#guardar").click(function (e) { e.preventDefault(); guardar() });
+                $("#guardar").click(function (e) { e.preventDefault(); $("#guardar").attr('disabled', true); guardar() });
 
                 $("#formulario").show();
 

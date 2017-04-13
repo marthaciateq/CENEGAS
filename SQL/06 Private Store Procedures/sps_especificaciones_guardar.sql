@@ -1,4 +1,4 @@
-CREATE PROCEDURE sps_especificaciones_guardar 
+CREATE PROCEDURE [dbo].[sps_especificaciones_guardar] 
 	@idsesion varchar(max),
 	@idespecificacion varchar(max),
 	@idelemento varchar(max),
@@ -23,7 +23,7 @@ BEGIN
 		declare @fecha1 date
 		set @fecha1=convert(date,@fecha,103)
 		
-		if (select COUNT(*) from especificaciones where idelemento = @idelemento and zona=@zona and fecha=convert(date,@fecha,100) and (@idespecificacion is null or idespecificacion <> @idespecificacion)) > 0
+		if (select COUNT(*) from especificaciones where idelemento = @idelemento and zona=@zona and fecha=@fecha1 and (@idespecificacion is null or idespecificacion <> @idespecificacion)) > 0
 				execute sp_error 'U', 'Ya existe una especificación para el elemento y fecha indicada.'
 				
 		begin try
@@ -31,11 +31,11 @@ BEGIN
 				if @idespecificacion is null
 				begin
 					execute sp_randomKey @idespecificacion output
-					insert into especificaciones values(@idespecificacion,@idelemento,@zona,@fecha1,@minimo,@maximo,@max_diaria,@deleted)
+					insert into especificaciones values(@idespecificacion,@idelemento,@zona,convert(date,@fecha1,100),@minimo,@maximo,@max_diaria,@deleted)
 				end
 				else
 				begin 
-					update especificaciones set idelemento = @idelemento, zona=@zona, fecha=@fecha1, minimo=@minimo, maximo=@maximo, max_diaria=@max_diaria, deleted=@deleted
+					update especificaciones set idelemento = @idelemento, zona=@zona, fecha=convert(date,@fecha1,100), minimo=@minimo, maximo=@maximo, max_diaria=@max_diaria, deleted=@deleted
 					where idespecificacion = @idespecificacion
 				end					
 			commit
