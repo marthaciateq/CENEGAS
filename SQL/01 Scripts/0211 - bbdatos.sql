@@ -4,4 +4,5 @@ CREATE TABLE dbo.bbdatos(
 	fecha datetime NOT NULL,
 	mes int NOT NULL,
 	anio int NOT NULL
-) ON PRIMARY
+) ON [PRIMARY]
+GO
