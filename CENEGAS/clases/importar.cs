@@ -78,6 +78,9 @@ namespace cenegas.clases
             int MAX_COLUMNS = 0;
             int index = 0;
 
+            string hoursPath = "";
+            string summaryPath  = "";
+
             try
             {
 
@@ -86,21 +89,21 @@ namespace cenegas.clases
                     // Tamaño de archivo excedido
                     Exception e = new Exception("No es posible realizar la importación, ya que el peso del archivo de horarios es de " + Math.Round((csvHours.ContentLength / MB), 2).ToString() + " MB, lo que excede el tamaño máximo permitido, que es de " + decimal.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]).ToString() + " MB.");
 
-                    throw(e);
+                    throw (e);
                 }
 
                 if (csvSummary.ContentLength > FILE_MAX_LENGTH)
                 {
                     // Tamaño de archivo excedido
-                    Exception e = new Exception("No es posible realizar la importación, ya que el peso del archivo de promedios es de " + Math.Round((csvSummary.ContentLength / MB),2).ToString() + " MB, lo que excede el tamaño permitido, que es de " + decimal.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]).ToString() + " MB.");
+                    Exception e = new Exception("No es posible realizar la importación, ya que el peso del archivo de promedios es de " + Math.Round((csvSummary.ContentLength / MB), 2).ToString() + " MB, lo que excede el tamaño permitido, que es de " + decimal.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]).ToString() + " MB.");
 
                     throw (e);
                 }
 
                 DataTable recordsByHour = new DataTable();
                 DataTable summaryOfRecords = new DataTable();
-                string hoursPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
-                string summaryPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
+                hoursPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
+                summaryPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
                 string hoursName = "";
                 string summaryName = "";
 
@@ -195,8 +198,8 @@ namespace cenegas.clases
 
                 originalHoursName = csvHours.FileName;
                 originalSummaryName = csvSummary.FileName;
-                
-                
+
+
                 charDirectory = originalHoursName.LastIndexOf("\\");
                 if (charDirectory > 0)
                     originalHoursName = originalHoursName.Substring(charDirectory + 1, (originalHoursName.Length - 1) - charDirectory);
@@ -209,10 +212,23 @@ namespace cenegas.clases
             }
             catch (Exception e)
             {
-
                 throw (e);
             }
+            finally {
+                if (viewHowChanges || actionForNewPoints == "V") {
+                    if (summaryPath.Length > 0) {
+                        if (File.Exists(summaryPath))
+                            File.Delete(summaryPath);
+                    }
 
+
+                    if (hoursPath.Length > 0)
+                    {
+                        if (File.Exists(hoursPath))
+                            File.Delete(hoursPath);
+                    }
+                }
+            }
 
         }
 
