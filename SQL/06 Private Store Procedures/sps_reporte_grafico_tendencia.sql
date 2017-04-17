@@ -45,7 +45,7 @@ BEGIN
 		begin
 			select 
 				distinct a.idpmuestreo idpmuestreo,
-				punto+'_'+replace(replace(replace(replace(replace(nalterno,' ',''),'"',''),'(',''),')',''),'Ú','U') pmuestreo
+				punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo
 			from 
 				#base_rpromedio a
 		end
@@ -60,8 +60,7 @@ BEGIN
 			end
 
 			select @cols = STUFF((SELECT ',' + '[F_'+replace(convert(varchar(max),fecha,103),'/','')+']'  from @fechas
-						FOR XML PATH(''), TYPE
-						).value('.', 'NVARCHAR(MAX)') 
+						FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)') 
 					,1,1,'')
 
 			select

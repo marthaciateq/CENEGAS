@@ -12,8 +12,6 @@ CREATE TABLE bdatos(
 	ignorados int NULL,
 	fueraFecha int NULL,
 	tipoArchivo char(1) NOT NULL,
-	
-		
 	CONSTRAINT PK_bdatos PRIMARY KEY (idbdatos),
 	CONSTRAINT CK_bdatos_01 CHECK (actualizar in ('S','N'))			
 )

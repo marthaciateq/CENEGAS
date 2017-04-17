@@ -1,6 +1,5 @@
 CREATE PROCEDURE sps_reporte_especificaciones
 	@idsesion varchar(max),
-	@idbdatos varchar(max),
 	@pmuestreo varchar(max),
 	@elementos varchar(max),
 	@finicial varchar(max),
@@ -36,7 +35,7 @@ BEGIN
 		into #base_rpromedio
 		from v_promedios a
 		where 
-			(@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
+			(fecha>=@d_finicial and convert(date,fecha)<=@d_ffinal)
 			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
 			and (@elementos is null or idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
 
@@ -45,12 +44,15 @@ BEGIN
 		
 		--PROMEDIOS FUERA DE ESPECIFICACION
 
-		select a.*
+		select a.*,
+			dateadd(hh,a.hcorte,convert(datetime,convert(date,a.fecha))) fcorte,	
+			dateadd(hh, -23, dateadd(hh,a.hcorte,convert(datetime,convert(date,a.fecha)))) rango
 			into #fespecificacion
 		from
 			#base_rpromedio a 
-			inner join especificaciones c on a.idelemento=c.idelemento and a.zona=c.zona 
-				and c.fecha=(select max(z.fecha) from especificaciones z where z.idelemento=a.idelemento and z.zona=a.zona and convert(date,a.fecha)>=z.fecha)
+			inner join especificaciones c on a.idelemento=c.idelemento and a.zona=c.zona and c.deleted='N' 
+				and c.fecha=(select max(z.fecha) from especificaciones z 
+								where z.idelemento=a.idelemento and z.zona=a.zona and convert(date,a.fecha)>=z.fecha)
 		where 
 			(a.promedio<c.minimo or a.promedio>c.maximo)
 			
@@ -58,37 +60,60 @@ BEGIN
 		begin
 			select 
 				distinct idpmuestreo,
-				punto+'_'+replace(replace(replace(replace(replace(nalterno,' ',''),'"',''),'(',''),')',''),'Ú','U') pmuestreo
+				punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo
 			from 
 				#fespecificacion
 		end	
 		else
 		begin
-
-			select 
-				a.idpmuestreo,
-				a.idelemento,	
-				b.fecha,		
-				dbo.fn_datetimeToString(b.fecha,2) fechaS,
-				b.valor,
-				convert(date,a.fecha) fpromedio,	
-				dbo.fn_dateToString(convert(date,a.fecha)) fpromedioS,						
-				a.punto,
-				a.nalterno,
-				a.elemento descripcion,
-				a.promedio,
-				a.zona,
-				case 
-					when a.zona='S' then 'SUR' 
-					when a.zona='R' then 'RESTO DEL PAIS'
-				end zonaS,
-				@formato formato,
-				@finicial finicial,
-				@ffinal ffinal,
-				@reporte reporte
-			from #fespecificacion a
-				left join v_horarios b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and convert(date,a.fecha)=convert(date,b.fecha)
-			order by b.nalterno,a.fecha,b.fecha
+			if(@reporte='G')
+				select
+					a.idpmuestreo,
+					a.idelemento,	
+					convert(date,a.fecha) fpromedio,	
+					dbo.fn_dateToString(convert(date,a.fecha)) fpromedioS,						
+					a.punto,
+					a.nalterno,
+					a.elemento descripcion,
+					a.promedio,
+					a.zona,
+					case 
+						when a.zona='S' then 'SUR' 
+						when a.zona='R' then 'RESTO DEL PAIS'
+					end zonaS,
+					@formato formato,
+					@finicial finicial,
+					@ffinal ffinal,
+					@reporte reporte
+				from #fespecificacion a
+				order by a.nalterno,a.fecha						
+			else
+				select 
+					a.idpmuestreo,
+					a.idelemento,	
+					b.fecha,		
+					dbo.fn_datetimeToString(b.fecha,2) fechaS,
+					b.valor,
+					convert(date,a.fecha) fpromedio,	
+					dbo.fn_dateToString(convert(date,a.fecha)) fpromedioS,						
+					a.punto,
+					a.nalterno,
+					a.elemento descripcion,
+					a.promedio,
+					a.zona,
+					case 
+						when a.zona='S' then 'SUR' 
+						when a.zona='R' then 'RESTO DEL PAIS'
+					end zonaS,
+					@formato formato,
+					@finicial finicial,
+					@ffinal ffinal,
+					@reporte reporte
+				from #fespecificacion a
+					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
+						and a.idelemento=b.idelemento 
+						and b.fecha>=a.rango and b.fecha<=a.fcorte
+				order by a.nalterno,a.fecha,b.fecha
 		end
 	end try
 	begin catch

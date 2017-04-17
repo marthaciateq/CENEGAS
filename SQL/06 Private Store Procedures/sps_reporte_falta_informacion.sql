@@ -27,11 +27,11 @@ BEGIN
 		if ( (@pmuestreo is null and DATEDIFF(day,@d_finicial,@d_ffinal)>15) or (@pmuestreo is not null and DATEDIFF(day,@d_finicial,@d_ffinal)>90) )
 			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo son 15 dias y con puntos de muestreo 3 meses'
 		
-		
 		declare @t_pmuestreo table(
 			idpmuestreo char(32),
 			punto varchar(max),
-			nalterno varchar(max)
+			nalterno varchar(max),
+			hcorte int
 		)
 		declare @fcero datetime
 		declare @fechas table(
@@ -57,8 +57,8 @@ BEGIN
 			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
 			and (@elementos is null or idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
 			
-		if(@pmuestreo is null) insert into @t_pmuestreo select idpmuestreo,punto,nalterno from pmuestreo where deleted='N'
-		else insert into @t_pmuestreo select idpmuestreo,punto,nalterno from pmuestreo where deleted='N' and idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo))
+		if(@pmuestreo is null) insert into @t_pmuestreo select idpmuestreo,punto,nalterno,hcorte from v_pmuestreo where deleted='N'
+		else insert into @t_pmuestreo select idpmuestreo,punto,nalterno,hcorte from v_pmuestreo where deleted='N' and idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo))
 	
 		select 
 			@d_finicial=convert(date,min(fminima)),
@@ -77,6 +77,7 @@ BEGIN
 			insert into @fechas values(@fcero)
 			set @fcero=dateadd(hh,1,@fcero)			
 		end
+		
 		set @fcero=@d_finicial
 		while @fcero<dateadd(dd,1,@d_ffinal)		
 		begin
@@ -87,118 +88,92 @@ BEGIN
 		--TOTAL DE FECHAS
 		select
 			a.idpmuestreo,
-			a.punto,
-			a.nalterno,
-			b.descripcion elemento,
+			b.idelemento,
 			c.fecha
 		into #tcompleta_horarios		
-		from @t_pmuestreo a,(select * from elementos where deleted='N') b,@fechas c
+		from @t_pmuestreo a,(select * from v_elementos where deleted='N') b,@fechas c
 
 		----TOTAL DE FECHAS PROMEDIO
 		select
 			a.idpmuestreo,
 			a.punto,
 			a.nalterno,
-			b.descripcion elemento,
+			a.hcorte,
+			b.idelemento,
+			b.elemento,
 			c.fecha
 		into #tcompleta_promedios
-		from @t_pmuestreo a,(select * from elementos where deleted='N') b,@fechasp c
+		from @t_pmuestreo a,(select * from v_elementos where deleted='N') b,@fechasp c
 		
-	
-		--REGISTRO QUE NO ESTAN EN LA TABLA COMPLETA DE HORARIOS
-		select * 
-		into #incompleta_horarios
+		--REGISTROS QUE NO ESTAN EN LA TABLA COMPLETA DE HORARIOS
+		select 
+			* 
+		into #incompleta_horarios_0
 		from 
-		#tcompleta_horarios 
+		#tcompleta_horarios
 		EXCEPT
-		select idpmuestreo,punto,nalterno,elemento,fecha from 
+		select idpmuestreo,idelemento,fecha from 
 		#base_registros 
 		
-		-- REGISTROS PROMEDIO QUE NO ESTAN EN LA TABLA COMPLETA DE PROMEDIO
-		select * 
-		into #incompleta_promedios
-		from 
-		#tcompleta_promedios
-		EXCEPT
 		select 
-			idpmuestreo,
-			punto,
-			nalterno,
-			elemento,
-			convert(date,fecha) fecha
-		from
-		#base_rpromedio
-		
-		select
-			idpmuestreo,punto,nalterno,elemento,
-			convert(date,a.fecha) fecha,
-			count(*) nhoras,
-			STUFF((
-					 SELECT ','+dbo.fn_datetimeToString(b.fecha,5)
-					 FROM #incompleta_horarios b where convert(date,a.fecha)=convert(date,b.fecha) and a.punto=b.punto and a.nalterno=b.nalterno and a.elemento=b.elemento
-					 FOR XML PATH('')
-			   ),1,1,'') horas
-		into #hfaltantes
-		from #incompleta_horarios a
-		group by idpmuestreo,punto,nalterno,elemento,convert(date,fecha)
+			a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.elemento,a.fecha fpromedio,b.fecha fhorario
+		into #horarios
+		from (
+			select *,
+				dateadd(hh,hcorte,convert(datetime,convert(date,fecha))) fcorte,	
+				dateadd(hh, -23, dateadd(hh,hcorte,convert(datetime,convert(date,fecha)))) rango					
+			from #tcompleta_promedios
+		)a 
+			inner join #incompleta_horarios_0 b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento
+				and b.fecha>=a.rango and b.fecha<=a.fcorte
+				
+		select 
+			isnull(a.idpmuestreo,b.idpmuestreo) idpmuestreo,
+			isnull(a.punto,b.punto) punto,
+			isnull(a.nalterno,b.nalterno) nalterno,
+			isnull(a.elemento,b.elemento) descripcion,	
+			isnull(b.fecha,a.fpromedio) fecha,
+			dbo.fn_dateToString(isnull(b.fecha,a.fpromedio)) fechaS,				
+			isnull(a.nhoras,24) num_hfalta,
+			isnull(a.horas,'TODAS LAS HORAS') hfalta,
+			case when b.fecha is null
+				then 'NO'
+				else 'SI'
+			end promedio,
+			@formato formato,
+			@finicial finicial,
+			@ffinal ffinal	
+		into #horarios_1	
+		from	
+		(
+			select a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.elemento,a.fpromedio,count(*) nhoras,
+				STUFF((
+						 SELECT ','+dbo.fn_datetimeToString(z.fhorario,5)
+						 FROM #horarios z
+						 where z.idpmuestreo=a.idpmuestreo and z.idelemento=a.idelemento
+							and z.fpromedio=a.fpromedio		
+						 order by z.fpromedio,z.fhorario		 
+						 FOR XML PATH('')
+				   ),1,1,'') horas		
+			from #horarios a
+			group by a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.elemento,a.fpromedio
+		)a
+		full join #base_rpromedio b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and a.fpromedio=convert(date,b.fecha)
 
-		SELECT
-		isnull(a.idpmuestreo,b.idpmuestreo) idpmuestreo,
-		isnull(a.punto,b.punto) punto,
-		isnull(a.nalterno,b.nalterno) nalterno,
-		isnull(a.elemento,b.elemento) descripcion,
-		isnull(a.fecha,b.fecha) fecha,
-		dbo.fn_dateToString(isnull(a.fecha,b.fecha)) fechaS,
-		case when a.fecha is not null
-			then
-				 (
-					SELECT nhoras
-					FROM #hfaltantes b where a.fecha=b.fecha and a.punto=b.punto and a.nalterno=b.nalterno and a.elemento=b.elemento
-				)
-			  else
-				24
-		end num_hfalta,		
-		case when a.fecha is not null
-			then
-				 (
-					SELECT horas
-					FROM #hfaltantes b where a.fecha=b.fecha and a.punto=b.punto and a.nalterno=b.nalterno and a.elemento=b.elemento
-				)
-			  else
-				'TODAS LAS HORAS'
-		end hfalta,
-		case when b.fecha is null
-			then 'SI'
-			else 'NO'
-		end promedio,
-		@formato formato,
-		@finicial finicial,
-		@ffinal ffinal				
-        into #horarios
-		FROM (
-			 select distinct
-				idpmuestreo,
-				punto,
-				nalterno,
-				elemento,
-				convert(date,fecha) fecha
-			from
-				#incompleta_horarios
-			) a
-			full join #incompleta_promedios b on a.punto=b.punto and a.nalterno=b.nalterno and a.fecha=b.fecha and a.elemento=b.elemento
-		
 		if @resultado=1
 		begin
 			select 
 				distinct idpmuestreo idpmuestreo,
-				punto+'_'+replace(replace(replace(replace(replace(nalterno,' ',''),'"',''),'(',''),')',''),'Ú','U') pmuestreo
+				punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo
 			from 
-				#horarios
+				#horarios_1
 		end	
 		else
 		begin
-			select * from #horarios
+			select * from #horarios_1
 			order by nalterno,fecha
+			
+			select * from especificaciones
 		end
 		
 	end try

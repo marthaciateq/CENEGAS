@@ -5,12 +5,7 @@ CREATE TABLE rpromedio(
 	idelemento char(32) NOT NULL,	
 	fecha datetime NOT NULL,
 	promedio float NOT NULL,
-	estado int NOT NULL, -- Capturado (0), Aprobado (1), Cancelado (2)
-	iduaprobo char(32),
-	faprobo datetime,
-	iducancelo char(32),
-	fcancelo datetime,
-	CONSTRAINT PK_rpromedio PRIMARY KEY (idrpromedio)
+	CONSTRAINT PK_rpromedio PRIMARY KEY NONCLUSTERED(idrpromedio)
 )
 GO
 
@@ -23,13 +18,7 @@ GO
 ALTER TABLE rpromedio ADD CONSTRAINT FK_rpromedios_elementos FOREIGN KEY(idelemento) REFERENCES elementos(idelemento)
 GO
 
-ALTER TABLE rpromedio ADD CONSTRAINT FK_rpromedio_usuarios_1 FOREIGN KEY(iduaprobo) REFERENCES usuarios(idusuario)
-GO
-
-ALTER TABLE rpromedio ADD CONSTRAINT FK_rpromedio_usuarios_2 FOREIGN KEY(iducancelo) REFERENCES usuarios(idusuario)
-GO
-
-CREATE INDEX FK_rpromedio_01 on rpromedio(idpmuestreo)
-CREATE INDEX FK_rpromedio_02 on rpromedio(idpmuestreo,idelemento)
-CREATE INDEX FK_rpromedio_03 on rpromedio(idpmuestreo,idelemento,fecha)
+CREATE CLUSTERED INDEX FK_rpromedio_01 on rpromedio(idpmuestreo,idelemento,fecha)
+CREATE INDEX FK_rpromedio_02 on rpromedio(idpmuestreo)
+CREATE INDEX FK_rpromedio_03 on rpromedio(idpmuestreo,idelemento)
 GO
