@@ -115,6 +115,48 @@ BEGIN
 						and b.fecha>=a.rango and b.fecha<=a.fcorte
 				order by a.nalterno,a.fecha,b.fecha
 		end
+		
+		--GENERAR ENCABEZADOS DINAMICOS
+		
+		--declare @cols varchar(max)
+		--select @cols = STUFF(
+		--					(SELECT ',[' + codigo + ']'
+		--						from v_elementos
+		--						FOR XML PATH('')
+		--					) ,1,1,'')
+		--select @cols
+
+		select zona,[metano],[oxigeno],[bioxidocarbono],[nitrogeno],[totalinertes],[etano],[temprocio],[humedad],[podercalorifico],[indicewoobe],[acidosulfhidrico],[azufretotal]
+		into #especificaciones
+		from
+		(
+			select 	
+				a.zona,	
+				b.descripcion 
+				+ case when b.simbolo is not null then ' (' + b.simbolo + ') ' else '' end  
+				+ CHAR(13) + CHAR(10) +
+				+ ' ' + b.unidad
+				+ CHAR(13) + CHAR(10) 
+				+ '( ' +
+				isnull(convert(varchar(max),a.maximo),'') 
+					+ case when a.maximo is not null and a.minimo is not null then ' - '  else '' end 
+					+ isnull(convert(varchar(max),a.minimo),'')
+				+' )' 
+				+ CHAR(13) + CHAR(10) 
+				+ case when a.max_diaria is not null then 'Desv. máxima: ' + convert(varchar(max),a.max_diaria) else '' end  valores,
+				b.codigo
+			from especificaciones a
+				inner join elementos b on a.idelemento=b.idelemento
+			where a.fecha<=@d_ffinal
+				and a.fecha=(select max(fecha) from especificaciones z where z.idelemento=a.idelemento and z.zona=a.zona and z.fecha<=@d_ffinal)	
+		)as source
+		PIVOT( 
+			min(valores) FOR codigo in ([metano],[oxigeno],[bioxidocarbono],[nitrogeno],[totalinertes],[etano],[temprocio],[humedad],[podercalorifico],[indicewoobe],[acidosulfhidrico],[azufretotal])
+		) as pivot_table
+
+		select * from #especificaciones where zona='R'
+		select * from #especificaciones where zona='S'
+					
 	end try
 	begin catch
 		set @error = error_message()
