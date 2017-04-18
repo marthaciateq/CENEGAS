@@ -20,6 +20,10 @@
       <Name>tendencia.rdl</Name>
       <FullPath>tendencia.rdl</FullPath>
     </ProjectItem>
+    <ProjectItem>
+      <Name>mensualCRE.rdl</Name>
+      <FullPath>mensualCRE.rdl</FullPath>
+    </ProjectItem>
   </Reports>
   <Configurations>
     <Configuration>
