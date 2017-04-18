@@ -15,6 +15,6 @@ CREATE TABLE bhorarios(
 	azufreTotal decimal(18, 10) NULL,
 	oxigeno decimal(18, 10) NULL,
 	estatus char(1) NOT NULL,
-	CONSTRAINT PK_bhorarios PRIMARY KEY (idpmuestreo,fecha)
+	CONSTRAINT PK_bhorarios PRIMARY KEY (idbdatos,idpmuestreo,fecha)
 ) 
 GO
