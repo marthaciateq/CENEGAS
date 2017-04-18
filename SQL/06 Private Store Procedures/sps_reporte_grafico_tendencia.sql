@@ -96,6 +96,8 @@ BEGIN
 					
 				from #base_rpromedio a
 					inner join especificaciones d on a.idelemento=d.idelemento and a.zona=d.zona
+						and d.fecha=(select max(z.fecha) from especificaciones z where z.idelemento=a.idelemento and z.zona=a.zona and convert(date,a.fecha)>=z.fecha)					
+						and d.deleted='N'
 			) SOURCE
 			unpivot (value FOR concept IN ( tendencia,promedio,minimo,maximo )) as pivottable
 			
@@ -132,6 +134,7 @@ BEGIN
 			from #base_rpromedio a
 				inner join especificaciones d on a.idelemento=d.idelemento and a.zona=d.zona 
 					and d.fecha=(select max(z.fecha) from especificaciones z where z.idelemento=a.idelemento and z.zona=a.zona and convert(date,a.fecha)>=z.fecha)
+					and deleted='N'					
 				inner join #valoresY e on a.idpmuestreo=e.idpmuestreo and a.idelemento=e.idelemento
 			order by a.nalterno,a.elemento,convert(date,a.fecha)
 

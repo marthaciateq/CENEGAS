@@ -34,10 +34,12 @@ BEGIN
 		select a.*
 		into #base_rpromedio
 		from v_promedios a
+			--inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo and b.deleted='N'
+			--inner join elementos c on a.idelemento=c.idelemento and c.deleted='N'
 		where 
 			(fecha>=@d_finicial and convert(date,fecha)<=@d_ffinal)
-			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
-			and (@elementos is null or idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
+			and (@pmuestreo is null or a.idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
+			and (@elementos is null or a.idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
 
 		select @d_finicial=min(fecha),@d_ffinal=max(fecha) 
 		from #base_rpromedio

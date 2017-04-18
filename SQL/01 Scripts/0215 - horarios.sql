@@ -13,8 +13,8 @@ CREATE TABLE horarios(
 	indiceWoobe decimal(18, 10) NULL,
 	acidoSulfhidrico decimal(18, 10) NULL,
 	azufreTotal decimal(18, 10) NULL,
-	oxigeno decimal(18, 10) NULL,
-	CONSTRAINT PK_horarios PRIMARY KEY (idbdatos,idpmuestreo,fecha)		
+	oxigeno decimal(18, 10) NULL
+	--CONSTRAINT PK_horarios PRIMARY KEY (idbdatos,idpmuestreo,fecha)		
 )
 GO
 

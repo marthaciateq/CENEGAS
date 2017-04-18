@@ -41,38 +41,11 @@ BEGIN
 			fecha date
 		)			
 			
-		select *
-		into #base_registros
-		from v_horarios
-		where 
-  			(@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal)) 
-			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
-			and (@elementos is null or idelemento in ( select col1 from dbo.fn_table(1,@elementos)))
-			
-		select *
-		into #base_rpromedio
-		from v_promedios
-		where 
-			(@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
-			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
-			and (@elementos is null or idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
-			
 		if(@pmuestreo is null) insert into @t_pmuestreo select idpmuestreo,punto,nalterno,hcorte from v_pmuestreo where deleted='N'
 		else insert into @t_pmuestreo select idpmuestreo,punto,nalterno,hcorte from v_pmuestreo where deleted='N' and idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo))
 	
-		select 
-			@d_finicial=convert(date,min(fminima)),
-			@d_ffinal=convert(date,max(fmaxima))
-		from(
-			select min(fecha) fminima,max(fecha) fmaxima
-			from #base_registros
-			union
-			select min(fecha) fminima,max(fecha) fmaxima 
-			from #base_rpromedio			
-		)a
-		
-		set @fcero=@d_finicial
-		while @fcero<dateadd(dd,1,@d_ffinal)		
+		set @fcero=dateadd(dd,-2,@d_finicial)
+		while @fcero<dateadd(dd,2,@d_ffinal)		
 		begin
 			insert into @fechas values(@fcero)
 			set @fcero=dateadd(hh,1,@fcero)			
@@ -92,6 +65,7 @@ BEGIN
 			c.fecha
 		into #tcompleta_horarios		
 		from @t_pmuestreo a,(select * from v_elementos where deleted='N') b,@fechas c
+		
 
 		----TOTAL DE FECHAS PROMEDIO
 		select
@@ -105,28 +79,32 @@ BEGIN
 		into #tcompleta_promedios
 		from @t_pmuestreo a,(select * from v_elementos where deleted='N') b,@fechasp c
 		
-		--REGISTROS QUE NO ESTAN EN LA TABLA COMPLETA DE HORARIOS
-		select 
-			* 
-		into #incompleta_horarios_0
-		from 
-		#tcompleta_horarios
-		EXCEPT
-		select idpmuestreo,idelemento,fecha from 
-		#base_registros 
-		
 		select 
 			a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.elemento,a.fecha fpromedio,b.fecha fhorario
-		into #horarios
+		into #horarios_completos
 		from (
 			select *,
 				dateadd(hh,hcorte,convert(datetime,convert(date,fecha))) fcorte,	
 				dateadd(hh, -23, dateadd(hh,hcorte,convert(datetime,convert(date,fecha)))) rango					
 			from #tcompleta_promedios
 		)a 
-			inner join #incompleta_horarios_0 b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento
-				and b.fecha>=a.rango and b.fecha<=a.fcorte
+			inner join #tcompleta_horarios b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento
+				and b.fecha>=a.rango and b.fecha<=a.fcorte	
 				
+		--REGISTROS QUE NO ESTAN EN LA TABLA COMPLETA DE HORARIOS		
+		select a.* 
+		into #horarios
+		from #horarios_completos a
+			left join v_horarios b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and a.fhorario=b.fecha
+		where b.valor is null
+		
+		--REGISTROS QUE NO ESTAN EN LA TABLA COMPLETA DE PROMEDIOS
+		select a.* 
+		into #promedios
+		from #tcompleta_promedios a
+			left join v_promedios  b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and a.fecha=convert(date,b.fecha)
+		where b.promedio is null	
+		
 		select 
 			isnull(a.idpmuestreo,b.idpmuestreo) idpmuestreo,
 			isnull(a.punto,b.punto) punto,
@@ -134,11 +112,11 @@ BEGIN
 			isnull(a.elemento,b.elemento) descripcion,	
 			isnull(b.fecha,a.fpromedio) fecha,
 			dbo.fn_dateToString(isnull(b.fecha,a.fpromedio)) fechaS,				
-			isnull(a.nhoras,24) num_hfalta,
-			isnull(a.horas,'TODAS LAS HORAS') hfalta,
+			isnull(a.nhoras,0) num_hfalta,
+			a.horas hfalta,
 			case when b.fecha is null
-				then 'NO'
-				else 'SI'
+				then 'SI'
+				else 'NO'
 			end promedio,
 			@formato formato,
 			@finicial finicial,
@@ -148,7 +126,7 @@ BEGIN
 		(
 			select a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.elemento,a.fpromedio,count(*) nhoras,
 				STUFF((
-						 SELECT ','+dbo.fn_datetimeToString(z.fhorario,5)
+						 SELECT ','+dbo.fn_datetimeToString(z.fhorario,2)
 						 FROM #horarios z
 						 where z.idpmuestreo=a.idpmuestreo and z.idelemento=a.idelemento
 							and z.fpromedio=a.fpromedio		
@@ -158,7 +136,7 @@ BEGIN
 			from #horarios a
 			group by a.idpmuestreo,a.punto,a.nalterno,a.idelemento,a.elemento,a.fpromedio
 		)a
-		full join #base_rpromedio b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and a.fpromedio=convert(date,b.fecha)
+		full join #promedios b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and a.fpromedio=convert(date,b.fecha)
 
 		if @resultado=1
 		begin
@@ -172,8 +150,6 @@ BEGIN
 		begin
 			select * from #horarios_1
 			order by nalterno,fecha
-			
-			select * from especificaciones
 		end
 		
 	end try

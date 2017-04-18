@@ -14,8 +14,8 @@ CREATE TABLE bpromedios(
 	acidoSulfhidrico decimal(18, 10) NULL,
 	azufreTotal decimal(18, 10) NULL,
 	oxigeno decimal(18, 10) NULL,
-	estatus char(1) NULL,
-	CONSTRAINT PK_bpromedios PRIMARY KEY (idbdatos,idpmuestreo,fecha)
+	estatus char(1) NULL
+	--CONSTRAINT PK_bpromedios PRIMARY KEY (idbdatos,idpmuestreo,fecha)
 )
 GO
 
