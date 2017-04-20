@@ -1440,6 +1440,7 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
+            <NoRowsMessage>NO HAY INFORMACIÓN.</NoRowsMessage>
             <DataSetName>DataSet1</DataSetName>
             <Left>0.10266cm</Left>
             <Height>15.75964cm</Height>
@@ -1448,6 +1449,7 @@
               <Border>
                 <Style>None</Style>
               </Border>
+              <FontSize>16pt</FontSize>
             </Style>
           </Tablix>
         </ReportItems>

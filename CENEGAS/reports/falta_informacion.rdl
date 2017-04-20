@@ -459,7 +459,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -982,6 +981,7 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
+            <NoRowsMessage>NO HAY INFORMACIÓN FALTANTE.</NoRowsMessage>
             <DataSetName>DataSet1</DataSetName>
             <Top>0.45489cm</Top>
             <Height>3.59063cm</Height>
@@ -990,6 +990,7 @@
               <Border>
                 <Style>None</Style>
               </Border>
+              <FontSize>16pt</FontSize>
             </Style>
           </Tablix>
         </ReportItems>
