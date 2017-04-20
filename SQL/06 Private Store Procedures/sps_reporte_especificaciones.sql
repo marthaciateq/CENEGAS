@@ -1,4 +1,4 @@
-CREATE PROCEDURE sps_reporte_especificaciones
+ALTER PROCEDURE sps_reporte_especificaciones
 	@idsesion varchar(max),
 	@pmuestreo varchar(max),
 	@elementos varchar(max),
@@ -34,8 +34,6 @@ BEGIN
 		select a.*
 		into #base_rpromedio
 		from v_promedios a
-			--inner join pmuestreo b on a.idpmuestreo=b.idpmuestreo and b.deleted='N'
-			--inner join elementos c on a.idelemento=c.idelemento and c.deleted='N'
 		where 
 			(fecha>=@d_finicial and convert(date,fecha)<=@d_ffinal)
 			and (@pmuestreo is null or a.idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
@@ -48,7 +46,7 @@ BEGIN
 
 		select a.*,
 			dateadd(hh,a.hcorte,convert(datetime,convert(date,a.fecha))) fcorte,	
-			dateadd(hh, -23, dateadd(hh,a.hcorte,convert(datetime,convert(date,a.fecha)))) rango
+			dateadd(hh, 23, dateadd(hh,a.hcorte,convert(datetime,convert(date,a.fecha)))) rango
 			into #fespecificacion
 		from
 			#base_rpromedio a 
@@ -114,7 +112,7 @@ BEGIN
 				from #fespecificacion a
 					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
 						and a.idelemento=b.idelemento 
-						and b.fecha>=a.rango and b.fecha<=a.fcorte
+						and b.fecha<=a.rango and b.fecha>=a.fcorte
 				order by a.nalterno,a.fecha,b.fecha
 				
 		
@@ -156,8 +154,9 @@ BEGIN
 					min(valores) FOR codigo in ([metano],[oxigeno],[bioxidocarbono],[nitrogeno],[totalinertes],[etano],[temprocio],[humedad],[podercalorifico],[indicewoobe],[acidosulfhidrico],[azufretotal])
 				) as pivot_table
 
+				select * from #especificaciones where zona='S'		
 				select * from #especificaciones where zona='R'
-				select * from #especificaciones where zona='S'				
+		
 		end
 
 					

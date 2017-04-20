@@ -44,7 +44,7 @@ BEGIN
 		if(@pmuestreo is null) insert into @t_pmuestreo select idpmuestreo,punto,nalterno,hcorte from v_pmuestreo where deleted='N'
 		else insert into @t_pmuestreo select idpmuestreo,punto,nalterno,hcorte from v_pmuestreo where deleted='N' and idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo))
 	
-		set @fcero=dateadd(dd,-2,@d_finicial)
+		set @fcero=@d_finicial
 		while @fcero<dateadd(dd,2,@d_ffinal)		
 		begin
 			insert into @fechas values(@fcero)
@@ -85,11 +85,11 @@ BEGIN
 		from (
 			select *,
 				dateadd(hh,hcorte,convert(datetime,convert(date,fecha))) fcorte,	
-				dateadd(hh, -23, dateadd(hh,hcorte,convert(datetime,convert(date,fecha)))) rango					
+				dateadd(hh, 23, dateadd(hh,hcorte,convert(datetime,convert(date,fecha)))) rango					
 			from #tcompleta_promedios
 		)a 
 			inner join #tcompleta_horarios b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento
-				and b.fecha>=a.rango and b.fecha<=a.fcorte	
+				and b.fecha<=a.rango and b.fecha>=a.fcorte	
 				
 		--REGISTROS QUE NO ESTAN EN LA TABLA COMPLETA DE HORARIOS		
 		select a.* 

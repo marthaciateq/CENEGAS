@@ -1,4 +1,4 @@
-CREATE PROCEDURE sps_reporte_mensualCRE
+alter PROCEDURE sps_reporte_mensualCRE
 	@idsesion varchar(max),
 	@pmuestreo varchar(max),
 	@finicial varchar(max),
@@ -54,11 +54,27 @@ BEGIN
 		select 
 			idpmuestreo,
 			idelemento,
-			elemento
+			elemento,
 			fpromedio,
-			max(valor) max_horario
+			max(valor) max_horario,
+			avg(valor) prom_horario,
+			min(valor) min_horario,			
+		into #maximos_horarios
 		from #horarios
 		group by idpmuestreo,idelemento,elemento,fpromedio
+		
+		--select * from #maximos_horarios
+		
+		select 
+			idpmuestreo,
+			idelemento,
+			elemento,		
+			min(max_horario) minimo,
+			max(max_horario) maximo,
+			avg(max_horario) promedio,
+			stdev(max_horario) desviacion
+		from #maximos_horarios
+		group by idpmuestreo,idelemento,elemento,fpromedio		
 		
 	end try
 	begin catch

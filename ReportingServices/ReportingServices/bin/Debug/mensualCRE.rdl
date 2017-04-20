@@ -8,21 +8,21 @@
             <TablixCornerRow>
               <TablixCornerCell>
                 <CellContents>
-                  <Textbox Name="Textbox9">
+                  <Textbox Name="Textbox13">
                     <CanGrow>true</CanGrow>
                     <KeepTogether>true</KeepTogether>
                     <Paragraphs>
                       <Paragraph>
                         <TextRuns>
                           <TextRun>
-                            <Value />
+                            <Value>idpmuestreo1</Value>
                             <Style />
                           </TextRun>
                         </TextRuns>
                         <Style />
                       </Paragraph>
                     </Paragraphs>
-                    <rd:DefaultName>Textbox9</rd:DefaultName>
+                    <rd:DefaultName>Textbox13</rd:DefaultName>
                     <Style>
                       <Border>
                         <Color>LightGrey</Color>
@@ -36,8 +36,6 @@
                   </Textbox>
                 </CellContents>
               </TablixCornerCell>
-            </TablixCornerRow>
-            <TablixCornerRow>
               <TablixCornerCell>
                 <CellContents>
                   <Textbox Name="Textbox4">
@@ -83,7 +81,7 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox11">
+                    <Textbox Name="Textbox8">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -97,7 +95,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox11</rd:DefaultName>
+                      <rd:DefaultName>Textbox8</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -118,7 +116,54 @@
         <TablixColumnHierarchy>
           <TablixMembers>
             <TablixMember>
-              <Group Name="idpmuestreo">
+              <Group Name="idelemento">
+                <GroupExpressions>
+                  <GroupExpression>=Fields!idelemento.Value</GroupExpression>
+                </GroupExpressions>
+              </Group>
+              <SortExpressions>
+                <SortExpression>
+                  <Value>=Fields!idelemento.Value</Value>
+                </SortExpression>
+              </SortExpressions>
+              <TablixHeader>
+                <Size>0.6cm</Size>
+                <CellContents>
+                  <Textbox Name="Textbox7">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>=Fields!elemento.Value</Value>
+                            <Style />
+                          </TextRun>
+                        </TextRuns>
+                        <Style />
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox7</rd:DefaultName>
+                    <Style>
+                      <Border>
+                        <Color>LightGrey</Color>
+                        <Style>Solid</Style>
+                      </Border>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                </CellContents>
+              </TablixHeader>
+            </TablixMember>
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="idpmuestreo1">
                 <GroupExpressions>
                   <GroupExpression>=Fields!idpmuestreo.Value</GroupExpression>
                 </GroupExpressions>
@@ -129,9 +174,9 @@
                 </SortExpression>
               </SortExpressions>
               <TablixHeader>
-                <Size>0.6cm</Size>
+                <Size>2.5cm</Size>
                 <CellContents>
-                  <Textbox Name="idpmuestreo">
+                  <Textbox Name="idpmuestreo1">
                     <CanGrow>true</CanGrow>
                     <KeepTogether>true</KeepTogether>
                     <Paragraphs>
@@ -145,7 +190,7 @@
                         <Style />
                       </Paragraph>
                     </Paragraphs>
-                    <rd:DefaultName>idpmuestreo</rd:DefaultName>
+                    <rd:DefaultName>idpmuestreo1</rd:DefaultName>
                     <Style>
                       <Border>
                         <Color>LightGrey</Color>
@@ -161,34 +206,34 @@
               </TablixHeader>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="idelemento">
+                  <Group Name="fpromedio">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!idelemento.Value</GroupExpression>
+                      <GroupExpression>=Fields!fpromedio.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!idelemento.Value</Value>
+                      <Value>=Fields!fpromedio.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>0.6cm</Size>
+                    <Size>2.5cm</Size>
                     <CellContents>
-                      <Textbox Name="idelemento">
+                      <Textbox Name="fpromedio">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=Fields!elemento.Value</Value>
+                                <Value>=Fields!fpromedio.Value</Value>
                                 <Style />
                               </TextRun>
                             </TextRuns>
                             <Style />
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>idelemento</rd:DefaultName>
+                        <rd:DefaultName>fpromedio</rd:DefaultName>
                         <Style>
                           <Border>
                             <Color>LightGrey</Color>
@@ -206,59 +251,12 @@
               </TablixMembers>
             </TablixMember>
           </TablixMembers>
-        </TablixColumnHierarchy>
-        <TablixRowHierarchy>
-          <TablixMembers>
-            <TablixMember>
-              <Group Name="fpromedio">
-                <GroupExpressions>
-                  <GroupExpression>=Fields!fpromedio.Value</GroupExpression>
-                </GroupExpressions>
-              </Group>
-              <SortExpressions>
-                <SortExpression>
-                  <Value>=Fields!fpromedio.Value</Value>
-                </SortExpression>
-              </SortExpressions>
-              <TablixHeader>
-                <Size>2.5cm</Size>
-                <CellContents>
-                  <Textbox Name="fpromedio">
-                    <CanGrow>true</CanGrow>
-                    <KeepTogether>true</KeepTogether>
-                    <Paragraphs>
-                      <Paragraph>
-                        <TextRuns>
-                          <TextRun>
-                            <Value>=Fields!fpromedio.Value</Value>
-                            <Style />
-                          </TextRun>
-                        </TextRuns>
-                        <Style />
-                      </Paragraph>
-                    </Paragraphs>
-                    <rd:DefaultName>fpromedio</rd:DefaultName>
-                    <Style>
-                      <Border>
-                        <Color>LightGrey</Color>
-                        <Style>Solid</Style>
-                      </Border>
-                      <PaddingLeft>2pt</PaddingLeft>
-                      <PaddingRight>2pt</PaddingRight>
-                      <PaddingTop>2pt</PaddingTop>
-                      <PaddingBottom>2pt</PaddingBottom>
-                    </Style>
-                  </Textbox>
-                </CellContents>
-              </TablixHeader>
-            </TablixMember>
-          </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSet1</DataSetName>
-        <Top>0.36724cm</Top>
-        <Left>0.57891cm</Left>
-        <Height>1.8cm</Height>
-        <Width>5cm</Width>
+        <Top>0.97578cm</Top>
+        <Left>0.47307cm</Left>
+        <Height>1.2cm</Height>
+        <Width>7.5cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -323,6 +321,10 @@
         </Field>
         <Field Name="fpromedio">
           <DataField>fpromedio</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="elemento">
+          <DataField>elemento</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="max_horario">
