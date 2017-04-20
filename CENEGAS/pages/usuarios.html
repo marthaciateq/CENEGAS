@@ -57,7 +57,10 @@
                 $("#password2").val("");
                 $("#roles").val("");
 
-                $("#guardar").click(function (e) { e.preventDefault(); $("#guardar").attr('disabled', true); guardar() });
+                $("#guardar").unbind("click").click(function () {
+                    $(this).prop("disabled", true);
+                    guardar()
+                });
 
                 $("#formulario").show();
 
@@ -144,6 +147,7 @@
         }
 
         function _onload() {
+            $("#formulario").hide();
             Mi.Template.load(function () {
                 Mi.Template.menuTop([
                     {
@@ -211,7 +215,7 @@
                 $("#bcancelar").click(function () {
                     buscar();
                 });
-                $("#formulario").hide();
+
                 Mi.AJAX.request({
                     data: [
                         {

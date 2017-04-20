@@ -12,9 +12,6 @@ Mi.Template.menuTop = function (opciones, titulo) {
             )
         )
     );
-//    $("#menuTop").append(
-//            $('<form class="navbar-form navbar-left" role="search"><div class="form-group"><input id="txtbuscar" type="text" class="form-control" placeholder="Buscar"></div><button id="bbuscar" type="submit" class="btn btn-default">Enviar</button></form>')
-//    );
     $.each(opciones, function (key, elemento) {
         href = $('<a href="#"><span class="glyphicon ' + elemento.img + ' aria-hidden="true"></span>' + elemento.label + '</a>');
         href.click(elemento.onclick);

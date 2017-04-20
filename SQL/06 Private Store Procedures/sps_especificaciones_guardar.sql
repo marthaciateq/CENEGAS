@@ -1,4 +1,4 @@
-CREATE PROCEDURE [dbo].[sps_especificaciones_guardar] 
+ CREATE PROCEDURE sps_especificaciones_guardar
 	@idsesion varchar(max),
 	@idespecificacion varchar(max),
 	@idelemento varchar(max),

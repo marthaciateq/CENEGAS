@@ -24,11 +24,11 @@
                     buscar();
                     $("#formulario").hide();
                     $("#listado").show();
-                    $("#guardar").attr('disabled', false);
+                    $("#guardar").prop('disabled', false);
                 },
                 onerror: function (r) {
                     $("#formulario").show();
-                    $("#guardar").attr('disabled',false);
+                    $("#guardar").prop('disabled', false);
                     Mi.Modal.error(r);
                 }
             });
@@ -42,7 +42,10 @@
                 $("#descripcion").val("");
                 $("#hcorte").val("");
 
-                $("#guardar").click(function (e) { e.preventDefault(); $("#guardar").attr('disabled',true);guardar() });
+                $("#guardar").unbind( "click" ).click(function() {
+                    $(this).prop("disabled", true);
+                    guardar()
+                });
 
                 $("#formulario").show();
 
@@ -61,18 +64,22 @@
                     $("#deleted").val(row.deleted);
                 }
             }
-
             $("#listado").hide();
             f1();
         }
-        function buscar(pmuestreo) {
+        function buscar(buscar) {
             Mi.AJAX.request({
                 data: {
                     NAME: 'sps_pmuestreo_buscar',
-                    buscar: pmuestreo
+                    buscar: buscar
                 },
                 onsuccess: function (r) {
+                    $("#bbuscar").prop("disabled", false);
                     listado(r);
+                },
+                onerror: function (r) {
+                    $("#bbuscar").prop("disabled", false);
+                    Mi.Modal.error(r);
                 }
             });
         }
@@ -100,6 +107,7 @@
         }
 
         function _onload() {
+            $("#formulario").hide();
             Mi.Template.load(function () {
                 Mi.Template.menuTop([
                     {
@@ -161,13 +169,19 @@
                         }, img: "glyphicon glyphicon-trash"
                     }
                 ], "PUNTOS DE MUESTREO");
-                $("#bbuscar").click(function () {
+                $("#menuTop").prepend(
+                        $('<form class="navbar-form navbar-left" role="search"><div class="form-group"><input id="txtbuscar" type="text" class="form-control" placeholder="Buscar"></div><button id="bbuscar" type="submit" class="btn btn-default">Enviar</button></form>')
+                );
+
+                $("#bbuscar").unbind("click").click(function () {
+                    $(this).prop("disabled", true);
                     buscar($("#txtbuscar").val());
                 });
+                  
                 $("#bcancelar").click(function () {
                     buscar();
                 });
-                $("#formulario").hide();
+                
                 Mi.AJAX.request({
                     data: [
                         {

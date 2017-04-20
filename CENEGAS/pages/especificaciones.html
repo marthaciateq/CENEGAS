@@ -9,6 +9,7 @@
         function guardar() {
             row = $("#registros").find('input:checked').first().parent().parent().data('row');
             $("#formulario").hide();
+
             Mi.AJAX.request({
                 data: {
                     NAME: 'sps_especificaciones_guardar',
@@ -45,11 +46,22 @@
                 $("#maximo").val("");
                 $("#max_diaria").val("");
 
-                $("#guardar").click(function (e) { e.preventDefault(); $("#guardar").attr('disabled', true); guardar() });
+                $("#guardar").unbind("click").click(function () {
+                    $(this).prop("disabled", true);
+                    guardar()
+                });
 
                 $("#formulario").show();
 
-                var idelemento = Mi.Input.comboElementosSimple();
+                var idelemento= $('<select/>');
+                idelemento.MiInputCombo();
+                Mi.AJAX.request({
+                    data: { NAME: 'spp_elementos_buscar' },
+                    onsuccess: function (r) {
+                        idelemento.MiFill(r, { value: 'idelemento', text: 'elemento' });
+                        if (row) idelemento.val(row.idelemento);
+                    }
+                });
                 idelemento.appendTo("#divElementos");
                 idelemento.prop("id", "idelemento");
 
@@ -60,7 +72,6 @@
                 deleted.prop("id", "deleted");
 
                 if (row) {
-                    $("#idelemento").val(row.idelemento);
                     $("#zona").val(row.zona);
                     $("#minimo").val(row.minimo);
                     $("#maximo").val(row.maximo);
@@ -80,7 +91,12 @@
                     buscar: especificacion
                 },
                 onsuccess: function (r) {
+                    $("#bbuscar").prop("disabled", false);
                     listado(r);
+                },
+                onerror: function (r) {
+                    $("#bbuscar").prop("disabled", false);
+                    Mi.Modal.error(r);
                 }
             });
         }
@@ -92,11 +108,11 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['','Elemento', 'Zona', 'Máximo','Minimo','Desv. máxima','Fecha','Estatus']]
+                    data: [['','Elemento', 'Zona', 'Minimo','Máximo','Desv. máxima','Fecha','Estatus']]
                 },
                 body: {
                     data: r,
-                    cols: ['elemento', 'zonaS', 'maximo','minimo','max_diaria','fechaS','deletedS']
+                    cols: ['elemento', 'zonaS', 'minimo','maximo','max_diaria','fechaS','deletedS']
                 },
                 addCheckbox: true
             });
@@ -111,6 +127,7 @@
         }
 
         function _onload() {
+            $("#formulario").hide();
             Mi.Template.load(function () {
                 Mi.Template.menuTop([
                     {
@@ -173,6 +190,10 @@
                     }
                 ], "ESPECIFICACIONES");
 
+                $("#menuTop").prepend(
+                        $('<form class="navbar-form navbar-left" role="search"><div class="form-group"><input id="txtbuscar" type="text" class="form-control" placeholder="Buscar"></div><button id="bbuscar" type="submit" class="btn btn-default">Enviar</button></form>')
+                );
+
                 var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
                 var options = {
                     format: 'dd/mm/yyyy',
@@ -183,13 +204,15 @@
                 };
                 $("#fecha").datepicker(options);
 
-                $("#bbuscar").click(function () {
+                $("#bbuscar").unbind("click").click(function (e) {
+                    e.preventDefault();
+                    $(this).prop("disabled", true);
                     buscar($("#txtbuscar").val());
                 });
+
                 $("#bcancelar").click(function () {
                     buscar();
                 });
-                $("#formulario").hide();
                 Mi.AJAX.request({
                     data: [
                         {
@@ -226,15 +249,15 @@
                         </div>                    
                     </div>
                     <div class="form-group clearfix">
-                        <label class="control-label col-sm-2">Máximo:</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control MiInputNumber" id="maximo" placeholder="Máximo" />
-                        </div>
-                    </div>
-                    <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Minimo</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control MiInputNumber" id="minimo" placeholder="Minimo" />
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Máximo:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control MiInputNumber" id="maximo" placeholder="Máximo" />
                         </div>
                     </div>
                     <div class="form-group clearfix">
