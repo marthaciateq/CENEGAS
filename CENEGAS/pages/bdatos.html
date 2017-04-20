@@ -106,7 +106,8 @@
                     {
                         var r = JSON.parse(data)
                             , TAG_NEW_POINTS = "VALIDATION_NEW_POINTS:"
-                            , TAG_HOW_CHANGE = "VALIDATION_HOW_CHANGE:";
+                            , TAG_HOW_CHANGE = "VALIDATION_HOW_CHANGE:"
+                            , TAG_DUPLICATE_RECORDS = "VALIDATION_DUPLICATE_RECORDS:";
 
                         if (typeof r.error === 'undefined') {
                             buscar();
@@ -114,6 +115,9 @@
                         else {
                             var hasNewPoints = r.error.indexOf(TAG_NEW_POINTS);
                             var hasHowChange = r.error.indexOf(TAG_HOW_CHANGE);
+                            var hasDuplicateRecords = r.error.indexOf(TAG_DUPLICATE_RECORDS);
+
+                            var message = null;
 
                             if (hasNewPoints > 0) {
                                 hasNewPoints = hasNewPoints + TAG_NEW_POINTS.length;
@@ -158,9 +162,42 @@
                                 message += '<tr><td>' + response.CSVs.promedios + '</td> <td>' + response.promedios.inserts + ' </td> <td> ' + response.promedios.updates + '</td></tr> ';
 
 
-                                message += '<tr><td colspan="3">&nbsp;</td></tr><tr><td colspan="3">NOTA: Los registros de mediciones de los CSV que correspondan a puntos de muestreo que no existen en la Base de Datos, NO son considerados en el conteo de inserciones/actualizaciones. </td></tr></table>';
+                                message += '<tr><td colspan="3">&nbsp;</td></tr><tr><td colspan="3">NOTA: Los registros de mediciones de los CSV que correspondan a puntos de muestreo que no existen en la Base de Datos NO son considerados en el conteo de inserciones/actualizaciones. </td></tr></table>';
 
                                 Mi.Modal.alert($(message));
+                            }
+                            else if ( hasDuplicateRecords > 0){
+                                hasDuplicateRecords = hasDuplicateRecords + TAG_DUPLICATE_RECORDS.length;
+
+                                var response = $.parseJSON(r.error.substring(hasDuplicateRecords, r.error.length));
+
+                                var linkHorarios = (response.idHorarios == null ? '' : '<a href ="#">Archivo de Horarios</a>');
+
+                                var linkPromedios = (response.idPromedios == null ? '' : '<a href ="#">Archivo de Promedios</a>');
+
+                                message = $('<span>La importación no puede realizarse porque existen registros de mediciones duplicadas en los archivos CSV. <br>Favor de verificarlo. </span> ' + linkHorarios + (linkHorarios && linkPromedios ? ' y ': '') + linkPromedios);
+
+
+                                if (linkHorarios !== '') {
+                                    message.eq(2).click(function (e) {
+                                        e.preventDefault();
+                                        alert('horario:' + response.idHorarios);
+                                    });
+
+                                    if (linkPromedios !== '')
+                                        message.eq(4).click(function (e) {
+                                            e.preventDefault();
+                                            alert('promedio:' + response.idPromedios);
+                                        })
+                                } else {
+                                    if (linkPromedios !== '')
+                                        message.eq(2).click(function (e) {
+                                            e.preventDefault();
+                                            alert('promedio' + response.idPromedios);
+                                        })
+                                }
+                                    
+                                Mi.Modal.alert(message);
                             } else
                                 Mi.Modal.error(r.error);
                         }
@@ -232,11 +269,11 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Carga', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. fuera de fecha', 'Archivo Horarios', 'Archivo Promedios']]
+                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. fuera de fecha', 'Archivo Horarios', 'Archivo Promedios']]
                 },
                 body: {
                     data: r,
-                    cols: ['fechaS', 'actualizar', 'fcarga', 'finicial', 'ffinal', 'horariosInsertados', 'horariosActualizados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
+                    cols: ['fcarga', 'actualizar', 'finicial', 'ffinal', 'horariosInsertados', 'horariosActualizados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
                 },
                 addCheckbox: true
             });

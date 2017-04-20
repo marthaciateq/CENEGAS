@@ -21,6 +21,8 @@ namespace cenegas.clases
     {
         private static Dictionary<string, System.Type> layoutFields = new Dictionary<string, Type>();
         private static string importsDirectory = WebConfigurationManager.AppSettings["importsDirectory"];
+        static DateTime? start ;
+        static TimeSpan? ts;
 
         // Inicia el proceso de importacion del archivo de mediciones
         public static void import(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, bool viewHowChanges, string actionForNewPoints, DateTime initDate, DateTime finalDate, HttpResponse response)
@@ -28,13 +30,12 @@ namespace cenegas.clases
             Dictionary<string, object> result = new Dictionary<string, object>();
             try
             {
-                int taskTime;
                 string filter = "";
 
 
                 result.Add("success", true);
 
-                DateTime start = DateTime.Now;
+                start = DateTime.Now;
 
                 // Se agrega un dia unicamente para hacer la comparación de registros < a fechaFinal
                 finalDate = finalDate.AddDays(1);
@@ -48,14 +49,16 @@ namespace cenegas.clases
 
                 importCSVFile(idsesion, csvHours, csvSummary, updateRecords, useRange, viewHowChanges, actionForNewPoints, initDate, finalDate, filter);
 
-                TimeSpan ts = DateTime.Now - start;
-
-                int dif = ts.Seconds;
+                ts = DateTime.Now - start;
+                result.Add("elapsed", ts.ToString());
 
                 response.Output.Write(JSON.Serialize(result));
             }
             catch (Exception e)
             {
+                ts = DateTime.Now - start;
+                result.Add("elapsed", ts.ToString());
+
                 result["success"] = false;
 
                 result.Add("error", e.Message);
