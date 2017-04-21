@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -265,15 +265,17 @@
 
                 r[i].linkHorarios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idHorarios + '">Horarios</a>');
                 r[i].linkPromedios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idPromedios + '">Promedios</a>');
+                r[i].actualizar = (r[i].actualizar == 'S' ? 'Si' : 'No');
+                r[i].nuevosPuntos = (r[i].nuevosPuntos == 'C' ? 'Crear' : '');
             }
 
             var table = Mi.table({
                 head: {
-                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. fuera de fecha', 'Archivo Horarios', 'Archivo Promedios']]
+                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Nuevos Puntos', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. fuera de fecha', 'Archivo Horarios', 'Archivo Promedios']]
                 },
                 body: {
                     data: r,
-                    cols: ['fcarga', 'actualizar', 'finicial', 'ffinal', 'horariosInsertados', 'horariosActualizados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
+                    cols: ['fcarga', 'actualizar', 'finicial', 'ffinal', 'nuevosPuntos', 'horariosInsertados', 'horariosActualizados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
                 },
                 addCheckbox: true
             });
