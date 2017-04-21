@@ -7,6 +7,7 @@ CREATE TABLE bdatos(
 	fcarga datetime NOT NULL,
 	narchivo varchar(256) NOT NULL,
 	noriginal varchar(256) NOT NULL,
+	nuevosPuntos char(1) NULL,
 	insertados int NOT NULL,
 	actualizados int NOT NULL,
 	ignorados int NULL,
