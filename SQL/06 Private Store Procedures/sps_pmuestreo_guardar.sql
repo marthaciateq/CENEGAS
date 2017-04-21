@@ -16,6 +16,7 @@ BEGIN
 		execute sp_servicios_validar @idsesion, @@PROCID, @idusuarioSESION output
 		
 		if @punto is null execute sp_error 'U', 'Campo punto(s) requerido.'
+		if @zona is null execute sp_error 'U', 'Campo zona requerida.'		
 		if @nalterno is null execute sp_error 'U', 'Campo nombre alterno requerido.'
 		if @descripcion is null execute sp_error 'U', 'Campo descripcion requerido.'
 		if @hcorte is null execute sp_error 'U', 'Campo hora de corte requerido.'		
