@@ -12,7 +12,7 @@
     else if (Request.QueryString["idDownload"] != null)
     {
 
-        Mi.Control.Files.File file = cenegas.clases.importar.getFile(Request.QueryString["idDownload"]);
+        Mi.Control.Files.File file = cenegas.clases.importar.getFile(Request.QueryString["idDownload"], Request.QueryString["idsesion"]);
 
         Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         Response.AddHeader("Content-disposition", "filename=" + file.name);
