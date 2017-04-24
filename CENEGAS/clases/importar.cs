@@ -25,7 +25,7 @@ namespace cenegas.clases
         static TimeSpan? ts;
 
         // Inicia el proceso de importacion del archivo de mediciones
-        public static void import(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, bool viewHowChanges, string actionForNewPoints, DateTime initDate, DateTime finalDate, HttpResponse response)
+        public static void import(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool useRange, bool viewHowChanges, string actionForNewPoints, DateTime initDate, DateTime finalDate, HttpResponse response)
         {
             Dictionary<string, object> result = new Dictionary<string, object>();
             try
@@ -47,7 +47,7 @@ namespace cenegas.clases
                 finalDate = finalDate.AddDays(-1);
 
 
-                importCSVFile(idsesion, csvHours, csvSummary, updateRecords, useRange, viewHowChanges, actionForNewPoints, initDate, finalDate, filter);
+                importCSVFile(idsesion, csvHours, csvSummary, useRange, viewHowChanges, actionForNewPoints, initDate, finalDate, filter);
 
                 ts = DateTime.Now - start;
                 result.Add("elapsed", ts.ToString());
@@ -72,7 +72,7 @@ namespace cenegas.clases
 
 
         // Recibe un archivo CSV e importa sus registros a una tabla del servidor *
-        private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool updateRecords, bool useRange, bool viewHowChanges, string actionForNewPoints, DateTime? initDate, DateTime? finalDate, string filter)
+        private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool useRange, bool viewHowChanges, string actionForNewPoints, DateTime? initDate, DateTime? finalDate, string filter)
         {
             //const decimal _byte = 8; // bits
             const double KB = 1024.0;
@@ -211,7 +211,7 @@ namespace cenegas.clases
                 if (charDirectory > 0)
                     originalSummaryName = originalSummaryName.Substring(charDirectory + 1, (originalSummaryName.Length - 1) - charDirectory);
 
-                saveRecords(idsesion, updateRecords, useRange, viewHowChanges, actionForNewPoints, hoursName, originalHoursName, summaryName, originalSummaryName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
+                saveRecords(idsesion, useRange, viewHowChanges, actionForNewPoints, hoursName, originalHoursName, summaryName, originalSummaryName, ref recordsByHour, ref summaryOfRecords, initDate, finalDate);
             }
             catch (Exception e)
             {
@@ -295,7 +295,7 @@ namespace cenegas.clases
         }
 
         // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
-        private static void saveRecords(string idsesion, bool updateRecords, bool useRange, bool viewHowChanges, string actionForNewPoints
+        private static void saveRecords(string idsesion, bool useRange, bool viewHowChanges, string actionForNewPoints
                                         , string hoursName, string originalHoursName
                                         , string summaryName, string originalSummaryName
                                         , ref DataTable recordsByHour, ref DataTable summaryOfRecords
@@ -328,7 +328,6 @@ namespace cenegas.clases
 
                 cmd.Parameters.Add("@viewHowChanges", SqlDbType.Bit);
 
-                cmd.Parameters.Add("@updateRecords", SqlDbType.Bit);
                 cmd.Parameters.Add("@idsesion", SqlDbType.VarChar);
 
                 cmd.Parameters.Add("@hoursName", SqlDbType.VarChar);
@@ -345,7 +344,6 @@ namespace cenegas.clases
 
                 cmd.Parameters["@viewHowChanges"].Value = viewHowChanges;
 
-                cmd.Parameters["@updateRecords"].Value = updateRecords;
                 cmd.Parameters["@idsesion"].Value = idsesion;
 
                 cmd.Parameters["@hoursName"].Value = hoursName;
@@ -398,7 +396,7 @@ namespace cenegas.clases
 
         }
 
-        public static Mi.Control.Files.File getFile(string idDownload)
+        public static Mi.Control.Files.File getFile(string idDownload, string idsesion)
         {
             try
             {
@@ -408,7 +406,7 @@ namespace cenegas.clases
 
 
                 string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, importsDirectory);
-                string fileName = getFileName(idDownload);
+                string fileName = getFileName(idDownload, idsesion);
 
                 byte[] bytesFile = fileToBytes(path + fileName);
 
@@ -455,7 +453,7 @@ namespace cenegas.clases
 
 
         // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
-        public static string getFileName(string idbdatos)
+        public static string getFileName(string idbdatos, string idsesion)
         {
 
 
@@ -469,9 +467,11 @@ namespace cenegas.clases
                 cnn = BD.Connection();
 
                 cmd.Parameters.Add("@idbdatos", SqlDbType.VarChar);
+                cmd.Parameters.Add("@idsesion", SqlDbType.VarChar);
 
 
                 cmd.Parameters["@idbdatos"].Value = idbdatos;
+                cmd.Parameters["@idsesion"].Value = idsesion;
 
                 cmd.Connection = cnn;
                 cmd.CommandTimeout = 180;

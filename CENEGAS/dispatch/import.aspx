@@ -5,7 +5,6 @@
 
     string idsesion = Request.Params["idsesion"];
 
-    bool updateRecords = bool.Parse(Request.Params["updateRecords"]);
     bool useRange = bool.Parse(Request.Params["useRange"]);
     bool viewHowChanges = bool.Parse(Request.Params["viewHowChanges"]);
     
@@ -22,6 +21,6 @@
     
 
     if (csvHours != null && csvSummary != null)
-        cenegas.clases.importar.import(idsesion, csvHours, csvSummary, updateRecords, useRange, viewHowChanges, actionForNewPoints, initDate, finalDate, Response);
+        cenegas.clases.importar.import(idsesion, csvHours, csvSummary, useRange, viewHowChanges, actionForNewPoints, initDate, finalDate, Response);
                                                                                      
 %>

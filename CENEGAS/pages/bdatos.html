@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,7 +23,6 @@
             var optRango = $("#optRango")[0]
                 , finicial = $("#finicial")[0]
                 , ffinal = $("#ffinal")[0]
-                , optActualizar = $("#optActualizar")[0]
                 , useRange = false;
 
             var continuar = true;
@@ -83,7 +82,6 @@
                 }
 
                 formData.append("useRange", useRange)
-                formData.append("updateRecords", optActualizar.checked);
                 formData.append("idsesion", Mi.Cookie.get('SESIONCENEGAS').idsesion);
                 formData.append("viewHowChanges", (typeof (viewHowChanges) === "undefined" ? false : viewHowChanges));
                 formData.append("actionForNewPoints", (typeof (actionForNewPoints) === "undefined" ? "V" : actionForNewPoints));
@@ -231,8 +229,7 @@
             $("#listado").hide()
             //$("#registros").hide()
         }
-        function eliminar() {
-        }
+        
         function buscar(fechaInicial, fechaFinal) {
 
             fechaInicial || (fechaInicial = null);
@@ -263,19 +260,19 @@
             for (i = 0; i < r.length; i++) {
 
 
-                r[i].linkHorarios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idHorarios + '">Horarios</a>');
-                r[i].linkPromedios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idPromedios + '">Promedios</a>');
+                r[i].linkHorarios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idHorarios + '&idsesion=' + Mi.Cookie.get('SESIONCENEGAS').idsesion + '">Horarios</a>');
+                r[i].linkPromedios = $('<a href="../dispatch/files.aspx?idDownload=' + r[i].idPromedios + '&idsesion=' + Mi.Cookie.get('SESIONCENEGAS').idsesion + '">Promedios</a>');
                 r[i].actualizar = (r[i].actualizar == 'S' ? 'Si' : 'No');
                 r[i].nuevosPuntos = (r[i].nuevosPuntos == 'C' ? 'Crear' : '');
             }
 
             var table = Mi.table({
                 head: {
-                    data: [['', 'Fecha Carga', 'Actualizar Datos', 'Fecha Inicial', 'Fecha Final', 'Nuevos Puntos', 'Horarios - Reg. insertados', 'Horarios - Reg. Actualizados', 'Horarios - Reg. fuera fecha', 'Promedios - Reg. insertados', 'Promedios - Reg. actualizados', 'Promedios - Reg. fuera de fecha', 'Archivo Horarios', 'Archivo Promedios']]
+                    data: [['', 'Fecha Carga', 'Fecha Inicial', 'Fecha Final', 'Nuevos Puntos', 'Horarios - Reg. insertados', 'Promedios - Reg. insertados', 'Archivo Horarios', 'Archivo Promedios', 'Subido por']]
                 },
                 body: {
                     data: r,
-                    cols: ['fcarga', 'actualizar', 'finicial', 'ffinal', 'nuevosPuntos', 'horariosInsertados', 'horariosActualizados', 'horariosFueraFecha', 'promediosInsertados', 'promediosActualizados', 'promediosFueraFecha', 'linkHorarios', 'linkPromedios']
+                    cols: ['fcarga', 'finicial', 'ffinal', 'nuevosPuntos', 'horariosInsertados', 'promediosInsertados', 'linkHorarios', 'linkPromedios', 'nombreCompleto']
                 },
                 addCheckbox: true
             });
@@ -303,58 +300,52 @@
                             cargar();
                         }, img: ""
                     },
-                    //{
-                    //    label: "Eliminar Base de Datos",
-                    //    onclick: function () {
-                    //        var row;
-                    //        row = $("#registros").find('input:checked').first().parent().parent().data('row');
-                    //        if ($(this).parent().hasClass('disabled')) return;
-                    //        if (!row) {
-                    //            Mi.Modal.alert("Por favor seleccione un registro");
-                    //            return;
-                    //        }
-                    //        //$(this).parent().parent().children('li').addClass("disabled");
-                    //        $(this).parent().removeClass("disabled");
-                    //        eliminar();
-                    //    },
-                    //    img: ""
-                    //}
-
-                     {
-                        label: "Eliminar mediciones de un mes",
-                        onclick: function (e) {
-
+                    {
+                        label: "Eliminar Base de Datos",
+                        onclick: function () {
                             
-                            if ($(this).parent().hasClass('disabled'))
+                            if ($(this).parent().hasClass('disabled')) return;
+                            if (!$("#registros").find('input:checked').first().parent().parent().data('row')) {
+                                Mi.Modal.alert("Por favor seleccione un registro");
                                 return;
-
-                            $("#listado").hide();
-                            $("#formulario").hide();
-
+                            }
                             $(this).parent().parent().children('li').addClass("disabled");
                             $(this).parent().removeClass("disabled");
+                            Mi.Modal.confirm('¿Está usted seguro que desea borrar los registros seleccionados?',
+                                    function () {
+                                        var idsHorarios = [];
+                                        var idsPromedios = [];
 
-                            if (this.querySelector("option") == null) {
-                                var today = new Date();
+                                        var record = 
+                                        $("#registros").find('input:checked').each(function () {
+                                            record = $(this).first().parent().parent().data("row");
+                                            
+                                            idsHorarios.push(record.idHorarios);
+                                            idsPromedios.push(record.idPromedios);
+                                        });
 
-                                var finalYear = today.getFullYear()
-                                , initialYear = finalYear - 5
-                                , cboMes = $('#cboAnio')[0]
-                                , option = null;
+                                        Mi.AJAX.request({
+                                            data: {
+                                                NAME: 'sps_bdatos_borrar',
+                                                  idsesion: Mi.Cookie.get('SESIONCENEGAS').idsesion
+                                                , idsHorarios: idsHorarios
+                                                , idsPromedios: idsPromedios
+                                            },
+                                            onsuccess: function (r) {
+                                                buscar();
+                                            },
+                                            onerror: function (r) {
+                                                Mi.Modal.error(r);
+                                            }
+                                        });
 
-                                for (index = finalYear; index > initialYear; index--) {
-                                    option = $('<option value="' + index + '">' + index + '</option>');
-                                    option.appendTo(cboMes);
-                                }
-                            }
-
-                            $('#eliminacion').show();
-
-                            e.preventDefault();
+                                    }
+                          );
                         },
-                        img: ""
+                        img: "glyphicon glyphicon-trash"
                     }
 
+                     
                 ], "CARGA DE BASES DE DATOS");
 
 
@@ -377,21 +368,21 @@
 
                     e.preventDefault();
                 });
-                $("#guardar").click(function (e) {
+                $("#guardar").unbind("click").click(function (e) {
                     guardar(e);
 
                     e.preventDefault();
 
                 });
 
-                $("#verCambios").click(function (e) {
+                $("#verCambios").unbind("click").click(function (e) {
                     guardar(e, true, null);
 
                     e.preventDefault();
                 });
 
 
-                $("#buscar").click(function (e) {
+                $("#buscar").unbind("click").click(function (e) {
 
                     var filtroFechaInicial = $("#filtroFechaInicial")[0]
                         , filtroFechaFinal = $("#filtroFechaFinal")[0];
@@ -427,60 +418,7 @@
                     $("#ffinal")[0].disabled = "";
                 });
 
-                $("#eliminarMes").click(function (e, mes, anio) {
-
-                    e.preventDefault();
-
-                    Mi.Modal.confirm("¿Esta seguro de que desea eliminar los registros de mediciones del mes seleccionado?", function () {
-                        var mes = $("#cboMes")[0].value
-                        , anio = $("#cboAnio")[0].value;
-
-                        if (mes == '' || mes == null || anio == '' || anio == null) {
-                            Mi.Modal.alert("Es necesario que indique el mes y el año para los que se borrarán las importaciones. Favor de verificarlo.");
-                        } else {
-
-                            Mi.Modal.showPleaseWait();
-
-                            Mi.AJAX.request({
-                                data: [
-                                    {
-                                        NAME: 'sps_bdatos_borrarMes'
-                                        , mes: mes
-                                        , anio: anio
-                                    }
-                                ],
-                                onsuccess: function (r) {
-                                    Mi.Modal.alert("La eliminación de registros se realizó correctamente.");
-
-                                    $("#eliminacion").hide();
-                                    $("#listado").show();
-
-                                    $("#top-menu").find('li').removeClass('disabled');
-
-                                    Mi.Modal.hidePleaseWait();
-                                },
-                                onerror: function (r) {
-                                    Mi.Modal.alert(r);
-
-                                    Mi.Modal.hidePleaseWait();
-                                }
-                            });
-                        }
-                        
-                    });
-
-                });
-
-                $("#eliminarCancelar").click(function (e) {
-
-                    $("#eliminacion").hide();
-                    $("#listado").show();
-
-                    $("#top-menu").find('li').removeClass('disabled');
-
-                    e.preventDefault();
-                });
-                    
+                
 
             });
 
@@ -496,7 +434,7 @@
             <div id="main" class="col-sm-offset-2 col-sm-10">
 
 
-                <div id="listado" class="col-sm-10">
+                <div id="listado" class="col-sm-10" style="width:100%">
 
                     <form style="display: none;">
 
@@ -530,48 +468,9 @@
                 </div>
 
 
-                <div class="col-sm-10">
-
-                    <form id="eliminacion">
-
-                        <div class="form-group">
-                            <label class="control-label col-sm-2">Seleccione la fecha para la eliminación:</label>
-                            <div class="col-sm-2">
-                                <select id="cboMes" name="cboMes" class="form-control">
-                                    <option value="1">Enero</option>
-                                    <option value="2">Febrero</option>
-                                    <option value="3">Marzo</option>
-                                    <option value="4">Abril</option>
-                                    <option value="5">Mayo</option>
-                                    <option value="6">Junio</option>
-                                    <option value="7">Julio</option>
-                                    <option value="8">Agosto</option>
-                                    <option value="9">Septiembre</option>
-                                    <option value="10">Octubre</option>
-                                    <option value="11">Nomviembre</option>
-                                    <option value="12">Diciembre</option>
-                                </select>
-                            </div>
-
-
-                            <div class="col-sm-2">
-                                <select id="cboAnio" name="cboAnio" class="form-control"></select>
-                            </div>
-
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-4">
-                                <button id="eliminarMes" class="btn btn-success">Eliminar registros del mes</button>
-
-                                <button id="eliminarCancelar" class="btn btn-danger">Cancelar</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
 
                 <div class="col-sm-10">
-                    <form id="formulario" class="form-horizontal">
+                    <form id="formulario" class="form-horizontal" style="display:none;">
                         <div class="form-group">
                             <label class="control-label col-sm-2">Archivo de Horarios:</label>
                             <div class="col-sm-9">
@@ -597,14 +496,14 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2">Fecha inicial:</label>
+                                    <label class="control-label col-sm-3">Fecha inicial:</label>
                                     <div class="col-sm-3">
                                         <input class="form-control" id="finicial" name="finicial" placeholder="DD/MM/YYYY" disabled="disabled" />
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2">Fecha final:</label>
+                                    <label class="control-label col-sm-3">Fecha final:</label>
                                     <div class="col-sm-3">
                                         <input class="form-control" id="ffinal" name="ffinal" placeholder="DD/MM/YYYY" disabled="disabled" />
                                     </div>
@@ -612,20 +511,7 @@
                             </div>
 
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-2">¿Que desea hacer con las mediciones que ya existan en la Base de Datos?</label>
 
-                            <div class="col-sm-4">
-                                <div class="radio">
-                                    <label><input type="radio" id="optIgnorar" name="optActualizar" checked="checked" value="0" />Ignorar los valores del archivo de importación.</label>
-                                </div>
-
-                                <div class="radio">
-                                    <label><input type="radio" id="optActualizar" name="optActualizar" value="1" />Actualizar los valores de la Base de Datos con los del archivo de importación.</label>
-                                </div>
-                            </div>
-
-                        </div>
 
                         <div class="form-group">
                             <div class="col-sm-offset-1 col-sm-10">
