@@ -13,8 +13,7 @@ CREATE TABLE bdatos(
 	idusuariodelete char(32) NULL,
 	fdelete datetime NULL,
 	CONSTRAINT PK_bdatos PRIMARY KEY (idbdatos),
-	CONSTRAINT CK_bdatos_01 CHECK (actualizar in ('S','N')),		
-	CONSTRAINT CK_bdatos_02 CHECK (deleted in ('S','N'))	
+	CONSTRAINT CK_bdatos_01 CHECK (deleted in ('S','N'))	
 )
 GO
 

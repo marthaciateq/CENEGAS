@@ -313,6 +313,8 @@
                             $(this).parent().removeClass("disabled");
                             Mi.Modal.confirm('¿Está usted seguro que desea borrar los registros seleccionados?',
                                     function () {
+                                        Mi.Modal.showPleaseWait();
+
                                         var idsHorarios = [];
                                         var idsPromedios = [];
 
@@ -332,9 +334,13 @@
                                                 , idsPromedios: idsPromedios
                                             },
                                             onsuccess: function (r) {
+                                                Mi.Modal.hidePleaseWait();
+
                                                 buscar();
                                             },
                                             onerror: function (r) {
+                                                Mi.Modal.hidePleaseWait();
+
                                                 Mi.Modal.error(r);
                                             }
                                         });
