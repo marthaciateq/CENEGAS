@@ -268,11 +268,11 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['', 'Fecha Carga', 'Fecha Inicial', 'Fecha Final', 'Nuevos Puntos', 'Horarios - Reg. insertados', 'Promedios - Reg. insertados', 'Archivo Horarios', 'Archivo Promedios', 'Subido por']]
+                    data: [['', 'Fecha Inicial', 'Fecha Final', 'Nuevos Puntos', 'Horarios - Reg. insertados', 'Promedios - Reg. insertados', 'Archivo Horarios', 'Archivo Promedios', 'Subido por', 'Fecha Carga']]
                 },
                 body: {
                     data: r,
-                    cols: ['fcarga', 'finicial', 'ffinal', 'nuevosPuntos', 'horariosInsertados', 'promediosInsertados', 'linkHorarios', 'linkPromedios', 'nombreCompleto']
+                    cols: ['finicial', 'ffinal', 'nuevosPuntos', 'horariosInsertados', 'promediosInsertados', 'linkHorarios', 'linkPromedios', 'nombreCompleto', 'fcarga']
                 },
                 addCheckbox: true
             });
