@@ -4064,6 +4064,7 @@
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
+            <NoRowsMessage>NO SE ENCONTRO INFORMACIÓN FUERA DE ESPECIFICACIÓN.</NoRowsMessage>
             <DataSetName>DataSet1</DataSetName>
             <Top>0.0762cm</Top>
             <Height>15.77563cm</Height>
@@ -4072,6 +4073,7 @@
               <Border>
                 <Style>None</Style>
               </Border>
+              <FontSize>14pt</FontSize>
             </Style>
           </Tablix>
         </ReportItems>

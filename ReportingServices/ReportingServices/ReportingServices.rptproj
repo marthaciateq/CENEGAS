@@ -17,12 +17,16 @@
       <FullPath>falta_informacion.rdl</FullPath>
     </ProjectItem>
     <ProjectItem>
+      <Name>mensualCRE.rdl</Name>
+      <FullPath>mensualCRE.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
       <Name>tendencia.rdl</Name>
       <FullPath>tendencia.rdl</FullPath>
     </ProjectItem>
     <ProjectItem>
-      <Name>mensualCRE.rdl</Name>
-      <FullPath>mensualCRE.rdl</FullPath>
+      <Name>rduplicados.rdl</Name>
+      <FullPath>rduplicados.rdl</FullPath>
     </ProjectItem>
   </Reports>
   <Configurations>

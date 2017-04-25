@@ -11,6 +11,22 @@
 
     <!-- Comentarios-->
     <script language="javascript">
+        function generarReporteDuplicados(idbdatos) {
+            Mi.Reports.request({
+                data: {
+                    NAME: 'sps_reporte_rduplicados',
+                    idbdatos:idbdatos
+                },
+                nombre: 'rduplicados',
+                format: 'EXCEL',
+                onsuccess: function (r) {
+                },
+                onerror: function (data) {
+                    Mi.Modal.alert(data);
+                }
+            });
+
+        }
         function guardar(e, viewHowChanges, actionForNewPoints) {
 
             $('#guardar').attr('disabled', true);
@@ -179,19 +195,22 @@
                                 if (linkHorarios !== '') {
                                     message.eq(2).click(function (e) {
                                         e.preventDefault();
-                                        alert('horario:' + response.idHorarios);
+                                        //alert('horario:' + response.idHorarios);
+                                        generarReporteDuplicados(response.idHorarios);
                                     });
 
                                     if (linkPromedios !== '')
                                         message.eq(4).click(function (e) {
                                             e.preventDefault();
-                                            alert('promedio:' + response.idPromedios);
+                                           // alert('promedio:' + response.idPromedios);
+                                            generarReporteDuplicados(response.idPromedios);
                                         })
                                 } else {
                                     if (linkPromedios !== '')
                                         message.eq(2).click(function (e) {
                                             e.preventDefault();
-                                            alert('promedio' + response.idPromedios);
+                                            //alert('promedio' + response.idPromedios);
+                                            generarReporteDuplicados(response.idPromedios);
                                         })
                                 }
                                     
