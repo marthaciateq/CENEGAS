@@ -100,7 +100,6 @@
                 formData.append("useRange", useRange)
                 formData.append("idsesion", Mi.Cookie.get('SESIONCENEGAS').idsesion);
                 formData.append("viewHowChanges", (typeof (viewHowChanges) === "undefined" ? false : viewHowChanges));
-                formData.append("actionForNewPoints", (typeof (actionForNewPoints) === "undefined" ? "V" : actionForNewPoints));
 
                 formData.append("horarios", horarios);
                 formData.append("promedios", promedios);
@@ -119,7 +118,6 @@
                     success: function (data)   // A function to be called if request succeeds
                     {
                         var r = JSON.parse(data)
-                            , TAG_NEW_POINTS = "VALIDATION_NEW_POINTS:"
                             , TAG_HOW_CHANGE = "VALIDATION_HOW_CHANGE:"
                             , TAG_DUPLICATE_RECORDS = "VALIDATION_DUPLICATE_RECORDS:";
 
@@ -127,45 +125,12 @@
                             buscar();
                         }
                         else {
-                            var hasNewPoints = r.error.indexOf(TAG_NEW_POINTS);
                             var hasHowChange = r.error.indexOf(TAG_HOW_CHANGE);
                             var hasDuplicateRecords = r.error.indexOf(TAG_DUPLICATE_RECORDS);
 
                             var message = null;
 
-                            if (hasNewPoints > 0) {
-                                hasNewPoints = hasNewPoints + TAG_NEW_POINTS.length;
-
-                                message = r.error.substring(hasNewPoints, r.error.length);
-
-                                records = message.split("||");
-
-
-
-                                message = "<tr><th>Punto</th> <th>Nombre Alterno</th> </tr><tr><td>" + records.join("</td></tr><tr><td>") + '</td></tr>';
-
-                                message = message.split("|").join("</td><td>");
-
-
-                                message = '<table width="100%" style="border-collapse:collapse;width:100%"> <caption> Se detectó que los siguientes puntos de muestreo de los archivos CSV no existen en el catálogo de la Base de Datos.</caption>' + message + '<tr><td colspan="2">&nbsp;</td></tr><tr><th colspan="2"> ¿Que acción desea realizar? </th></tr></table>';
-
-                                var params = {};
-
-                                params.content = $(message);
-                                params.buttons = $('<button type="button" class="btn btn-default" data-dismiss="modal">Agregarlos e importar</button><button type="button" class="btn btn-default" data-dismiss="modal">Ignorarlos e importar</button><button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>');
-                                params.buttons.eq(0).click(function () {
-                                    me.guardar(e, false, 'C');  // Crear
-                                });
-
-                                params.buttons.eq(1).click(function () {
-                                    me.guardar(e, false, null); // ignorar
-                                });
-
-
-                                Mi.Modal.modal(params);
-
-                            }
-                            else if (hasHowChange > 0) {
+                            if (hasHowChange > 0) {
                                 hasHowChange = hasHowChange + TAG_HOW_CHANGE.length;
 
                                 var response = $.parseJSON(r.error.substring(hasHowChange, r.error.length));
@@ -176,7 +141,7 @@
                                 message += '<tr><td>' + response.CSVs.promedios + '</td> <td>' + response.inserts.promedios + ' </td> </tr> ';
 
 
-                                message += '<tr><td colspan="2">&nbsp;</td></tr><tr><td colspan="2">NOTA: Los registros de mediciones de los CSV que correspondan a puntos de muestreo que no existen en la Base de Datos NO son considerados en el conteo de inserciones. </td></tr></table>';
+                                message += '</table>';
 
                                 Mi.Modal.alert($(message));
                             }
@@ -243,7 +208,6 @@
         function cargar() {
             $("#formulario").show()
             $("#listado").hide()
-            //$("#registros").hide()
         }
         
         function buscar(fechaInicial, fechaFinal) {
