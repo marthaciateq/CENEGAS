@@ -170,13 +170,13 @@
 
                                 var response = $.parseJSON(r.error.substring(hasHowChange, r.error.length));
 
-                                message = '<table width="100%" style="border-collapse:collapse;border:1px solid #000;width:100%"> <caption>El proceso de importacion de estos CSV realizará las siguientes acciones:</caption><tr> <th>Archivo CSV</th> <th> Inserciones </th> <th> Actualizaciones </th></tr>';
+                                message = '<table width="100%" style="border-collapse:collapse;border:1px solid #000;width:100%"> <caption>El proceso de importacion de estos CSV realizará las siguientes acciones:</caption><tr> <th>Archivo CSV</th> <th> Inserciones </th> </tr>';
 
-                                message += '<tr><td>' + response.CSVs.horarios + '</td> <td>' + response.horarios.inserts + ' </td> <td> ' + response.horarios.updates + '</td></tr> ';
-                                message += '<tr><td>' + response.CSVs.promedios + '</td> <td>' + response.promedios.inserts + ' </td> <td> ' + response.promedios.updates + '</td></tr> ';
+                                message += '<tr><td>' + response.CSVs.horarios + '</td> <td>' + response.inserts.horarios + ' </td> </tr> ';
+                                message += '<tr><td>' + response.CSVs.promedios + '</td> <td>' + response.inserts.promedios + ' </td> </tr> ';
 
 
-                                message += '<tr><td colspan="3">&nbsp;</td></tr><tr><td colspan="3">NOTA: Los registros de mediciones de los CSV que correspondan a puntos de muestreo que no existen en la Base de Datos NO son considerados en el conteo de inserciones/actualizaciones. </td></tr></table>';
+                                message += '<tr><td colspan="2">&nbsp;</td></tr><tr><td colspan="2">NOTA: Los registros de mediciones de los CSV que correspondan a puntos de muestreo que no existen en la Base de Datos NO son considerados en el conteo de inserciones. </td></tr></table>';
 
                                 Mi.Modal.alert($(message));
                             }
@@ -195,21 +195,18 @@
                                 if (linkHorarios !== '') {
                                     message.eq(2).click(function (e) {
                                         e.preventDefault();
-                                        //alert('horario:' + response.idHorarios);
                                         generarReporteDuplicados(response.idHorarios);
                                     });
 
                                     if (linkPromedios !== '')
                                         message.eq(4).click(function (e) {
                                             e.preventDefault();
-                                           // alert('promedio:' + response.idPromedios);
                                             generarReporteDuplicados(response.idPromedios);
                                         })
                                 } else {
                                     if (linkPromedios !== '')
                                         message.eq(2).click(function (e) {
                                             e.preventDefault();
-                                            //alert('promedio' + response.idPromedios);
                                             generarReporteDuplicados(response.idPromedios);
                                         })
                                 }
@@ -461,7 +458,7 @@
 
                 <div id="listado" class="col-sm-10" style="width:100%">
 
-                    <form style="display: none;">
+                    <form>
 
                         <div class="form-group">
                             <label class="control-label col-sm-2">Fecha Inicial:</label>
