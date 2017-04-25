@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" %><% 
+<%@ Page Language="C#" AutoEventWireup="true" %><% 
                                                     
     HttpPostedFile csvHours = (HttpPostedFile)Request.Files["horarios"];
     HttpPostedFile csvSummary = (HttpPostedFile)Request.Files["promedios"];
@@ -7,8 +7,6 @@
 
     bool useRange = bool.Parse(Request.Params["useRange"]);
     bool viewHowChanges = bool.Parse(Request.Params["viewHowChanges"]);
-    
-    string actionForNewPoints = Request.Params["actionForNewPoints"];
     
     DateTime initDate = DateTime.Now;
     DateTime finalDate = initDate;
@@ -21,6 +19,6 @@
     
 
     if (csvHours != null && csvSummary != null)
-        cenegas.clases.importar.import(idsesion, csvHours, csvSummary, useRange, viewHowChanges, actionForNewPoints, initDate, finalDate, Response);
+        cenegas.clases.importar.import(idsesion, csvHours, csvSummary, useRange, viewHowChanges, initDate, finalDate, Response);
                                                                                      
 %>
