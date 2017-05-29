@@ -1,0 +1,17 @@
+Link externo  http://200.33.18.29/tool/
+
+Link dentro de Ciateq http://172.16.4.133/tool/
+
+
+Servidor
+
+Ip: 172.16.5.110
+
+User: Administrator
+Pass: ciateq.mx16
+
+
+Usuario SQL: sa
+Pass: pa$$w0rd
+
+\\C000889\Temp\IAC
