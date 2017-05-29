@@ -1,4 +1,0 @@
-Admin=MSSQL,Data Source=sql5031.smarterasp.net; Initial Catalog=DB_A0ACB1_dietech; User ID=DB_A0ACB1_dietech_admin; Password=DietechSQL6384587; Min Pool Size=3; Max Pool Size=25;
-Default=MSSQL,Data Source=sql5031.smarterasp.net; Initial Catalog=DB_A0ACB1_dietech; User ID=DB_A0ACB1_dietech_admin; Password=DietechSQL6384587; Min Pool Size=3; Max Pool Size=25;
-MRP=MYSQL,Server=mysql5016.smarterasp.net; Port=3306; Database=db_a0acb1_dietech; Uid=a0acb1_dietech; Pwd=Mexic02017;
-SMTP=SMTP,mail.ramaps.net/25/postmaster@ramaps.net/_Rama3023

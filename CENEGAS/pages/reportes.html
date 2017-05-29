@@ -9,7 +9,7 @@
     <script type="text/javascript">
         var files = [];
         var apmuestreo = new Array();
-        function getPuntosMuestreoConInformacion(pmuestreo, reporte,formato) {
+        function getPuntosMuestreoConInformacion(pmuestreo, reporte,formato,separacion) {
             var nombre = 'especificaciones';
             var procedimiento = 'sps_reporte_especificaciones';
             var dfd = $.Deferred();
@@ -32,7 +32,8 @@
                     elementos: $("#idelemento").MiVal(),
                     finicial: $("#finicial").val(),
                     ffinal: $("#ffinal").val(),
-                    resultado:1
+                    resultado: 1,
+                    separacion:separacion
                 },
                 onsuccess: function (r) {
                    dfd.resolve(r);
@@ -45,8 +46,7 @@
             });
             return dfd.promise();
         }
-        function generarReporte(pmuestreo,punto,reporte,formato, ptoFile) {
-           
+        function generarReporte(pmuestreo,punto,elementos,celemento,reporte,formato,separacion,ptoFile) {
             var nombre = 'especificaciones';
             var procedimiento = 'sps_reporte_especificaciones';
             var dfd = $.Deferred();
@@ -62,12 +62,14 @@
                 nombre = 'tendencia';
                 procedimiento = 'sps_reporte_grafico_tendencia'
             }
-            console.log('called processItem');
+
+
+                console.log('called processItem');
                 Mi.Reports.request({
                     data: {
                         NAME: procedimiento,
                         pmuestreo: pmuestreo == "" ? null : pmuestreo,
-                        elementos: $("#idelemento").val()==""?null:$("#idelemento").val(),
+                        elementos: elementos == "" ? null : elementos,
                         finicial: $("#finicial").val() == "" ? null : $("#finicial").val(),
                         ffinal: $("#ffinal").val() == "" ? null : $("#ffinal").val(),
                         formato: formato,
@@ -78,7 +80,7 @@
                     format: formato,
                     toFile: ptoFile,
                     onsuccess: function (data) {
-                        apmuestreo[data] = punto;
+                        apmuestreo[data] = punto+(celemento!=null && separacion=='E'?'-'+celemento:'');
                         files.push(data);
                         dfd.resolve(data);
                     },
@@ -126,25 +128,26 @@
 
                      var formato = $("#formato:checked").val();
                      var reporte = $("#reporte:checked").val();
+                     var separacion = $("#separacion:checked").val();
 
-                     if (formato == 'PDF' && (reporte == 'G' || reporte == 'D' || reporte == 'T')) {
+                     if ( (formato == 'PDF' && (reporte == 'G' || reporte == 'D' || reporte == 'T') ) || (formato=='EXCEL' && separacion=='E') ) {
 
                         var processItemsDeferred = [];
                         $('#bgenerar').attr('disabled', true);
 
                         var error = false;
-
-                        $.when(getPuntosMuestreoConInformacion($("#idpmuestreo").val(),reporte,formato)).then(function (data) {
+                        $.when(getPuntosMuestreoConInformacion($("#idpmuestreo").val(),reporte,formato,separacion)).then(function (data) {
 
                             if (data.length != 0) {
 
                                 Mi.Modal.showPleaseWait();
+                                var pmuestreo = null;
                                 $.each(data, function (index, value) {
-                                    processItemsDeferred.push(generarReporte(value.idpmuestreo, value.pmuestreo, reporte, formato, 'S'));
+                                    pmuestreo = value;
+                                    processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, pmuestreo.pmuestreo, pmuestreo.idelemento,pmuestreo.celemento,reporte, formato,separacion,'S'));
                                 });
 
                                 $.when.apply($, processItemsDeferred).then(function () {
-
                                     if (error) return;
 
                                     var formData = new FormData();
@@ -169,6 +172,10 @@
                                             frm01.appendChild(input2);
                                         }
                                     });
+                                    input3 = document.createElement('input');
+                                    input3.name = "formato";
+                                    input3.value = formato;
+                                    frm01.appendChild(input3);
                                     frm01.submit();
                                     document.body.removeChild(frm01);
                                     $('#bgenerar').attr('disabled', false);
@@ -183,7 +190,7 @@
                         });
                     } 
                     else {
-                        generarReporte($("#idpmuestreo").val(), null, reporte, formato);
+                         generarReporte($("#idpmuestreo").val(), null, $("#idelemento").val(),null,reporte, formato,separacion);
                    }
                 });
 
@@ -243,6 +250,13 @@
                         <div id="divFormatos" class="col-sm-4">
                             <label class="radio-inline"><input type="radio" id="formato" name="optradio2" value="EXCEL" checked="checked" />EXCEL</label>
                             <label class="radio-inline"><input type="radio" id="formato" name="optradio2" value="PDF" />PDF</label>
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Separación del Reporte:</label>
+                        <div id="divFormatos" class="col-sm-4">
+                            <label class="radio-inline"><input type="radio" id="separacion" name="optradio3" value="P" checked="checked" />Punto de Muestreo</label>
+                            <label class="radio-inline"><input type="radio" id="separacion" name="optradio3" value="E" />Elemento</label>
                         </div>
                     </div>
                     <div class="form-group clearfix">
