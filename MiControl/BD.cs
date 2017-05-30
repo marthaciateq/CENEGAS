@@ -308,8 +308,6 @@ namespace Mi
 												if (!dataSet.Tables[tableIndex].Rows[i].IsNull(dataFromColumn))
 												{
 													fromColumnValue = (String)dataSet.Tables[tableIndex].Rows[i].ItemArray[dataFromColumn.Ordinal];
-													if (rowSpecifications[3] == "Code39") dataSet.Tables[tableIndex].Rows[i].SetField(dataToColumn, BarCode.Code39(fromColumnValue));
-													else if (rowSpecifications[3] == "Pdf417") dataSet.Tables[tableIndex].Rows[i].SetField(dataToColumn, BarCode.Pdf417(fromColumnValue));
 												}
 										}
 								}

@@ -42,9 +42,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Otros\Librerias\Microsoft.ReportViewer.WebForms.DLL</HintPath>
     </Reference>
-    <Reference Include="Spire.Barcode">
-      <HintPath>C:\Program Files (x86)\e-iceblue\Spire.Barcode\Bin\NET4.0\Spire.Barcode.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -58,7 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AJAX.cs" />
-    <Compile Include="BarCode.cs" />
     <Compile Include="BD.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Files.cs" />
