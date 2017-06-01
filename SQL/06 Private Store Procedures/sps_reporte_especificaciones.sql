@@ -76,6 +76,7 @@ BEGIN
 					a.nalterno,
 					a.elemento descripcion,
 					a.promedio,
+					a.celemento,
 					a.zona,
 					case 
 						when a.zona='S' then 'SUR' 
@@ -100,6 +101,7 @@ BEGIN
 					a.nalterno,
 					a.elemento descripcion,
 					a.promedio,
+					a.celemento,
 					a.zona,
 					case 
 						when a.zona='S' then 'SUR' 
@@ -108,12 +110,13 @@ BEGIN
 					@formato formato,
 					@finicial finicial,
 					@ffinal ffinal,
-					@reporte reporte
+					@reporte reporte,
+					ROW_NUMBER() OVER(PARTITION BY a.nalterno ORDER BY a.nalterno,a.celemento,a.fecha,b.fecha) as nrow
 				from #fespecificacion a
 					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
 						and a.idelemento=b.idelemento 
 						and b.fecha<=a.rango and b.fecha>=a.fcorte
-				order by a.nalterno,a.fecha,b.fecha
+				order by a.nalterno,a.celemento,a.fecha,b.fecha
 				
 		
 				--GENERAR ENCABEZADOS DINAMICOS
