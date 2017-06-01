@@ -1,4 +1,4 @@
-CREATE PROCEDURE sps_reporte_rduplicados
+ALTER PROCEDURE sps_reporte_rduplicados
 	@idsesion varchar(max),
 	@idbdatos varchar(max)
 AS
@@ -12,8 +12,12 @@ BEGIN
 		execute sp_servicios_validar @idsesion, @@PROCID, @idusuarioSESION output
 		if @idbdatos is null execute sp_error 'U','Favor de seleccionar una base de datos'
 		
-		select * from importacionesRegistrosDuplicados a
+		select 
+			a.*,
+			dbo.fn_dateToString(a.fecha) fechaS
+		from importacionesRegistrosDuplicados a
 			where a.idbdatos=@idbdatos
+		order by fecha
 			
 	end try
 	begin catch

@@ -14,4 +14,17 @@ Pass: ciateq.mx16
 Usuario SQL: sa
 Pass: pa$$w0rd
 
-\\C000889\Temp\IAC
+
+1.	El usuario local para la implementación será el siguiente: 
+Usuario: amdlocalext  
+Contraseña:  3xT-Cen420161
+ 
+2.	La dirección IP para acceso (solo para la implementación) es: 40.71.83.95, para entrar por escritorio remoto (RDP).
+ 
+3.	La implementación del sitio web deberá realizarse sobre la carpeta C:\WEBApps\Calidadgasnatural y el sitio WEB configurado es CalidadGasNatural, ambos como se muestran en las siguientes imágenes.
+
+
+cenagasAdmin contraseña: Externo2017
+cenagasDefault contraseña: Acceso2017
+
+

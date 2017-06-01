@@ -6,7 +6,8 @@ ALTER PROCEDURE sps_reporte_especificaciones
 	@ffinal varchar(max),
 	@formato varchar(max),
 	@resultado int, --(1) Solo puntos de muestreo que cuentan con información fuera de especificacion (2) Informacion completa
-	@reporte varchar(max) -- (G) General (D) detalle 
+	@reporte varchar(max), -- (G) General (D) detalle 
+	@separacion char(1) -- (P) Punto de Muestreo, (E) Elemento
 AS
 BEGIN
 	declare @error varchar(max)
@@ -58,12 +59,23 @@ BEGIN
 			
 		if @resultado=1
 		begin
-			select 
-				distinct idpmuestreo,
-				punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo
-			from 
-				#fespecificacion
-		end	
+			if @separacion='P'
+				select 
+					distinct idpmuestreo,
+					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
+					null as idelemento,
+					null as descripcion
+				from 
+					#fespecificacion
+			else
+				select 
+					distinct idpmuestreo,
+					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
+					idelemento,
+					celemento
+				from 
+					#fespecificacion
+		end
 		else
 		begin
 			if(@reporte='G')
