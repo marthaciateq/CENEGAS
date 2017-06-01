@@ -6,7 +6,7 @@ ALTER PROCEDURE sps_reporte_especificaciones
 	@ffinal varchar(max),
 	@formato varchar(max),
 	@resultado int, --(1) Solo puntos de muestreo que cuentan con información fuera de especificacion (2) Informacion completa
-	@reporte char(1), -- (G) General (D) detalle 
+	@reporte varchar(max), -- (G) General (D) detalle 
 	@separacion char(1) -- (P) Punto de Muestreo, (E) Elemento
 AS
 BEGIN
@@ -74,8 +74,8 @@ BEGIN
 					idelemento,
 					celemento
 				from 
-					#fespecificacion				
-		end	
+					#fespecificacion
+		end
 		else
 		begin
 			if(@reporte='G')
@@ -104,8 +104,8 @@ BEGIN
 				select 
 					a.idpmuestreo,
 					a.idelemento,	
-					a.fecha,		
-					dbo.fn_datetimeToString(a.fecha,2) fechaS,
+					b.fecha,		
+					dbo.fn_datetimeToString(b.fecha,2) fechaS,
 					b.valor,
 					convert(date,a.fecha) fpromedio,	
 					dbo.fn_dateToString(convert(date,a.fecha)) fpromedioS,						
@@ -122,12 +122,13 @@ BEGIN
 					@formato formato,
 					@finicial finicial,
 					@ffinal ffinal,
-					@reporte reporte
+					@reporte reporte,
+					ROW_NUMBER() OVER(PARTITION BY a.nalterno ORDER BY a.nalterno,a.celemento,a.fecha,b.fecha) as nrow
 				from #fespecificacion a
 					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
 						and a.idelemento=b.idelemento 
 						and b.fecha<=a.rango and b.fecha>=a.fcorte
-				order by a.nalterno,a.fecha,b.fecha
+				order by a.nalterno,a.celemento,a.fecha,b.fecha
 				
 		
 				--GENERAR ENCABEZADOS DINAMICOS
