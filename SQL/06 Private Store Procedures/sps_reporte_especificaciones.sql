@@ -1,4 +1,4 @@
-ALTER PROCEDURE sps_reporte_especificaciones
+CREATE PROCEDURE sps_reporte_especificaciones
 	@idsesion varchar(max),
 	@pmuestreo varchar(max),
 	@elementos varchar(max),
@@ -6,8 +6,7 @@ ALTER PROCEDURE sps_reporte_especificaciones
 	@ffinal varchar(max),
 	@formato varchar(max),
 	@resultado int, --(1) Solo puntos de muestreo que cuentan con información fuera de especificacion (2) Informacion completa
-	@reporte varchar(max), -- (G) General (D) detalle 
-	@separacion char(1) -- (P) Punto de Muestreo, (E) Elemento
+	@reporte varchar(max) -- (G) General (D) detalle 
 AS
 BEGIN
 	declare @error varchar(max)
@@ -59,23 +58,12 @@ BEGIN
 			
 		if @resultado=1
 		begin
-			if @separacion='P'
-				select 
-					distinct idpmuestreo,
-					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
-					null as idelemento,
-					null as descripcion
-				from 
-					#fespecificacion
-			else
-				select 
-					distinct idpmuestreo,
-					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
-					idelemento,
-					celemento
-				from 
-					#fespecificacion
-		end
+			select 
+				distinct idpmuestreo,
+				punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo
+			from 
+				#fespecificacion
+		end	
 		else
 		begin
 			if(@reporte='G')
@@ -88,7 +76,6 @@ BEGIN
 					a.nalterno,
 					a.elemento descripcion,
 					a.promedio,
-					a.celemento,
 					a.zona,
 					case 
 						when a.zona='S' then 'SUR' 
@@ -113,7 +100,6 @@ BEGIN
 					a.nalterno,
 					a.elemento descripcion,
 					a.promedio,
-					a.celemento,
 					a.zona,
 					case 
 						when a.zona='S' then 'SUR' 
@@ -122,13 +108,12 @@ BEGIN
 					@formato formato,
 					@finicial finicial,
 					@ffinal ffinal,
-					@reporte reporte,
-					ROW_NUMBER() OVER(PARTITION BY a.nalterno ORDER BY a.nalterno,a.celemento,a.fecha,b.fecha) as nrow
+					@reporte reporte
 				from #fespecificacion a
 					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
 						and a.idelemento=b.idelemento 
 						and b.fecha<=a.rango and b.fecha>=a.fcorte
-				order by a.nalterno,a.celemento,a.fecha,b.fecha
+				order by a.nalterno,a.fecha,b.fecha
 				
 		
 				--GENERAR ENCABEZADOS DINAMICOS
