@@ -52,7 +52,7 @@
             var dfd = $.Deferred();
 
             if ($("#finicial").val() == "") { Mi.Modal.alert("Favor de capturar fecha inicial"); $('#bgenerar').attr('disabled', false);  return }
-            if ($("#ffinal").val() == "") { Mi.Modal.alert("Favor de capturar fecha final"); $('#bgenerar').attr('disabled', false);  return }
+            if ($("#ffinal").val() == "") { Mi.Modal.alert("Favor de capturar fecha final"); $('#bgenerar').attr('disabled', false); return }
 
             if (reporte == 'F') {
                 nombre = 'falta_informacion';
@@ -61,6 +61,10 @@
             else if (reporte == 'T') {
                 nombre = 'tendencia';
                 procedimiento = 'sps_reporte_grafico_tendencia'
+            }
+            else{
+                if(formato=='EXCEL')
+                    nombre = 'especificaciones_excel'; 
             }
 
 
