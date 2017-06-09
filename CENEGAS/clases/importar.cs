@@ -41,69 +41,50 @@ namespace cenegas.clases
         public static void import(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool useRange, bool viewHowChanges, DateTime initDate, DateTime finalDate, HttpResponse response)
         {
             Dictionary<string, object> result = new Dictionary<string, object>();
-            //System.Globalization.CultureInfo beforeCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+            TimeSpan ts;
+            DateTime start = DateTime.Now;
+
+            result.Add("elapsed", null);
            
             try
             {
-                //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("es-MX");
 
-                result.Add("success", true);
+                result["success"] = true;
+                
                 
                 importCSVFile(idsesion, csvHours, csvSummary, useRange, viewHowChanges, initDate, finalDate);
+
+                ts = DateTime.Now - start;
+                result["elapsed"] = ts.ToString();
 
                 response.Output.Write(JSON.Serialize(result));
             }
             catch (Exception e)
             {
-                //ts = DateTime.Now - start;
-                //result.Add("elapsed", ts.ToString());
-
                 result["success"] = false;
+
+                ts = DateTime.Now - start;
+                result["elapsed"] = ts.ToString();
 
                 result.Add("error", e.Message);
 
                 response.Output.Write(JSON.Serialize(result));
             }
-            //finally{
-            //    System.Threading.Thread.CurrentThread.CurrentCulture = beforeCulture;
-            //}
-          
+
 
         }
 
 
-        public static void Convert<T>(this DataColumn column, Func<object, T> conversion)
-        {
-            int index = 0;
-            foreach (DataRow row in column.Table.Rows)
-            {
-
-                index++;
-                if (row[column].ToString().Length > 0)
-                {
-                    row[column] = conversion(row[column]);
-
-
-                }
-            }
-        }
-
-
-        public static void Parse<T>(this DataColumn column) {
-            foreach (DataRow row in column.Table.Rows) {
-                row["fecha2"] = DateTime.Parse(row[column].ToString());
-            }
-        }
 
         // Recibe un archivo CSV e importa sus registros a una tabla del servidor *
         private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool useRange, bool viewHowChanges, DateTime? initDate, DateTime? finalDate)
         {
-            //const decimal _byte = 8; // bits
             const double KB = 1024.0;
             const double MB = KB * 1024.0;
             double FILE_MAX_LENGTH = MB * double.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]);
-            int MAX_COLUMNS = 0;
-            int index = 0;
+            
+
+            int activeElements = 0;
 
             string hoursPath = "";
             string summaryPath  = "";
@@ -155,11 +136,15 @@ namespace cenegas.clases
                 summaryName = System.IO.Path.GetFileName(summaryPath);
 
 
+                activeElements = getActiveElements();
+
+
                 recordsByHour.Columns.Add("punto");
                 recordsByHour.Columns.Add("nombreAlterno");
                 recordsByHour.Columns.Add("fecha");
                 recordsByHour.Columns.Add("fecha2");
                 recordsByHour.Columns["fecha2"].DataType = typeof(DateTime);
+
                 recordsByHour.Columns.Add("metano");
                 recordsByHour.Columns["metano"].DataType = typeof(double);
 
@@ -183,7 +168,10 @@ namespace cenegas.clases
 
                 recordsByHour.Columns.Add("acidoSulfhidrico");
                 recordsByHour.Columns["acidoSulfhidrico"].DataType = typeof(double);
-
+                recordsByHour.Columns.Add("azufreTotal");
+                recordsByHour.Columns["azufreTotal"].DataType = typeof(double);
+                recordsByHour.Columns.Add("oxigeno");
+                recordsByHour.Columns["oxigeno"].DataType = typeof(double);
                
 
 
@@ -194,39 +182,45 @@ namespace cenegas.clases
                 summaryOfRecords.Columns.Add("fecha2");
                 summaryOfRecords.Columns["fecha2"].DataType = typeof(DateTime);
                 summaryOfRecords.Columns.Add("metano");
+                summaryOfRecords.Columns["metano"].DataType = typeof(double);
 
                 summaryOfRecords.Columns.Add("bioxidoCarbono");
+                summaryOfRecords.Columns["bioxidoCarbono"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("nitrogeno");
+                summaryOfRecords.Columns["nitrogeno"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("totalInertes");
+                summaryOfRecords.Columns["totalInertes"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("etano");
+                summaryOfRecords.Columns["etano"].DataType = typeof(double);
 
                 summaryOfRecords.Columns.Add("tempRocio");
+                summaryOfRecords.Columns["tempRocio"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("humedad");
+                summaryOfRecords.Columns["humedad"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("poderCalorifico");
+                summaryOfRecords.Columns["poderCalorifico"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("indiceWoobe");
+                summaryOfRecords.Columns["indiceWoobe"].DataType = typeof(double);
 
                 summaryOfRecords.Columns.Add("acidoSulfhidrico");
-                
+                summaryOfRecords.Columns["acidoSulfhidrico"].DataType = typeof(double);
+                summaryOfRecords.Columns.Add("azufreTotal");
+                summaryOfRecords.Columns["azufreTotal"].DataType = typeof(double);
+                summaryOfRecords.Columns.Add("oxigeno");
+                summaryOfRecords.Columns["oxigeno"].DataType = typeof(double);
 
 
-                
-
-                readCSV(hoursPath, ref recordsByHour);
-
-                readCSV(summaryPath, ref summaryOfRecords);
-
-            
+                readCSV(hoursPath, ref recordsByHour, activeElements);
+                readCSV(summaryPath, ref summaryOfRecords, activeElements);
 
                 foreach (DataRow row in recordsByHour.Rows)
                 {
                     row["fecha2"] = DateTime.Parse(row["fecha"].ToString());
-               
                }
 
                 foreach (DataRow row in summaryOfRecords.Rows)
                 {
                     row["fecha2"] = DateTime.Parse(row["fecha"].ToString());
-
                 }
 
 
@@ -237,37 +231,7 @@ namespace cenegas.clases
                 summaryOfRecords.Columns["fecha2"].ColumnName = "fecha";
 
 
-
-
-                if (recordsByHour.Columns.Count > 12)
-                {
-
-                    MAX_COLUMNS = recordsByHour.Columns.Count - 1;
-                    index = MAX_COLUMNS;
-
-                    for (index = MAX_COLUMNS; index > 12; index--)
-                    {
-                        recordsByHour.Columns.Remove(recordsByHour.Columns[index]);
-                    }
-                }
-
-
-                if (summaryOfRecords.Columns.Count > 12)
-                {
-
-                    MAX_COLUMNS = summaryOfRecords.Columns.Count - 1;
-                    index = MAX_COLUMNS;
-
-                    for (index = MAX_COLUMNS; index > 12; index--)
-                    {
-                        summaryOfRecords.Columns.Remove(summaryOfRecords.Columns[index]);
-                    }
-                }
-
-
                 // Filtrar por rango de fechas
-
-
                 if (useRange) {
                     // Se agrega un dia unicamente para hacer la comparación de registros < a fechaFinal
                     finalDate = ((DateTime)finalDate).AddDays(1);
@@ -302,7 +266,6 @@ namespace cenegas.clases
 
 
                 }
-
 
                 originalHoursName = csvHours.FileName;
                 originalSummaryName = csvSummary.FileName;
@@ -361,7 +324,7 @@ namespace cenegas.clases
             }
         }
 
-        private static object evalNull(string value) {
+        private static object evalDouble(string value) {
             object response = DBNull.Value;
 
             if (value.Length > 0)
@@ -370,8 +333,17 @@ namespace cenegas.clases
             return response;
         }
 
+        private static object evalDate(string value)
+        {
+            object response = DBNull.Value;
 
-        private static void readCSV(string pathFile, ref DataTable dt){
+            if (value.Length > 0)
+                response = value.ToUpper().Replace(" A.M.", "").Replace(" P.M.", "").Replace("A.M.", "").Replace("P.M.", "");
+
+            return response;
+        }
+
+        private static void readCSV(string pathFile, ref DataTable dt, int activeElements){
             DateTime hoy = DateTime.Now;
 
             try
@@ -383,78 +355,54 @@ namespace cenegas.clases
                     int fieldCount = csv.FieldCount;
 
                     string[] headers = csv.GetFieldHeaders();
-                    while (csv.ReadNextRecord())
+
+                    if (activeElements == 10)
                     {
-
-                        dt.Rows.Add(csv[0], csv[1], csv[3], hoy
-                            , evalNull(csv[4])
-                            , evalNull(csv[5])
-                            , evalNull(csv[6])
-                            , evalNull(csv[7])
-                            , evalNull(csv[8])
-                            , evalNull(csv[9])
-                            , evalNull(csv[10])
-                            , evalNull(csv[11])
-                            , evalNull(csv[12]));
-
+                        while (csv.ReadNextRecord())
+                        {
+                            dt.Rows.Add(csv[0], csv[1], evalDate(csv[3]), hoy
+                                , evalDouble(csv[4])
+                                , evalDouble(csv[5])
+                                , evalDouble(csv[6])
+                                , evalDouble(csv[7])
+                                , evalDouble(csv[8])
+                                , evalDouble(csv[9])
+                                , evalDouble(csv[10])
+                                , evalDouble(csv[11])
+                                , evalDouble(csv[12])
+                                , evalDouble(csv[13])
+                                );
+                        }
+                    }
+                    else if (activeElements == 12)
+                    {
+                        while (csv.ReadNextRecord())
+                        {
+                            dt.Rows.Add(csv[0], csv[1], evalDate(csv[3]), hoy
+                                        , evalDouble(csv[4])
+                                        , evalDouble(csv[5])
+                                        , evalDouble(csv[6])
+                                        , evalDouble(csv[7])
+                                        , evalDouble(csv[8])
+                                        , evalDouble(csv[9])
+                                        , evalDouble(csv[10])
+                                        , evalDouble(csv[11])
+                                        , evalDouble(csv[12])
+                                        , evalDouble(csv[13])
+                                        , evalDouble(csv[14])
+                                        , evalDouble(csv[15])
+                                        );
+                        }
 
                     }
+                   
                 }
             }catch( Exception e){
                 throw(e);
             }
         }
 
-        // Lee los datos de un archivo CSV y los vuelca en un DataTable
-        private static void csvToDataTable(string pathFile, string query, ref DataTable dt)
-        {
-            ////// NOTAS IMPORTANTES: 
-            //////- Para poder utilizar el driver Microsoft.Jet.OLEDB.4.0; o el Microsoft.ACE.OLEDB.12.0;
-            //////- es necesario configurar el Pool de Aplicaciones de IIS para habilitar las aplicaciones de 32 bits, 
-            //////- IIS > Application Pools > DefaultAppPool > Advanced Settings > Enable 32-Bit Applications 
-            //////-      Cambiar el valor a TRUE
-
-            //System.Globalization.CultureInfo beforeCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
-
-            try
-            {
-                string path = System.IO.Path.GetDirectoryName(pathFile);
-
-                ////Guardamos el tiempo antes del proceso a cronometrar
-                //DateTime tiempoinicial = DateTime.Now;
-
-
-
-                //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("es-MX");
-
-                using (OleDbConnection conn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source='" + path + "';Extended Properties='text;HDR=No;IMEX=1;FMT=Delimited'"))
-                {
-
-                    OleDbDataAdapter da = new OleDbDataAdapter(query, conn);
-                    da.Fill(dt);
-                }
-
-                //System.Threading.Thread.CurrentThread.CurrentCulture = beforeCulture;
-
-                ////Guardamos el tiempo al finalizar todas las instrucciones
-                //DateTime tiempofinal = DateTime.Now;
-
-                ////Creamos el intervalo de tiempo con una resta
-                //TimeSpan total = new TimeSpan(tiempofinal.Ticks - tiempoinicial.Ticks);
-
-                ////Mostramos por pantalla el tiempo que ha tardado el proceso
-                //System.Console.WriteLine(total.ToString());
-            }
-            catch (Exception e)
-            {
-
-                throw (e);
-            }
-            //finally
-            //{
-            //    System.Threading.Thread.CurrentThread.CurrentCulture = beforeCulture;
-            //}
-        }
+     
 
         // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
         private static void saveRecords(string idsesion, bool useRange, bool viewHowChanges
@@ -464,7 +412,6 @@ namespace cenegas.clases
                                         , DateTime? initDate, DateTime? finalDate
                                         )
         {
-
 
             SqlConnection adminConnection = BD.Connection("Admin");
 
@@ -643,6 +590,54 @@ namespace cenegas.clases
                 string narchivo = (string)dr["narchivo"];
 
                 return narchivo;
+
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
+            finally
+            {
+                if (cnn != null)
+                {
+                    if (cnn.State == ConnectionState.Open)
+                    {
+                        cnn.Close();
+                        cnn.Dispose();
+                    }
+                }
+
+            }
+
+
+        }
+
+
+
+
+        // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
+        public static int getActiveElements()
+        {
+            SqlConnection cnn = new SqlConnection();
+            SqlCommand cmd = new SqlCommand();
+
+            object activeElements = 0;
+            try
+            {
+
+                cnn = BD.Connection();
+
+                cmd.Parameters.Add("@deleted", SqlDbType.VarChar);
+                cmd.Parameters["@deleted"].Value = "N";
+
+                cmd.Connection = cnn;
+                cmd.CommandTimeout = 180;
+                cmd.CommandText = "spp_elementos_elementosActivos";
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                activeElements = cmd.ExecuteScalar();
+
+                return (int)activeElements;
 
             }
             catch (Exception e)
