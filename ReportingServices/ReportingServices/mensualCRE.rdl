@@ -88,6 +88,10 @@
           <DataField>fpromedioS</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="zonaS">
+          <DataField>zonaS</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -99,12 +103,12 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>30.39937cm</Width>
+                  <Width>29.60562cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>11.84246cm</Height>
+                  <Height>10.25496cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -114,10 +118,10 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>2.5cm</Width>
+                                    <Width>2.18249cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>3.53188cm</Width>
+                                    <Width>3.05563cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
                                     <Width>21.8675cm</Width>
@@ -128,7 +132,7 @@
                                 </TablixColumns>
                                 <TablixRows>
                                   <TablixRow>
-                                    <Height>0.97042cm</Height>
+                                    <Height>1.12917cm</Height>
                                     <TablixCells>
                                       <TablixCell>
                                         <CellContents>
@@ -141,6 +145,8 @@
                                                   <TextRun>
                                                     <Value />
                                                     <Style>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>12pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
@@ -156,7 +162,9 @@
                                                 <Color>LightGrey</Color>
                                                 <Style>None</Style>
                                               </Border>
-                                              <BackgroundColor>LightBlue</BackgroundColor>
+                                              <BackgroundColor>=iif(Fields!grupo.Value="grupo1","#f8cbad",
+	iif(Fields!grupo.Value="grupo2","#bdd7ee","#c6e0b4")
+)</BackgroundColor>
                                               <PaddingLeft>2pt</PaddingLeft>
                                               <PaddingRight>2pt</PaddingRight>
                                               <PaddingTop>2pt</PaddingTop>
@@ -174,8 +182,12 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>INFORME MENSUAL SOBRE LAS ESPECIFICACIONES DEL GAS NATURAL</Value>
+                                                    <Value>="INFORME MENSUAL SOBRE LAS ESPECIFICACIONES DEL GAS NATURAL"  + Environment.Newline + iif(Fields!grupo.Value="grupo1","Registros máximos diarios",
+	iif(Fields!grupo.Value="grupo2","Valores promedios diarios","Registros minimos diarios")
+)</Value>
                                                     <Style>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>12pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
@@ -191,7 +203,9 @@
                                                 <Color>LightGrey</Color>
                                                 <Style>None</Style>
                                               </Border>
-                                              <BackgroundColor>LightBlue</BackgroundColor>
+                                              <BackgroundColor>=iif(Fields!grupo.Value="grupo1","#f8cbad",
+	iif(Fields!grupo.Value="grupo2","#bdd7ee","#c6e0b4")
+)</BackgroundColor>
                                               <PaddingLeft>2pt</PaddingLeft>
                                               <PaddingRight>2pt</PaddingRight>
                                               <PaddingTop>2pt</PaddingTop>
@@ -204,149 +218,16 @@
                                       <TablixCell />
                                       <TablixCell>
                                         <CellContents>
-                                          <Textbox Name="Textbox71">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value />
-                                                    <Style>
-                                                      <FontWeight>Bold</FontWeight>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style>
-                                                  <TextAlign>Center</TextAlign>
-                                                </Style>
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox71</rd:DefaultName>
+                                          <Image Name="Image1">
+                                            <Source>Embedded</Source>
+                                            <Value>cre</Value>
+                                            <Sizing>FitProportional</Sizing>
                                             <Style>
                                               <Border>
-                                                <Color>LightGrey</Color>
                                                 <Style>None</Style>
                                               </Border>
-                                              <BackgroundColor>LightBlue</BackgroundColor>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
-                                          </Textbox>
-                                        </CellContents>
-                                      </TablixCell>
-                                    </TablixCells>
-                                  </TablixRow>
-                                  <TablixRow>
-                                    <Height>0.6cm</Height>
-                                    <TablixCells>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Textbox Name="Textbox96">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value />
-                                                    <Style>
-                                                      <FontSize>9pt</FontSize>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style>
-                                                  <TextAlign>Center</TextAlign>
-                                                </Style>
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox96</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>None</Style>
-                                              </Border>
-                                              <BackgroundColor>LightBlue</BackgroundColor>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
-                                        </CellContents>
-                                      </TablixCell>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Textbox Name="Textbox80">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value>=iif(Fields!grupo.Value="grupo1","Valores máximos diarios",
-	iif(Fields!grupo.Value="grupo2","Valores promedios diarios","Valores minimos diarios")
-)</Value>
-                                                    <Style />
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style>
-                                                  <TextAlign>Center</TextAlign>
-                                                </Style>
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox80</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>None</Style>
-                                              </Border>
-                                              <BackgroundColor>LightBlue</BackgroundColor>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
-                                          <ColSpan>2</ColSpan>
-                                        </CellContents>
-                                      </TablixCell>
-                                      <TablixCell />
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Textbox Name="Textbox72">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value />
-                                                    <Style>
-                                                      <FontSize>9pt</FontSize>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style>
-                                                  <TextAlign>Center</TextAlign>
-                                                </Style>
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox72</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>None</Style>
-                                              </Border>
-                                              <BackgroundColor>LightBlue</BackgroundColor>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
+                                          </Image>
                                         </CellContents>
                                       </TablixCell>
                                     </TablixCells>
@@ -365,7 +246,8 @@
                                                   <TextRun>
                                                     <Value />
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
@@ -400,7 +282,8 @@
                                                   <TextRun>
                                                     <Value />
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
@@ -435,7 +318,8 @@
                                                   <TextRun>
                                                     <Value />
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -469,7 +353,8 @@
                                                   <TextRun>
                                                     <Value />
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -506,15 +391,16 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>PERMISIONARIO:</Value>
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
-                                                  <TextAlign>Center</TextAlign>
+                                                  <TextAlign>Right</TextAlign>
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
@@ -530,43 +416,10 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
+                                          <ColSpan>2</ColSpan>
                                         </CellContents>
                                       </TablixCell>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Textbox Name="Textbox81">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value>PERMISIONARIO:</Value>
-                                                    <Style>
-                                                      <FontSize>9pt</FontSize>
-                                                      <FontWeight>Bold</FontWeight>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style>
-                                                  <TextAlign>Center</TextAlign>
-                                                </Style>
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox81</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>None</Style>
-                                              </Border>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
-                                        </CellContents>
-                                      </TablixCell>
+                                      <TablixCell />
                                       <TablixCell>
                                         <CellContents>
                                           <Textbox Name="Textbox88">
@@ -578,19 +431,20 @@
                                                   <TextRun>
                                                     <Value>PEMEX Gas  y Petroquimica Básica</Value>
                                                     <Style>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
-                                                  <TextAlign>Center</TextAlign>
+                                                  <TextAlign>Left</TextAlign>
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox88</rd:DefaultName>
                                             <Style>
                                               <Border>
-                                                <Color>LightGrey</Color>
                                                 <Style>None</Style>
                                               </Border>
                                               <BottomBorder>
@@ -615,7 +469,8 @@
                                                   <TextRun>
                                                     <Value />
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -652,15 +507,16 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>PUNTO DE MEDICIÓN:</Value>
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
-                                                  <TextAlign>Center</TextAlign>
+                                                  <TextAlign>Right</TextAlign>
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
@@ -676,43 +532,10 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
+                                          <ColSpan>2</ColSpan>
                                         </CellContents>
                                       </TablixCell>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Textbox Name="Textbox82">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value>PUNTO DE MEDICIÓN:</Value>
-                                                    <Style>
-                                                      <FontSize>9pt</FontSize>
-                                                      <FontWeight>Bold</FontWeight>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style>
-                                                  <TextAlign>Center</TextAlign>
-                                                </Style>
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox82</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>None</Style>
-                                              </Border>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
-                                        </CellContents>
-                                      </TablixCell>
+                                      <TablixCell />
                                       <TablixCell>
                                         <CellContents>
                                           <Textbox Name="pmuestreo">
@@ -724,20 +547,20 @@
                                                   <TextRun>
                                                     <Value>=Fields!pmuestreo.Value</Value>
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
-                                                  <TextAlign>Center</TextAlign>
+                                                  <TextAlign>Left</TextAlign>
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>pmuestreo</rd:DefaultName>
                                             <Style>
                                               <Border>
-                                                <Color>LightGrey</Color>
                                                 <Style>None</Style>
                                               </Border>
                                               <BottomBorder>
@@ -762,7 +585,8 @@
                                                   <TextRun>
                                                     <Value />
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -799,15 +623,16 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>ZONA DE MEDICIÓN:</Value>
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                       <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
-                                                  <TextAlign>Center</TextAlign>
+                                                  <TextAlign>Right</TextAlign>
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
@@ -823,43 +648,10 @@
                                               <PaddingBottom>2pt</PaddingBottom>
                                             </Style>
                                           </Textbox>
+                                          <ColSpan>2</ColSpan>
                                         </CellContents>
                                       </TablixCell>
-                                      <TablixCell>
-                                        <CellContents>
-                                          <Textbox Name="Textbox83">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value>ZONA DE MEDICIÓN:</Value>
-                                                    <Style>
-                                                      <FontSize>9pt</FontSize>
-                                                      <FontWeight>Bold</FontWeight>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style>
-                                                  <TextAlign>Center</TextAlign>
-                                                </Style>
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox83</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>None</Style>
-                                              </Border>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
-                                        </CellContents>
-                                      </TablixCell>
+                                      <TablixCell />
                                       <TablixCell>
                                         <CellContents>
                                           <Textbox Name="Textbox75">
@@ -869,21 +661,22 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value />
+                                                    <Value>=Fields!zonaS.Value</Value>
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
+                                                      <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
                                                 <Style>
-                                                  <TextAlign>Center</TextAlign>
+                                                  <TextAlign>Left</TextAlign>
                                                 </Style>
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox75</rd:DefaultName>
                                             <Style>
                                               <Border>
-                                                <Color>LightGrey</Color>
                                                 <Style>None</Style>
                                               </Border>
                                               <BottomBorder>
@@ -908,7 +701,8 @@
                                                   <TextRun>
                                                     <Value />
                                                     <Style>
-                                                      <FontSize>9pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>11pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -950,12 +744,11 @@
                                   <TablixMember />
                                   <TablixMember />
                                   <TablixMember />
-                                  <TablixMember />
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DataSet1</DataSetName>
-                              <Height>3.97042cm</Height>
-                              <Width>30.39938cm</Width>
+                              <Height>3.52917cm</Height>
+                              <Width>29.60562cm</Width>
                               <Style>
                                 <Border>
                                   <Style>None</Style>
@@ -975,8 +768,24 @@
                                             <Paragraph>
                                               <TextRuns>
                                                 <TextRun>
-                                                  <Value>Fecha</Value>
+                                                  <Value>FECHA:</Value>
                                                   <Style>
+                                                    <FontFamily>Calibri</FontFamily>
+                                                    <FontSize>9pt</FontSize>
+                                                    <FontWeight>Bold</FontWeight>
+                                                  </Style>
+                                                </TextRun>
+                                              </TextRuns>
+                                              <Style>
+                                                <TextAlign>Center</TextAlign>
+                                              </Style>
+                                            </Paragraph>
+                                            <Paragraph>
+                                              <TextRuns>
+                                                <TextRun>
+                                                  <Value>(dd/mm/aa)</Value>
+                                                  <Style>
+                                                    <FontFamily>Calibri</FontFamily>
                                                     <FontSize>9pt</FontSize>
                                                     <FontWeight>Bold</FontWeight>
                                                   </Style>
@@ -993,7 +802,7 @@
                                               <Color>LightGrey</Color>
                                               <Style>Solid</Style>
                                             </Border>
-                                            <BackgroundColor>LightBlue</BackgroundColor>
+                                            <BackgroundColor>#f2f2f2</BackgroundColor>
                                             <PaddingLeft>2pt</PaddingLeft>
                                             <PaddingRight>2pt</PaddingRight>
                                             <PaddingTop>2pt</PaddingTop>
@@ -1007,6 +816,12 @@
                               </TablixCorner>
                               <TablixBody>
                                 <TablixColumns>
+                                  <TablixColumn>
+                                    <Width>2.76459cm</Width>
+                                  </TablixColumn>
+                                  <TablixColumn>
+                                    <Width>2.5cm</Width>
+                                  </TablixColumn>
                                   <TablixColumn>
                                     <Width>2.5cm</Width>
                                   </TablixColumn>
@@ -1026,7 +841,8 @@
                                                   <TextRun>
                                                     <Value>=Fields!valor.Value</Value>
                                                     <Style>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
                                                       <Format>#,0.0000</Format>
                                                     </Style>
                                                   </TextRun>
@@ -1035,6 +851,72 @@
                                               </Paragraph>
                                             </Paragraphs>
                                             <rd:DefaultName>Textbox33</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox2">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value />
+                                                    <Style>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox2</rd:DefaultName>
+                                            <Style>
+                                              <Border>
+                                                <Color>LightGrey</Color>
+                                                <Style>Solid</Style>
+                                              </Border>
+                                              <PaddingLeft>2pt</PaddingLeft>
+                                              <PaddingRight>2pt</PaddingRight>
+                                              <PaddingTop>2pt</PaddingTop>
+                                              <PaddingBottom>2pt</PaddingBottom>
+                                            </Style>
+                                          </Textbox>
+                                        </CellContents>
+                                      </TablixCell>
+                                      <TablixCell>
+                                        <CellContents>
+                                          <Textbox Name="Textbox9">
+                                            <CanGrow>true</CanGrow>
+                                            <KeepTogether>true</KeepTogether>
+                                            <Paragraphs>
+                                              <Paragraph>
+                                                <TextRuns>
+                                                  <TextRun>
+                                                    <Value />
+                                                    <Style>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
+                                                    </Style>
+                                                  </TextRun>
+                                                </TextRuns>
+                                                <Style />
+                                              </Paragraph>
+                                            </Paragraphs>
+                                            <rd:DefaultName>Textbox9</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -1060,13 +942,8 @@
                                         <GroupExpression>=Fields!idelemento.Value</GroupExpression>
                                       </GroupExpressions>
                                     </Group>
-                                    <SortExpressions>
-                                      <SortExpression>
-                                        <Value>=Fields!elemento.Value</Value>
-                                      </SortExpression>
-                                    </SortExpressions>
                                     <TablixHeader>
-                                      <Size>0.6cm</Size>
+                                      <Size>0.81167cm</Size>
                                       <CellContents>
                                         <Textbox Name="Textbox7">
                                           <CanGrow>true</CanGrow>
@@ -1077,6 +954,7 @@
                                                 <TextRun>
                                                   <Value>=Fields!elemento.Value</Value>
                                                   <Style>
+                                                    <FontFamily>Calibri</FontFamily>
                                                     <FontSize>9pt</FontSize>
                                                     <FontWeight>Bold</FontWeight>
                                                   </Style>
@@ -1093,7 +971,9 @@
                                               <Color>LightGrey</Color>
                                               <Style>Solid</Style>
                                             </Border>
-                                            <BackgroundColor>LightBlue</BackgroundColor>
+                                            <BackgroundColor>=iif(Fields!grupo.Value="grupo1","#f8cbad",
+	iif(Fields!grupo.Value="grupo2","#bdd7ee","#c6e0b4")
+)</BackgroundColor>
                                             <PaddingLeft>2pt</PaddingLeft>
                                             <PaddingRight>2pt</PaddingRight>
                                             <PaddingTop>2pt</PaddingTop>
@@ -1102,6 +982,122 @@
                                         </Textbox>
                                       </CellContents>
                                     </TablixHeader>
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <TablixHeader>
+                                      <Size>0.81167cm</Size>
+                                      <CellContents>
+                                        <Textbox Name="Textbox1">
+                                          <CanGrow>true</CanGrow>
+                                          <KeepTogether>true</KeepTogether>
+                                          <Paragraphs>
+                                            <Paragraph>
+                                              <TextRuns>
+                                                <TextRun>
+                                                  <Value>Azufre total*</Value>
+                                                  <Style>
+                                                    <FontFamily>Calibri</FontFamily>
+                                                    <FontSize>9pt</FontSize>
+                                                    <FontWeight>Bold</FontWeight>
+                                                  </Style>
+                                                </TextRun>
+                                              </TextRuns>
+                                              <Style>
+                                                <TextAlign>Center</TextAlign>
+                                              </Style>
+                                            </Paragraph>
+                                            <Paragraph>
+                                              <TextRuns>
+                                                <TextRun>
+                                                  <Value>(mg/m3)</Value>
+                                                  <Style>
+                                                    <FontFamily>Calibri</FontFamily>
+                                                    <FontSize>9pt</FontSize>
+                                                    <FontWeight>Bold</FontWeight>
+                                                  </Style>
+                                                </TextRun>
+                                              </TextRuns>
+                                              <Style>
+                                                <TextAlign>Center</TextAlign>
+                                              </Style>
+                                            </Paragraph>
+                                          </Paragraphs>
+                                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                                          <Style>
+                                            <Border>
+                                              <Color>LightGrey</Color>
+                                              <Style>Solid</Style>
+                                            </Border>
+                                            <BackgroundColor>Tan</BackgroundColor>
+                                            <PaddingLeft>2pt</PaddingLeft>
+                                            <PaddingRight>2pt</PaddingRight>
+                                            <PaddingTop>2pt</PaddingTop>
+                                            <PaddingBottom>2pt</PaddingBottom>
+                                          </Style>
+                                        </Textbox>
+                                      </CellContents>
+                                    </TablixHeader>
+                                    <Visibility>
+                                      <Hidden>=iif(Fields!grupo.Value="grupo2",false,true)</Hidden>
+                                    </Visibility>
+                                  </TablixMember>
+                                  <TablixMember>
+                                    <TablixHeader>
+                                      <Size>0.81167cm</Size>
+                                      <CellContents>
+                                        <Textbox Name="Textbox8">
+                                          <CanGrow>true</CanGrow>
+                                          <KeepTogether>true</KeepTogether>
+                                          <Paragraphs>
+                                            <Paragraph>
+                                              <TextRuns>
+                                                <TextRun>
+                                                  <Value>Oxígeno*</Value>
+                                                  <Style>
+                                                    <FontFamily>Calibri</FontFamily>
+                                                    <FontSize>9pt</FontSize>
+                                                    <FontWeight>Bold</FontWeight>
+                                                  </Style>
+                                                </TextRun>
+                                              </TextRuns>
+                                              <Style>
+                                                <TextAlign>Center</TextAlign>
+                                              </Style>
+                                            </Paragraph>
+                                            <Paragraph>
+                                              <TextRuns>
+                                                <TextRun>
+                                                  <Value>(%vol)</Value>
+                                                  <Style>
+                                                    <FontFamily>Calibri</FontFamily>
+                                                    <FontSize>9pt</FontSize>
+                                                    <FontWeight>Bold</FontWeight>
+                                                  </Style>
+                                                </TextRun>
+                                              </TextRuns>
+                                              <Style>
+                                                <TextAlign>Center</TextAlign>
+                                              </Style>
+                                            </Paragraph>
+                                          </Paragraphs>
+                                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                                          <Style>
+                                            <Border>
+                                              <Color>LightGrey</Color>
+                                              <Style>Solid</Style>
+                                            </Border>
+                                            <BackgroundColor>Tan</BackgroundColor>
+                                            <PaddingLeft>2pt</PaddingLeft>
+                                            <PaddingRight>2pt</PaddingRight>
+                                            <PaddingTop>2pt</PaddingTop>
+                                            <PaddingBottom>2pt</PaddingBottom>
+                                          </Style>
+                                        </Textbox>
+                                      </CellContents>
+                                    </TablixHeader>
+                                    <Visibility>
+                                      <Hidden>=iif(Fields!grupo.Value="grupo2",false,true)</Hidden>
+                                    </Visibility>
                                   </TablixMember>
                                 </TablixMembers>
                               </TablixColumnHierarchy>
@@ -1119,7 +1115,7 @@
                                       </SortExpression>
                                     </SortExpressions>
                                     <TablixHeader>
-                                      <Size>3.53188cm</Size>
+                                      <Size>2.47353cm</Size>
                                       <CellContents>
                                         <Textbox Name="Textbox68">
                                           <CanGrow>true</CanGrow>
@@ -1130,7 +1126,8 @@
                                                 <TextRun>
                                                   <Value>=Fields!fpromedioS.Value</Value>
                                                   <Style>
-                                                    <FontSize>8pt</FontSize>
+                                                    <FontFamily>Calibri</FontFamily>
+                                                    <FontSize>9pt</FontSize>
                                                   </Style>
                                                 </TextRun>
                                               </TextRuns>
@@ -1155,9 +1152,9 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DataSet1</DataSetName>
-                              <Top>4.78896cm</Top>
-                              <Height>1.2cm</Height>
-                              <Width>6.03188cm</Width>
+                              <Top>3.83646cm</Top>
+                              <Height>1.41167cm</Height>
+                              <Width>10.23812cm</Width>
                               <ZIndex>1</ZIndex>
                               <Style>
                                 <Border>
@@ -1169,10 +1166,10 @@
                               <TablixBody>
                                 <TablixColumns>
                                   <TablixColumn>
-                                    <Width>3.53187cm</Width>
+                                    <Width>2.47353cm</Width>
                                   </TablixColumn>
                                   <TablixColumn>
-                                    <Width>2.5cm</Width>
+                                    <Width>2.76459cm</Width>
                                   </TablixColumn>
                                 </TablixColumns>
                                 <TablixRows>
@@ -1188,9 +1185,11 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Minimo</Value>
+                                                    <Value>Mínimo</Value>
                                                     <Style>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
+                                                      <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -1222,7 +1221,8 @@
                                                   <TextRun>
                                                     <Value>=Fields!minimo.Value</Value>
                                                     <Style>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -1259,7 +1259,9 @@
                                                   <TextRun>
                                                     <Value>Promedios</Value>
                                                     <Style>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
+                                                      <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -1291,7 +1293,8 @@
                                                   <TextRun>
                                                     <Value>=Fields!promedio.Value</Value>
                                                     <Style>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
                                                       <Format>#,0.0000</Format>
                                                     </Style>
                                                   </TextRun>
@@ -1327,9 +1330,11 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>Maximo</Value>
+                                                    <Value>Máximo</Value>
                                                     <Style>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
+                                                      <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -1361,7 +1366,8 @@
                                                   <TextRun>
                                                     <Value>=Fields!maximo.Value</Value>
                                                     <Style>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
                                                       <Format>#,0.0000</Format>
                                                     </Style>
                                                   </TextRun>
@@ -1397,9 +1403,11 @@
                                               <Paragraph>
                                                 <TextRuns>
                                                   <TextRun>
-                                                    <Value>D. Standard</Value>
+                                                    <Value>Desv. Est.</Value>
                                                     <Style>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
+                                                      <FontWeight>Bold</FontWeight>
                                                     </Style>
                                                   </TextRun>
                                                 </TextRuns>
@@ -1431,7 +1439,8 @@
                                                   <TextRun>
                                                     <Value>=Fields!desviacion.Value</Value>
                                                     <Style>
-                                                      <FontSize>8pt</FontSize>
+                                                      <FontFamily>Calibri</FontFamily>
+                                                      <FontSize>9pt</FontSize>
                                                       <Format>#,0.0000</Format>
                                                     </Style>
                                                   </TextRun>
@@ -1500,9 +1509,9 @@
                                 </TablixMembers>
                               </TablixRowHierarchy>
                               <DataSetName>DataSet1</DataSetName>
-                              <Top>7.61683cm</Top>
+                              <Top>6.34683cm</Top>
                               <Height>2.4cm</Height>
-                              <Width>6.03187cm</Width>
+                              <Width>5.23812cm</Width>
                               <ZIndex>2</ZIndex>
                               <Style>
                                 <Border>
@@ -1519,6 +1528,7 @@
                                     <TextRun>
                                       <Value>*/ Los valores trimestrales se deberán reportar en los meses de enero, abril, julio y octubre de cada año, respecto del trimestre inmediato anterior.</Value>
                                       <Style>
+                                        <FontFamily>Calibri</FontFamily>
                                         <FontSize>8pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
@@ -1528,9 +1538,9 @@
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Textbox3</rd:DefaultName>
-                              <Top>6.47912cm</Top>
+                              <Top>5.52662cm</Top>
                               <Height>0.6cm</Height>
-                              <Width>30.39937cm</Width>
+                              <Width>29.60562cm</Width>
                               <ZIndex>3</ZIndex>
                               <Style>
                                 <Border>
@@ -1557,15 +1567,18 @@
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Textbox5</rd:DefaultName>
-                              <Top>10.47433cm</Top>
-                              <Left>3.53186cm</Left>
+                              <Top>8.88683cm</Top>
+                              <Left>2.47353cm</Left>
                               <Height>1.36813cm</Height>
-                              <Width>26.86751cm</Width>
+                              <Width>27.13209cm</Width>
                               <ZIndex>4</ZIndex>
                               <Style>
                                 <Border>
                                   <Style>None</Style>
                                 </Border>
+                                <BackgroundColor>=iif(Fields!grupo.Value="grupo1","#f8cbad",
+	iif(Fields!grupo.Value="grupo2","#bdd7ee","#c6e0b4")
+)</BackgroundColor>
                                 <PaddingLeft>2pt</PaddingLeft>
                                 <PaddingRight>2pt</PaddingRight>
                                 <PaddingTop>2pt</PaddingTop>
@@ -1581,7 +1594,8 @@
                                     <TextRun>
                                       <Value>Observaciones:</Value>
                                       <Style>
-                                        <FontSize>8pt</FontSize>
+                                        <FontFamily>Calibri</FontFamily>
+                                        <FontSize>9pt</FontSize>
                                         <FontWeight>Bold</FontWeight>
                                       </Style>
                                     </TextRun>
@@ -1590,9 +1604,9 @@
                                 </Paragraph>
                               </Paragraphs>
                               <rd:DefaultName>Textbox6</rd:DefaultName>
-                              <Top>10.47433cm</Top>
+                              <Top>8.88683cm</Top>
                               <Height>0.6cm</Height>
-                              <Width>3.53188cm</Width>
+                              <Width>2.47353cm</Width>
                               <ZIndex>5</ZIndex>
                               <Style>
                                 <Border>
@@ -1612,7 +1626,6 @@
                             </Border>
                           </Style>
                         </Rectangle>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1646,8 +1659,8 @@
                         <PageBreak>
                           <BreakLocation>StartAndEnd</BreakLocation>
                         </PageBreak>
-                        <PageName>=Fields!pmuestreo.Value+"_"+(iif(Fields!grupo.Value="grupo1","MAX",
-	iif(Fields!grupo.Value="grupo2","PROM","MIN")
+                        <PageName>=Fields!pmuestreo.Value+"_"+(iif(Fields!grupo.Value="grupo1","Máximos",
+	iif(Fields!grupo.Value="grupo2","Promedios","Mínimos")
 )
 )</PageName>
                       </Group>
@@ -1662,8 +1675,8 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
-            <Height>11.84246cm</Height>
-            <Width>30.39937cm</Width>
+            <Height>10.25496cm</Height>
+            <Width>29.60562cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1671,17 +1684,17 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>4.66238in</Height>
+        <Height>4.03739in</Height>
         <Style />
       </Body>
-      <Width>11.96826in</Width>
+      <Width>11.65576in</Width>
       <Page>
         <PageHeight>21cm</PageHeight>
         <PageWidth>29.7cm</PageWidth>
-        <LeftMargin>2cm</LeftMargin>
-        <RightMargin>2cm</RightMargin>
-        <TopMargin>2cm</TopMargin>
-        <BottomMargin>2cm</BottomMargin>
+        <LeftMargin>0.5cm</LeftMargin>
+        <RightMargin>0.5cm</RightMargin>
+        <TopMargin>0.5cm</TopMargin>
+        <BottomMargin>0.5cm</BottomMargin>
         <ColumnSpacing>0.13cm</ColumnSpacing>
         <Style />
       </Page>
@@ -1739,6 +1752,18 @@
       <Prompt>resultado</Prompt>
     </ReportParameter>
   </ReportParameters>
+  <EmbeddedImages>
+    <EmbeddedImage Name="cre">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>1d2e3211-1eae-4b60-b3b2-374ed70e413d</rd:ReportID>
 </Report>
