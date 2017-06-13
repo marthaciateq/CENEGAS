@@ -25,11 +25,12 @@
                 nombre = 'tendencia';
                 procedimiento = 'sps_reporte_grafico_tendencia'
             }
+
             Mi.AJAX.request({
                 data: {
                     NAME: procedimiento,
                     pmuestreo: pmuestreo==""?null:pmuestreo,
-                    elementos: $("#idelemento").MiVal(),
+                    elementos: $("#idelemento").val()==""?null:$("#idelemento").val(),
                     finicial: $("#finicial").val(),
                     ffinal: $("#ffinal").val(),
                     resultado: 1,
@@ -62,7 +63,10 @@
                 nombre = 'tendencia';
                 procedimiento = 'sps_reporte_grafico_tendencia'
             }
-            else{
+            else if (reporte == 'C') {
+                nombre = 'mensualCRE';
+                procedimiento = 'sps_reporte_mensualCRE'
+            }else{
                 if(formato=='EXCEL')
                     nombre = 'especificaciones_excel'; 
             }
@@ -148,7 +152,11 @@
                                 var pmuestreo = null;
                                 $.each(data, function (index, value) {
                                     pmuestreo = value;
-                                    processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, pmuestreo.pmuestreo, pmuestreo.idelemento,pmuestreo.celemento,reporte, formato,separacion,'S'));
+                                    if(separacion=='P' || reporte=='C' || reporte=='F')
+                                        processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, pmuestreo.pmuestreo, $("#idelemento").val(), null, reporte, formato, separacion, 'S'));
+                                    else 
+                                        if(separacion=='E')
+                                            processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, pmuestreo.pmuestreo, pmuestreo.idelemento, pmuestreo.celemento, reporte, formato, separacion, 'S'));
                                 });
 
                                 $.when.apply($, processItemsDeferred).then(function () {
@@ -234,6 +242,9 @@
                             </div>
                             <div class="radio">
                                 <label><input type="radio" id="reporte"  name="optradio" value="T" />Gráfico de Tendencia</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" id="reporte" name="optradio" value="C" />Reporte Mensual CRE</label>
                             </div>
                         </div>
                     </div>

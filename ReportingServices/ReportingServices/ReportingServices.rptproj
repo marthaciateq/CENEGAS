@@ -21,12 +21,16 @@
       <FullPath>mensualCRE.rdl</FullPath>
     </ProjectItem>
     <ProjectItem>
+      <Name>rduplicados.rdl</Name>
+      <FullPath>rduplicados.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
       <Name>tendencia.rdl</Name>
       <FullPath>tendencia.rdl</FullPath>
     </ProjectItem>
     <ProjectItem>
-      <Name>rduplicados.rdl</Name>
-      <FullPath>rduplicados.rdl</FullPath>
+      <Name>viaticos.rdl</Name>
+      <FullPath>viaticos.rdl</FullPath>
     </ProjectItem>
   </Reports>
   <Configurations>

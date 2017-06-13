@@ -31,6 +31,11 @@ BEGIN
 		declare @fechas table(
 			fecha datetime
 		)
+		declare @totalrowsXelemento table(
+			idpmuestreo varchar(max),
+			idelemento varchar(max),
+			totalrowsXelemento float
+		)
 		
 		select a.*
 		into #base_rpromedio
@@ -97,10 +102,26 @@ BEGIN
 					@formato formato,
 					@finicial finicial,
 					@ffinal ffinal,
-					@reporte reporte
+					@reporte reporte,
+					0 as totalrowsXelemento
+					--null fecha,
+					--null fechaS,
+					--null valor
 				from #fespecificacion a
 				order by a.nalterno,a.fecha						
 			else
+				begin
+				insert into @totalrowsXelemento
+				select
+					a.idpmuestreo,
+					a.idelemento,
+					count(*) as  totalrowsXelemento
+				from #fespecificacion a
+					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
+						and a.idelemento=b.idelemento 
+						and b.fecha<=a.rango and b.fecha>=a.fcorte	
+					group by a.idpmuestreo,a.idelemento			
+					
 				select 
 					a.idpmuestreo,
 					a.idelemento,	
@@ -123,12 +144,15 @@ BEGIN
 					@finicial finicial,
 					@ffinal ffinal,
 					@reporte reporte,
-					ROW_NUMBER() OVER(PARTITION BY a.nalterno ORDER BY a.nalterno,a.celemento,a.fecha,b.fecha) as nrow
+					ROW_NUMBER() OVER(PARTITION BY a.nalterno,a.celemento ORDER BY a.nalterno,a.celemento,a.fecha,b.fecha) as nrow,
+					totalrowsXelemento
 				from #fespecificacion a
 					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
 						and a.idelemento=b.idelemento 
 						and b.fecha<=a.rango and b.fecha>=a.fcorte
+					left join @totalrowsXelemento c on b.idpmuestreo=c.idpmuestreo and b.idelemento=c.idelemento
 				order by a.nalterno,a.celemento,a.fecha,b.fecha
+			end
 				
 		
 				--GENERAR ENCABEZADOS DINAMICOS
@@ -182,7 +206,3 @@ BEGIN
 	end catch
 END
 	
-
-
-
-

@@ -14,3 +14,4 @@ C:\proyectos\cenegas\CENEGAS\bin\MiControl.pdb
 C:\proyectos\cenegas\CENEGAS\bin\MiCrypt.pdb
 C:\proyectos\cenegas\CENEGAS\obj\Debug\CENEGAS.dll
 C:\proyectos\cenegas\CENEGAS\obj\Debug\CENEGAS.pdb
+C:\proyectos\cenegas\CENEGAS\bin\LumenWorks.Framework.IO.dll

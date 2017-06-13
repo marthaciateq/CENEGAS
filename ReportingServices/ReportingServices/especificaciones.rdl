@@ -40,6 +40,9 @@
           <QueryParameter Name="@reporte">
             <Value>=Parameters!reporte.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@separacion">
+            <Value>=Parameters!separacion.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>sps_reporte_especificaciones</CommandText>
@@ -120,6 +123,10 @@
         <Field Name="reporte">
           <DataField>reporte</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="totalrowsXelemento">
+          <DataField>totalrowsXelemento</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -4335,7 +4342,7 @@
                               <Width>7.19541cm</Width>
                               <ZIndex>3</ZIndex>
                               <Visibility>
-                                <Hidden>=IIF(Fields!reporte.Value = "G" and CountRows()&gt;10, True, False)</Hidden>
+                                <Hidden>=IIF(Fields!reporte.Value = "G" or Fields!totalrowsXelemento.Value&lt;10, True, False)</Hidden>
                               </Visibility>
                               <Style>
                                 <Border>
@@ -4529,7 +4536,7 @@
                               <Width>7.19541cm</Width>
                               <ZIndex>4</ZIndex>
                               <Visibility>
-                                <Hidden>=IIF(Fields!reporte.Value = "G" or CountRows()&lt;=20, True, False)</Hidden>
+                                <Hidden>=IIF(Fields!reporte.Value = "G" or Fields!totalrowsXelemento.Value&lt;=20, True, False)</Hidden>
                               </Visibility>
                               <Style>
                                 <Border>
@@ -4723,7 +4730,7 @@
                               <Width>7.19541cm</Width>
                               <ZIndex>5</ZIndex>
                               <Visibility>
-                                <Hidden>=IIF(Fields!reporte.Value = "G" or CountRows()&lt;=80, True, False)</Hidden>
+                                <Hidden>=IIF(Fields!reporte.Value = "G" or Fields!totalrowsXelemento.Value&lt;=80, True, False)</Hidden>
                               </Visibility>
                               <Style>
                                 <Border>
@@ -4917,7 +4924,7 @@
                               <Width>7.19541cm</Width>
                               <ZIndex>6</ZIndex>
                               <Visibility>
-                                <Hidden>=IIF(Fields!reporte.Value = "G" or CountRows() &lt;= 140, True, False)</Hidden>
+                                <Hidden>=IIF(Fields!reporte.Value = "G" or Fields!totalrowsXelemento.Value &lt;= 140, True, False)</Hidden>
                               </Visibility>
                               <Style>
                                 <Border>
@@ -5111,7 +5118,7 @@
                               <Width>7.19541cm</Width>
                               <ZIndex>7</ZIndex>
                               <Visibility>
-                                <Hidden>=IIF(Fields!reporte.Value = "G" or CountRows() &lt;= 200, True, False)</Hidden>
+                                <Hidden>=IIF(Fields!reporte.Value = "G" or Fields!totalrowsXelemento.Value &lt;= 200, True, False)</Hidden>
                               </Visibility>
                               <Style>
                                 <Border>
@@ -5305,7 +5312,7 @@
                               <Width>7.19541cm</Width>
                               <ZIndex>8</ZIndex>
                               <Visibility>
-                                <Hidden>=IIF(Fields!reporte.Value = "G" or CountRows() &lt;= 260, True, False)</Hidden>
+                                <Hidden>=IIF(Fields!reporte.Value = "G" or Fields!totalrowsXelemento.Value &lt;= 260, True, False)</Hidden>
                               </Visibility>
                               <Style>
                                 <Border>
@@ -5499,7 +5506,7 @@
                               <Width>7.19541cm</Width>
                               <ZIndex>9</ZIndex>
                               <Visibility>
-                                <Hidden>=IIF(Fields!reporte.Value = "G" or CountRows() &lt;= 320, True, False)</Hidden>
+                                <Hidden>=IIF(Fields!reporte.Value = "G" or Fields!totalrowsXelemento.Value &lt;= 320, True, False)</Hidden>
                               </Visibility>
                               <Style>
                                 <Border>
@@ -5693,7 +5700,7 @@
                               <Width>7.19541cm</Width>
                               <ZIndex>10</ZIndex>
                               <Visibility>
-                                <Hidden>=IIF(Fields!reporte.Value = "G" or CountRows() &lt;= 380, True, False)</Hidden>
+                                <Hidden>=IIF(Fields!reporte.Value = "G" or Fields!totalrowsXelemento.Value &lt;= 380, True, False)</Hidden>
                               </Visibility>
                               <Style>
                                 <Border>
@@ -5966,6 +5973,11 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <Prompt>reporte</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="separacion">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>separacion</Prompt>
     </ReportParameter>
   </ReportParameters>
   <EmbeddedImages>
