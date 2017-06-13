@@ -210,8 +210,8 @@ namespace cenegas.clases
                 summaryOfRecords.Columns["oxigeno"].DataType = typeof(double);
 
 
-                readCSV(hoursPath, ref recordsByHour, activeElements);
-                readCSV(summaryPath, ref summaryOfRecords, activeElements);
+                readCSV(hoursPath, ref recordsByHour, activeElements, "H");
+                readCSV(summaryPath, ref summaryOfRecords, activeElements, "D");
 
                 foreach (DataRow row in recordsByHour.Rows)
                 {
@@ -328,30 +328,52 @@ namespace cenegas.clases
             }
         }
 
-        private static object evalDouble(string value)
+        private static object evalDouble(string value, ref int index, int column, ref string type)
         {
-            object response = DBNull.Value;
+            try
+            {
 
-            if (value.Length > 0)
-                response = double.Parse(value);
+                if (value.Length > 0)
+                {
+                    return double.Parse(value);;
+                }
 
-            return response;
+            }
+            catch {
+                throw (new Exception("El valor '" + value + "' no puede ser convertido en un valor decimal. Favor de verificar la linea: " + index.ToString() + ", columna: " + column.ToString() + " del archivo CSV de " + (type == "H" ? "Horario." : "Diario.")));
+            }
+
+            return DBNull.Value;
         }
 
-        private static object evalDate(string value)
+        private static object evalDate(string value, ref int index, int column, ref string type)
         {
             object response = DBNull.Value;
+            DateTime val;
 
-            if (value.Length > 0)
-                response = value.ToUpper().Replace(" A.M.", "").Replace(" P.M.", "").Replace("A.M.", "").Replace("P.M.", "");
+            try
+            {
 
-            return response;
+                if (value.Length > 0)
+                {
+                    response = value.ToUpper().Replace(" A.M.", "").Replace(" P.M.", "").Replace("A.M.", "").Replace("P.M.", "");
+
+                    val = DateTime.Parse(response.ToString());
+
+                    return response;
+                }
+            }
+            catch {
+                throw (new Exception("El valor '" + value + "' no puede ser convertido en un valor fecha. Favor de verificar la linea: " + index.ToString() + ", columna: " + column.ToString() + " del archivo CSV de " + (type == "H" ? "Horario." : "Diario.")));
+            }
+
+            return DBNull.Value;
         }
 
-        private static void readCSV(string pathFile, ref DataTable dt, int activeElements)
+        private static void readCSV(string pathFile, ref DataTable dt, int activeElements, string type)
         {
             DateTime hoy = DateTime.Now;
-
+            int index = 0;
             try
             {
                 // open the file "data.csv" which is a CSV file with headers
@@ -362,21 +384,27 @@ namespace cenegas.clases
 
                     string[] headers = csv.GetFieldHeaders();
 
+
                     if (activeElements == 10)
                     {
                         while (csv.ReadNextRecord())
                         {
-                            dt.Rows.Add(csv[0], csv[1], evalDate(csv[3]), hoy
-                                , evalDouble(csv[4])
-                                , evalDouble(csv[5])
-                                , evalDouble(csv[6])
-                                , evalDouble(csv[7])
-                                , evalDouble(csv[8])
-                                , evalDouble(csv[9])
-                                , evalDouble(csv[10])
-                                , evalDouble(csv[11])
-                                , evalDouble(csv[12])
-                                , evalDouble(csv[13])
+                            index++;
+
+                            //if ( csv[13] != null )
+                            //    throw(new Exception("La linea " + index.ToString() + " tiene " + csv.FieldCount + " y se esperaban 14. Favor de verificar el archivo CSV de " + ( type == "H" ? "Horario." : "Diario.") ));
+
+                            dt.Rows.Add(csv[0], csv[1], evalDate(csv[3], ref index, 4, ref type), hoy
+                                , evalDouble(csv[4], ref index, 5, ref type)
+                                , evalDouble(csv[5], ref index, 6, ref type)
+                                , evalDouble(csv[6], ref index, 7, ref type)
+                                , evalDouble(csv[7], ref index, 8, ref type)
+                                , evalDouble(csv[8], ref index, 9, ref type)
+                                , evalDouble(csv[9], ref index, 10, ref type)
+                                , evalDouble(csv[10], ref index, 11, ref type)
+                                , evalDouble(csv[11], ref index, 12, ref type)
+                                , evalDouble(csv[12], ref index, 13, ref type)
+                                , evalDouble(csv[13], ref index, 14, ref type)
                                 );
                         }
                     }
@@ -384,19 +412,24 @@ namespace cenegas.clases
                     {
                         while (csv.ReadNextRecord())
                         {
-                            dt.Rows.Add(csv[0], csv[1], evalDate(csv[3]), hoy
-                                        , evalDouble(csv[4])
-                                        , evalDouble(csv[5])
-                                        , evalDouble(csv[6])
-                                        , evalDouble(csv[7])
-                                        , evalDouble(csv[8])
-                                        , evalDouble(csv[9])
-                                        , evalDouble(csv[10])
-                                        , evalDouble(csv[11])
-                                        , evalDouble(csv[12])
-                                        , evalDouble(csv[13])
-                                        , evalDouble(csv[14])
-                                        , evalDouble(csv[15])
+                            index++;
+
+                            //if (csv.FieldCount < 16)
+                            //    throw (new Exception("La linea " + index.ToString() + " tiene " + csv.FieldCount + " y se esperaban 16. Favor de verificar el archivo CSV de " + (type == "H" ? "Horario." : "Diario.")));
+
+                            dt.Rows.Add(csv[0], csv[1], evalDate(csv[3], ref index, 4, ref type), hoy
+                                        , evalDouble(csv[4], ref index, 5, ref type)
+                                        , evalDouble(csv[5], ref index, 6, ref type)
+                                        , evalDouble(csv[6], ref index, 7, ref type)
+                                        , evalDouble(csv[7], ref index, 8, ref type)
+                                        , evalDouble(csv[8], ref index, 9, ref type)
+                                        , evalDouble(csv[9], ref index, 10, ref type)
+                                        , evalDouble(csv[10], ref index, 11, ref type)
+                                        , evalDouble(csv[11], ref index, 12, ref type)
+                                        , evalDouble(csv[12], ref index, 13, ref type)
+                                        , evalDouble(csv[13], ref index, 14, ref type)
+                                        , evalDouble(csv[14], ref index, 15, ref type)
+                                        , evalDouble(csv[15], ref index, 16, ref type)
                                         );
                         }
 
@@ -406,7 +439,10 @@ namespace cenegas.clases
             }
             catch (Exception e)
             {
-                throw (e);
+                //if (e.HResult == -2146233088) {
+                //    throw (new Exception("La linea " + index.ToString() + " no tiene las columnas esperadas, se esperaban " + activeElements.ToString() + " columnas de valores para los elementos. Favor de verificar el archivo CSV de " + (type == "H" ? "Horario." : "Diario.")));
+                //}else
+                    throw (e);
             }
         }
 
