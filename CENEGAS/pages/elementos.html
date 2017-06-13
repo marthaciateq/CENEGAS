@@ -17,6 +17,8 @@
                     codigo: Mi.MiTextVal($("#codigo")),
                     simbolo: Mi.MiTextVal($("#simbolo")),
                     unidad: Mi.MiTextVal($("#unidad")),
+                    abreviatura: Mi.MiTextVal($("#abreviatura")),
+                    orden: $("#orden").val(),
                     deleted: $("#deleted").val()
                 },
                 onsuccess: function (r) {
@@ -38,6 +40,8 @@
                 $("#descripcion").val("");
                 $("#simbolo").val("");
                 $("#unidad").val("");
+                $("#abreviatura").val("");
+                $("#orden").val("");
 
                 $("#guardar").unbind("click").click(function () {
                     $(this).prop("disabled", true);
@@ -54,6 +58,8 @@
                     $("#simbolo").val(row.simbolo);
                     $("#unidad").val(row.unidad);
                     $("#codigo").val(row.codigo);
+                    $("#abreviatura").val(row.abreviatura);
+                    $("#orden").val(row.orden);
                     $("#deleted").val(row.deleted);
                 }
             }
@@ -80,11 +86,11 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['','Nombre','Simbolo','Unidad','Estado']]
+                    data: [['','Nombre','Simbolo','Unidad','Abreviatura','Órden','Estado']]
                 },
                 body: {
                     data: r,
-                    cols: ['descripcion','simbolo','unidad','deletedS']
+                    cols: ['descripcion','simbolo','unidad','abreviatura','orden','deletedS']
                 },
                 addCheckbox: true
             });
@@ -212,6 +218,18 @@
                         <label class="control-label col-sm-2">Código (para control de importación):</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" id="codigo" placeholder="Código" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Abreviatura:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="abreviatura" placeholder="Abreviatura" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Órden</label>
+                        <div class="col-sm-1">
+                            <input type="number" class="form-control" id="orden" placeholder="Orden" min="0" max="15" />
                         </div>
                     </div>
                     <div class="form-group">

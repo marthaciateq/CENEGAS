@@ -6,6 +6,7 @@ CREATE PROCEDURE sps_pmuestreo_guardar
 	@descripcion varchar(max),	
 	@zona char(1),
 	@hcorte int,
+	@abreviatura varchar(max),
 	@orden int,
 	@deleted varchar(max)
 AS
@@ -20,7 +21,8 @@ BEGIN
 		if @zona is null execute sp_error 'U', 'Campo zona requerida.'		
 		if @nalterno is null execute sp_error 'U', 'Campo nombre alterno requerido.'
 		if @descripcion is null execute sp_error 'U', 'Campo descripcion requerido.'
-		if @hcorte is null execute sp_error 'U', 'Campo hora de corte requerido.'		
+		if @hcorte is null execute sp_error 'U', 'Campo hora de corte requerido.'
+		if @abreviatura is null execute sp_error 'U', 'Campo abreviatura requerido.'						
 		if @orden is null execute sp_error 'U', 'Campo órden requerido.'				
 		
 		if (@hcorte<0 or @hcorte>23) execute sp_error 'U', 'La hora de corte debe de estar en el rango de [0-23] hrs.'	
@@ -33,11 +35,11 @@ BEGIN
 				if @idpmuestreo is null
 				begin
 					execute sp_randomKey @idpmuestreo output
-					insert into pmuestreo values(@idpmuestreo,@punto,@nalterno,@descripcion,@zona,@hcorte,@orden,@deleted)
+					insert into pmuestreo values(@idpmuestreo,@punto,@nalterno,@descripcion,@zona,@hcorte,@abreviatura,@orden,@deleted)
 				end
 				else
 				begin 
-					update pmuestreo set punto = @punto, nalterno=@nalterno, descripcion=@descripcion, zona=@zona, hcorte=@hcorte, orden=@orden,deleted=@deleted
+					update pmuestreo set punto = @punto, nalterno=@nalterno, descripcion=@descripcion, zona=@zona,hcorte=@hcorte,abreviatura=@abreviatura, orden=@orden,deleted=@deleted
 					where idpmuestreo = @idpmuestreo
 					
 				end					
