@@ -149,13 +149,6 @@
     <Compile Include="clases\MiMySQLConnection.cs" />
     <Compile Include="clases\Oops.cs" />
     <Compile Include="clases\utils.cs" />
-    <Compile Include="dispatch\import.aspx.cs">
-      <DependentUpon>import.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="dispatch\import.aspx.designer.cs">
-      <DependentUpon>import.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
