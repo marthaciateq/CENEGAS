@@ -18,7 +18,7 @@
                     simbolo: Mi.MiTextVal($("#simbolo")),
                     unidad: Mi.MiTextVal($("#unidad")),
                     abreviatura: Mi.MiTextVal($("#abreviatura")),
-                    orden: $("#orden"),
+                    orden: $("#orden").val(),
                     deleted: $("#deleted").val()
                 },
                 onsuccess: function (r) {
@@ -90,7 +90,7 @@
                 },
                 body: {
                     data: r,
-                    cols: ['descripcion','simbolo','unidad','Abreviatura','Órden','deletedS']
+                    cols: ['descripcion','simbolo','unidad','abreviatura','orden','deletedS']
                 },
                 addCheckbox: true
             });
