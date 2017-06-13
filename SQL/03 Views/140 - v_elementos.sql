@@ -4,6 +4,7 @@ CREATE VIEW v_elementos (
 	codigo,
 	simbolo,
 	unidad,
+	orden,
 	deleted,
 	deletedS,
 	elemento

@@ -5,6 +5,7 @@ CREATE VIEW v_pmuestreo (
 	descripcion,
 	zona,
 	hcorte,
+	orden,
 	deleted,
 	deletedS,
 	zonaS,

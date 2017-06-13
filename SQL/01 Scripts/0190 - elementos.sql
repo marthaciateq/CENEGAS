@@ -4,6 +4,7 @@ CREATE TABLE elementos(
 	codigo varchar(20) NOT NULL,
 	simbolo varchar(10) ,
 	unidad varchar(256) NOT NULL,
+	orden int NOT NULL,
 	deleted char(1) NOT NULL,
 	CONSTRAINT PK_elementos PRIMARY KEY (idelemento),
 	CONSTRAINT CK_elementos_01 CHECK (deleted in ('S','N')),

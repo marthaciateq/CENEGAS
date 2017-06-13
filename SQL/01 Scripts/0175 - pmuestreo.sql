@@ -5,6 +5,7 @@ CREATE TABLE pmuestreo(
 	descripcion varchar(256) NOT NULL,		
 	zona char(1) NOT NULL,
 	hcorte int NOT NULL,
+	orden int NOT NULL,
 	deleted char(1) NOT NULL,
 	CONSTRAINT PK_pmuestreo PRIMARY KEY (idpmuestreo),
 	CONSTRAINT CK_pmuestreo_01 CHECK (zona in ('S','R'))		
