@@ -395,9 +395,7 @@ namespace cenegas.clases
                             , evalNull(csv[9])
                             , evalNull(csv[10])
                             , evalNull(csv[11])
-                            , evalNull(csv[12])
-                            , evalNull(csv[13]))
-                            ;
+                            , evalNull(csv[12]));
 
 
                     }
