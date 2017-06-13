@@ -4342,7 +4342,7 @@
                               <Width>7.19541cm</Width>
                               <ZIndex>3</ZIndex>
                               <Visibility>
-                                <Hidden>=IIF(Fields!reporte.Value = "G" and Fields!totalrowsXelemento.Value&gt;10, True, False)</Hidden>
+                                <Hidden>=IIF(Fields!reporte.Value = "G" or Fields!totalrowsXelemento.Value&lt;10, True, False)</Hidden>
                               </Visibility>
                               <Style>
                                 <Border>
