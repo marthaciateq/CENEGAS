@@ -13,105 +13,107 @@ using System.Data.SqlClient;
 
 using Mi.Control;
 
-using System.Threading;
 
-
-using LumenWorks.Framework.IO.Csv;
 
 namespace cenegas.clases
 {
-    public static class importar
+    public class importar
     {
         private static Dictionary<string, System.Type> layoutFields = new Dictionary<string, Type>();
         private static string importsDirectory = WebConfigurationManager.AppSettings["importsDirectory"];
         static DateTime? start ;
         static TimeSpan? ts;
 
-
-        private static Random random = new Random();
-
-        public static string RandomString(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
         // Inicia el proceso de importacion del archivo de mediciones
         public static void import(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool useRange, bool viewHowChanges, DateTime initDate, DateTime finalDate, HttpResponse response)
         {
             Dictionary<string, object> result = new Dictionary<string, object>();
-            //System.Globalization.CultureInfo beforeCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+<<<<<<< HEAD
+            TimeSpan ts;
+            DateTime start = DateTime.Now;
+
+            result.Add("elapsed", null);
            
             try
             {
-                //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("es-MX");
 
-                result.Add("success", true);
+                result["success"] = true;
+                
                 
                 importCSVFile(idsesion, csvHours, csvSummary, useRange, viewHowChanges, initDate, finalDate);
+=======
+            try
+            {
+                string filter = "";
+
+
+                result.Add("success", true);
+
+                start = DateTime.Now;
+
+                // Se agrega un dia unicamente para hacer la comparación de registros < a fechaFinal
+                finalDate = finalDate.AddDays(1);
+
+
+                filter = useRange ? " WHERE   Fecha >= CDate('" + initDate.Year + (initDate.Month < 10 ? "/0" : "/") + initDate.Month + (initDate.Day < 10 ? "/0" : "/") + initDate.Day + "')   AND   fecha < CDate('" + finalDate.Year + (finalDate.Month < 10 ? "/0" : "/") + finalDate.Month + (finalDate.Day < 10 ? "/0" : "/") + finalDate.Day + "') " : "";
+
+                // Se reestablece la fecha original
+                finalDate = finalDate.AddDays(-1);
+
+
+                importCSVFile(idsesion, csvHours, csvSummary, useRange, viewHowChanges, initDate, finalDate, filter);
+
+                ts = DateTime.Now - start;
+                result.Add("elapsed", ts.ToString());
+>>>>>>> parent of b812894... Actualizacion importación
+
+                ts = DateTime.Now - start;
+                result["elapsed"] = ts.ToString();
 
                 response.Output.Write(JSON.Serialize(result));
             }
             catch (Exception e)
             {
-                //ts = DateTime.Now - start;
-                //result.Add("elapsed", ts.ToString());
+<<<<<<< HEAD
+=======
+                ts = DateTime.Now - start;
+                result.Add("elapsed", ts.ToString());
 
+>>>>>>> parent of b812894... Actualizacion importación
                 result["success"] = false;
+
+                ts = DateTime.Now - start;
+                result["elapsed"] = ts.ToString();
 
                 result.Add("error", e.Message);
 
                 response.Output.Write(JSON.Serialize(result));
             }
-            //finally{
-            //    System.Threading.Thread.CurrentThread.CurrentCulture = beforeCulture;
-            //}
-          
+<<<<<<< HEAD
+
+
+        }
+
+=======
 
         }
 
 
-        public static void Convert<T>(this DataColumn column, Func<object, T> conversion)
-        {
-            int index = 0;
-            foreach (DataRow row in column.Table.Rows)
-            {
+>>>>>>> parent of b812894... Actualizacion importación
 
-                index++;
-                if (row[column].ToString().Length > 0)
-                {
-                    row[column] = conversion(row[column]);
-
-
-                }
-            }
-        }
-
-
-        public static void Parse<T>(this DataColumn column) {
-            foreach (DataRow row in column.Table.Rows) {
-                row["fecha2"] = DateTime.Parse(row[column].ToString());
-            }
-        }
 
         // Recibe un archivo CSV e importa sus registros a una tabla del servidor *
-        private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool useRange, bool viewHowChanges, DateTime? initDate, DateTime? finalDate)
+        private static void importCSVFile(string idsesion, HttpPostedFile csvHours, HttpPostedFile csvSummary, bool useRange, bool viewHowChanges, DateTime? initDate, DateTime? finalDate, string filter)
         {
-            //const decimal _byte = 8; // bits
             const double KB = 1024.0;
             const double MB = KB * 1024.0;
             double FILE_MAX_LENGTH = MB * double.Parse(WebConfigurationManager.AppSettings["importsFILE_MAX_LENGTH"]);
-            int MAX_COLUMNS = 0;
-            int index = 0;
+            
+
+            int activeElements = 0;
 
             string hoursPath = "";
             string summaryPath  = "";
-
-
-            DataRow[] afterRows;
-            DataRow[] beforeRows;
-
 
             try
             {
@@ -143,7 +145,6 @@ namespace cenegas.clases
                 string originalSummaryName = "";
                 int charDirectory = 0;
 
-         
 
                 // Guardar el archivo de horarios
                 saveFileInServer(ref csvHours, ref hoursPath);
@@ -155,11 +156,16 @@ namespace cenegas.clases
                 summaryName = System.IO.Path.GetFileName(summaryPath);
 
 
+<<<<<<< HEAD
+                activeElements = getActiveElements();
+
+
                 recordsByHour.Columns.Add("punto");
                 recordsByHour.Columns.Add("nombreAlterno");
                 recordsByHour.Columns.Add("fecha");
                 recordsByHour.Columns.Add("fecha2");
                 recordsByHour.Columns["fecha2"].DataType = typeof(DateTime);
+
                 recordsByHour.Columns.Add("metano");
                 recordsByHour.Columns["metano"].DataType = typeof(double);
 
@@ -183,91 +189,107 @@ namespace cenegas.clases
 
                 recordsByHour.Columns.Add("acidoSulfhidrico");
                 recordsByHour.Columns["acidoSulfhidrico"].DataType = typeof(double);
-
+                recordsByHour.Columns.Add("azufreTotal");
+                recordsByHour.Columns["azufreTotal"].DataType = typeof(double);
+                recordsByHour.Columns.Add("oxigeno");
+                recordsByHour.Columns["oxigeno"].DataType = typeof(double);
                
 
+=======
+                csvToDataTable(hoursPath, "SELECT * FROM " + hoursName + filter, ref recordsByHour);
+                csvToDataTable(summaryPath, "SELECT * FROM " + summaryName + filter, ref summaryOfRecords);
+>>>>>>> parent of b812894... Actualizacion importación
 
+                // Eliminar las columas de más
+                recordsByHour.Columns.RemoveAt(2); // Columna Descripcion del CSV
+                //recordsByHour.Columns.RemoveAt(1); // Columna Nombre Alterno del CSV
 
+<<<<<<< HEAD
                 summaryOfRecords.Columns.Add("punto");
                 summaryOfRecords.Columns.Add("nombreAlterno");
                 summaryOfRecords.Columns.Add("fecha");
                 summaryOfRecords.Columns.Add("fecha2");
                 summaryOfRecords.Columns["fecha2"].DataType = typeof(DateTime);
                 summaryOfRecords.Columns.Add("metano");
+                summaryOfRecords.Columns["metano"].DataType = typeof(double);
 
                 summaryOfRecords.Columns.Add("bioxidoCarbono");
+                summaryOfRecords.Columns["bioxidoCarbono"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("nitrogeno");
+                summaryOfRecords.Columns["nitrogeno"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("totalInertes");
+                summaryOfRecords.Columns["totalInertes"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("etano");
+                summaryOfRecords.Columns["etano"].DataType = typeof(double);
 
                 summaryOfRecords.Columns.Add("tempRocio");
+                summaryOfRecords.Columns["tempRocio"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("humedad");
+                summaryOfRecords.Columns["humedad"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("poderCalorifico");
+                summaryOfRecords.Columns["poderCalorifico"].DataType = typeof(double);
                 summaryOfRecords.Columns.Add("indiceWoobe");
+                summaryOfRecords.Columns["indiceWoobe"].DataType = typeof(double);
 
                 summaryOfRecords.Columns.Add("acidoSulfhidrico");
-                
+                summaryOfRecords.Columns["acidoSulfhidrico"].DataType = typeof(double);
+                summaryOfRecords.Columns.Add("azufreTotal");
+                summaryOfRecords.Columns["azufreTotal"].DataType = typeof(double);
+                summaryOfRecords.Columns.Add("oxigeno");
+                summaryOfRecords.Columns["oxigeno"].DataType = typeof(double);
 
 
-                
-
-                readCSV(hoursPath, ref recordsByHour);
-
-                readCSV(summaryPath, ref summaryOfRecords);
-
-            
+                readCSV(hoursPath, ref recordsByHour, activeElements);
+                readCSV(summaryPath, ref summaryOfRecords, activeElements);
 
                 foreach (DataRow row in recordsByHour.Rows)
                 {
                     row["fecha2"] = DateTime.Parse(row["fecha"].ToString());
-               
                }
 
                 foreach (DataRow row in summaryOfRecords.Rows)
                 {
                     row["fecha2"] = DateTime.Parse(row["fecha"].ToString());
-
                 }
+=======
+                // Eliminar las columas de más
+                summaryOfRecords.Columns.RemoveAt(2); // Columna Descripcion del CSV
+                //summaryOfRecords.Columns.RemoveAt(1); // Columna Nombre Alterno del CSV
+
+                recordsByHour.Columns[0].ColumnName = "punto";
+                recordsByHour.Columns[1].ColumnName = "nombreAlterno";
+                recordsByHour.Columns[2].ColumnName = "fecha";
+                recordsByHour.Columns[3].ColumnName = "metano";
+                recordsByHour.Columns[4].ColumnName = "bioxidoCarbono";
+
+                recordsByHour.Columns[5].ColumnName = "nitrogeno";
+                recordsByHour.Columns[6].ColumnName = "totalInertes";
+                recordsByHour.Columns[7].ColumnName = "etano";
+                recordsByHour.Columns[8].ColumnName = "tempRocio";
+                recordsByHour.Columns[9].ColumnName = "humedad";
+>>>>>>> parent of b812894... Actualizacion importación
+
+                recordsByHour.Columns[10].ColumnName = "poderCalorifico";
+                recordsByHour.Columns[11].ColumnName = "indiceWoobe";
+                recordsByHour.Columns[12].ColumnName = "acidoSulfhidrico";
+                //recordsByHour.Columns[13].ColumnName = "azufreTotal";
+                //recordsByHour.Columns[14].ColumnName = "oxigeno";
 
 
-                recordsByHour.Columns.Remove(recordsByHour.Columns["fecha"]);
-                summaryOfRecords.Columns.Remove(summaryOfRecords.Columns["fecha"]);
+                summaryOfRecords.Columns[0].ColumnName = "punto";
+                summaryOfRecords.Columns[1].ColumnName = "nombreAlterno";
+                summaryOfRecords.Columns[2].ColumnName = "fecha";
+                summaryOfRecords.Columns[3].ColumnName = "metano";
+                summaryOfRecords.Columns[4].ColumnName = "bioxidoCarbono";
 
-                recordsByHour.Columns["fecha2"].ColumnName = "fecha";
-                summaryOfRecords.Columns["fecha2"].ColumnName = "fecha";
+                summaryOfRecords.Columns[5].ColumnName = "nitrogeno";
+                summaryOfRecords.Columns[6].ColumnName = "totalInertes";
+                summaryOfRecords.Columns[7].ColumnName = "etano";
+                summaryOfRecords.Columns[8].ColumnName = "tempRocio";
+                summaryOfRecords.Columns[9].ColumnName = "humedad";
 
-
-
-
-                if (recordsByHour.Columns.Count > 12)
-                {
-
-                    MAX_COLUMNS = recordsByHour.Columns.Count - 1;
-                    index = MAX_COLUMNS;
-
-                    for (index = MAX_COLUMNS; index > 12; index--)
-                    {
-                        recordsByHour.Columns.Remove(recordsByHour.Columns[index]);
-                    }
-                }
-
-
-                if (summaryOfRecords.Columns.Count > 12)
-                {
-
-                    MAX_COLUMNS = summaryOfRecords.Columns.Count - 1;
-                    index = MAX_COLUMNS;
-
-                    for (index = MAX_COLUMNS; index > 12; index--)
-                    {
-                        summaryOfRecords.Columns.Remove(summaryOfRecords.Columns[index]);
-                    }
-                }
-
-
+<<<<<<< HEAD
                 // Filtrar por rango de fechas
-
-
                 if (useRange) {
                     // Se agrega un dia unicamente para hacer la comparación de registros < a fechaFinal
                     finalDate = ((DateTime)finalDate).AddDays(1);
@@ -301,8 +323,39 @@ namespace cenegas.clases
                     finalDate = ((DateTime)finalDate).AddDays(-1);
 
 
+=======
+                summaryOfRecords.Columns[10].ColumnName = "poderCalorifico";
+                summaryOfRecords.Columns[11].ColumnName = "indiceWoobe";
+                summaryOfRecords.Columns[12].ColumnName = "acidoSulfhidrico";
+                //summaryOfRecords.Columns[13].ColumnName = "azufreTotal";
+                //summaryOfRecords.Columns[14].ColumnName = "oxigeno";
+
+
+                if (recordsByHour.Columns.Count > 12)
+                {
+
+                    MAX_COLUMNS = recordsByHour.Columns.Count - 1;
+                    index = MAX_COLUMNS;
+
+                    for (index = MAX_COLUMNS; index > 12; index--)
+                    {
+                        recordsByHour.Columns.Remove(recordsByHour.Columns[index]);
+                    }
                 }
 
+
+                if (summaryOfRecords.Columns.Count > 12)
+                {
+
+                    MAX_COLUMNS = summaryOfRecords.Columns.Count - 1;
+                    index = MAX_COLUMNS;
+
+                    for (index = MAX_COLUMNS; index > 12; index--)
+                    {
+                        summaryOfRecords.Columns.Remove(summaryOfRecords.Columns[index]);
+                    }
+>>>>>>> parent of b812894... Actualizacion importación
+                }
 
                 originalHoursName = csvHours.FileName;
                 originalSummaryName = csvSummary.FileName;
@@ -323,7 +376,6 @@ namespace cenegas.clases
                 throw (e);
             }
             finally {
-       
                 if (viewHowChanges) {
                     if (summaryPath.Length > 0) {
                         if (File.Exists(summaryPath))
@@ -350,7 +402,7 @@ namespace cenegas.clases
 
                 double mileseconds = DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
 
-                destinyPath += RandomString(6) + mileseconds.ToString().Replace(".", "") + ".csv";
+                destinyPath += mileseconds.ToString().Replace(".", "") + ".csv";
 
                 csvFile.SaveAs(destinyPath);
             }
@@ -361,7 +413,8 @@ namespace cenegas.clases
             }
         }
 
-        private static object evalNull(string value) {
+<<<<<<< HEAD
+        private static object evalDouble(string value) {
             object response = DBNull.Value;
 
             if (value.Length > 0)
@@ -370,8 +423,17 @@ namespace cenegas.clases
             return response;
         }
 
+        private static object evalDate(string value)
+        {
+            object response = DBNull.Value;
 
-        private static void readCSV(string pathFile, ref DataTable dt){
+            if (value.Length > 0)
+                response = value.ToUpper().Replace(" A.M.", "").Replace(" P.M.", "").Replace("A.M.", "").Replace("P.M.", "");
+
+            return response;
+        }
+
+        private static void readCSV(string pathFile, ref DataTable dt, int activeElements){
             DateTime hoy = DateTime.Now;
 
             try
@@ -383,28 +445,55 @@ namespace cenegas.clases
                     int fieldCount = csv.FieldCount;
 
                     string[] headers = csv.GetFieldHeaders();
-                    while (csv.ReadNextRecord())
+
+                    if (activeElements == 10)
                     {
-
-                        dt.Rows.Add(csv[0], csv[1], csv[3], hoy
-                            , evalNull(csv[4])
-                            , evalNull(csv[5])
-                            , evalNull(csv[6])
-                            , evalNull(csv[7])
-                            , evalNull(csv[8])
-                            , evalNull(csv[9])
-                            , evalNull(csv[10])
-                            , evalNull(csv[11])
-                            , evalNull(csv[12]));
-
+                        while (csv.ReadNextRecord())
+                        {
+                            dt.Rows.Add(csv[0], csv[1], evalDate(csv[3]), hoy
+                                , evalDouble(csv[4])
+                                , evalDouble(csv[5])
+                                , evalDouble(csv[6])
+                                , evalDouble(csv[7])
+                                , evalDouble(csv[8])
+                                , evalDouble(csv[9])
+                                , evalDouble(csv[10])
+                                , evalDouble(csv[11])
+                                , evalDouble(csv[12])
+                                , evalDouble(csv[13])
+                                );
+                        }
+                    }
+                    else if (activeElements == 12)
+                    {
+                        while (csv.ReadNextRecord())
+                        {
+                            dt.Rows.Add(csv[0], csv[1], evalDate(csv[3]), hoy
+                                        , evalDouble(csv[4])
+                                        , evalDouble(csv[5])
+                                        , evalDouble(csv[6])
+                                        , evalDouble(csv[7])
+                                        , evalDouble(csv[8])
+                                        , evalDouble(csv[9])
+                                        , evalDouble(csv[10])
+                                        , evalDouble(csv[11])
+                                        , evalDouble(csv[12])
+                                        , evalDouble(csv[13])
+                                        , evalDouble(csv[14])
+                                        , evalDouble(csv[15])
+                                        );
+                        }
 
                     }
+                   
                 }
             }catch( Exception e){
                 throw(e);
             }
         }
 
+     
+=======
         // Lee los datos de un archivo CSV y los vuelca en un DataTable
         private static void csvToDataTable(string pathFile, string query, ref DataTable dt)
         {
@@ -414,8 +503,6 @@ namespace cenegas.clases
             //////- IIS > Application Pools > DefaultAppPool > Advanced Settings > Enable 32-Bit Applications 
             //////-      Cambiar el valor a TRUE
 
-            //System.Globalization.CultureInfo beforeCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
-
             try
             {
                 string path = System.IO.Path.GetDirectoryName(pathFile);
@@ -423,18 +510,12 @@ namespace cenegas.clases
                 ////Guardamos el tiempo antes del proceso a cronometrar
                 //DateTime tiempoinicial = DateTime.Now;
 
-
-
-                //System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("es-MX");
-
-                using (OleDbConnection conn = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source='" + path + "';Extended Properties='text;HDR=No;IMEX=1;FMT=Delimited'"))
+                using (OleDbConnection conn = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source='" + path + "';Extended Properties='text;HDR=Yes;FMT=Delimited'"))
                 {
 
                     OleDbDataAdapter da = new OleDbDataAdapter(query, conn);
                     da.Fill(dt);
                 }
-
-                //System.Threading.Thread.CurrentThread.CurrentCulture = beforeCulture;
 
                 ////Guardamos el tiempo al finalizar todas las instrucciones
                 //DateTime tiempofinal = DateTime.Now;
@@ -450,11 +531,8 @@ namespace cenegas.clases
 
                 throw (e);
             }
-            //finally
-            //{
-            //    System.Threading.Thread.CurrentThread.CurrentCulture = beforeCulture;
-            //}
         }
+>>>>>>> parent of b812894... Actualizacion importación
 
         // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
         private static void saveRecords(string idsesion, bool useRange, bool viewHowChanges
@@ -464,7 +542,6 @@ namespace cenegas.clases
                                         , DateTime? initDate, DateTime? finalDate
                                         )
         {
-
 
             SqlConnection adminConnection = BD.Connection("Admin");
 
@@ -643,6 +720,54 @@ namespace cenegas.clases
                 string narchivo = (string)dr["narchivo"];
 
                 return narchivo;
+
+            }
+            catch (Exception e)
+            {
+                throw (e);
+            }
+            finally
+            {
+                if (cnn != null)
+                {
+                    if (cnn.State == ConnectionState.Open)
+                    {
+                        cnn.Close();
+                        cnn.Dispose();
+                    }
+                }
+
+            }
+
+
+        }
+
+
+
+
+        // Guarda mediante un SP los regitros de un DataTable en una tabla del Servidor
+        public static int getActiveElements()
+        {
+            SqlConnection cnn = new SqlConnection();
+            SqlCommand cmd = new SqlCommand();
+
+            object activeElements = 0;
+            try
+            {
+
+                cnn = BD.Connection();
+
+                cmd.Parameters.Add("@deleted", SqlDbType.VarChar);
+                cmd.Parameters["@deleted"].Value = "N";
+
+                cmd.Connection = cnn;
+                cmd.CommandTimeout = 180;
+                cmd.CommandText = "spp_elementos_elementosActivos";
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                activeElements = cmd.ExecuteScalar();
+
+                return (int)activeElements;
 
             }
             catch (Exception e)
