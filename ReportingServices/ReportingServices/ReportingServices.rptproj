@@ -28,10 +28,6 @@
       <Name>tendencia.rdl</Name>
       <FullPath>tendencia.rdl</FullPath>
     </ProjectItem>
-    <ProjectItem>
-      <Name>viaticos.rdl</Name>
-      <FullPath>viaticos.rdl</FullPath>
-    </ProjectItem>
   </Reports>
   <Configurations>
     <Configuration>
