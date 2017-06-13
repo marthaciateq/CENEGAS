@@ -6,7 +6,8 @@ CREATE PROCEDURE sps_reporte_especificaciones
 	@ffinal varchar(max),
 	@formato varchar(max),
 	@resultado int, --(1) Solo puntos de muestreo que cuentan con información fuera de especificacion (2) Informacion completa
-	@reporte varchar(max) -- (G) General (D) detalle 
+	@reporte varchar(max), -- (G) General (D) detalle 
+	@separacion char(1) -- (P) Punto de Muestreo, (E) Elemento
 AS
 BEGIN
 	declare @error varchar(max)
@@ -29,6 +30,11 @@ BEGIN
 		declare @fcero datetime
 		declare @fechas table(
 			fecha datetime
+		)
+		declare @totalrowsXelemento table(
+			idpmuestreo varchar(max),
+			idelemento varchar(max),
+			totalrowsXelemento float
 		)
 		
 		select a.*
@@ -58,12 +64,23 @@ BEGIN
 			
 		if @resultado=1
 		begin
-			select 
-				distinct idpmuestreo,
-				punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo
-			from 
-				#fespecificacion
-		end	
+			if @separacion='P'
+				select 
+					distinct idpmuestreo,
+					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
+					null as idelemento,
+					null as descripcion
+				from 
+					#fespecificacion
+			else
+				select 
+					distinct idpmuestreo,
+					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
+					idelemento,
+					celemento
+				from 
+					#fespecificacion
+		end
 		else
 		begin
 			if(@reporte='G')
@@ -76,6 +93,7 @@ BEGIN
 					a.nalterno,
 					a.elemento descripcion,
 					a.promedio,
+					a.celemento,
 					a.zona,
 					case 
 						when a.zona='S' then 'SUR' 
@@ -84,10 +102,26 @@ BEGIN
 					@formato formato,
 					@finicial finicial,
 					@ffinal ffinal,
-					@reporte reporte
+					@reporte reporte,
+					0 as totalrowsXelemento
+					--null fecha,
+					--null fechaS,
+					--null valor
 				from #fespecificacion a
 				order by a.nalterno,a.fecha						
 			else
+				begin
+				insert into @totalrowsXelemento
+				select
+					a.idpmuestreo,
+					a.idelemento,
+					count(*) as  totalrowsXelemento
+				from #fespecificacion a
+					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
+						and a.idelemento=b.idelemento 
+						and b.fecha<=a.rango and b.fecha>=a.fcorte	
+					group by a.idpmuestreo,a.idelemento			
+					
 				select 
 					a.idpmuestreo,
 					a.idelemento,	
@@ -100,6 +134,7 @@ BEGIN
 					a.nalterno,
 					a.elemento descripcion,
 					a.promedio,
+					a.celemento,
 					a.zona,
 					case 
 						when a.zona='S' then 'SUR' 
@@ -108,12 +143,16 @@ BEGIN
 					@formato formato,
 					@finicial finicial,
 					@ffinal ffinal,
-					@reporte reporte
+					@reporte reporte,
+					ROW_NUMBER() OVER(PARTITION BY a.nalterno,a.celemento ORDER BY a.nalterno,a.celemento,a.fecha,b.fecha) as nrow,
+					totalrowsXelemento
 				from #fespecificacion a
 					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
 						and a.idelemento=b.idelemento 
 						and b.fecha<=a.rango and b.fecha>=a.fcorte
-				order by a.nalterno,a.fecha,b.fecha
+					left join @totalrowsXelemento c on b.idpmuestreo=c.idpmuestreo and b.idelemento=c.idelemento
+				order by a.nalterno,a.celemento,a.fecha,b.fecha
+			end
 				
 		
 				--GENERAR ENCABEZADOS DINAMICOS
@@ -167,7 +206,3 @@ BEGIN
 	end catch
 END
 	
-
-
-
-
