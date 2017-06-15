@@ -45,20 +45,29 @@ BEGIN
 		begin
 			if @separacion='P'
 				select 
-					distinct idpmuestreo,
-					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
+					distinct a.idpmuestreo,
+					cast(b.orden as varchar(max))+'.'+b.abreviatura pmuestreo,
+					b.orden npmuestreo,
+					b.abreviatura abrev_pmuestreo,
 					null as idelemento,
 					null as descripcion
 				from 
 					#base_rpromedio a
+						left join v_pmuestreo b on a.idpmuestreo=b.idpmuestreo
 			else
 				select 
-					distinct idpmuestreo,
-					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
-					idelemento,
-					celemento
+					distinct a.idpmuestreo,
+					cast(b.orden as varchar(max))+'.'+b.abreviatura pmuestreo,
+					b.orden npmuestreo,
+					b.abreviatura abrev_pmuestreo,
+					a.idelemento,
+					a.celemento,
+					c.abreviatura abrev_elemento,
+					c.orden nelemento
 				from 
 					#base_rpromedio a
+						left join v_pmuestreo b on a.idpmuestreo=b.idpmuestreo
+						left join v_elementos c on a.idelemento=c.idelemento
 		end
 		else
 		begin
@@ -147,7 +156,9 @@ BEGIN
 					and d.fecha=(select max(z.fecha) from especificaciones z where z.idelemento=a.idelemento and z.zona=a.zona and convert(date,a.fecha)>=z.fecha)
 					and deleted='N'					
 				inner join #valoresY e on a.idpmuestreo=e.idpmuestreo and a.idelemento=e.idelemento
-			order by a.nalterno,a.elemento,convert(date,a.fecha)
+				left join v_pmuestreo f on a.idpmuestreo=f.idpmuestreo
+				left join v_elementos g on a.idelemento=g.idelemento
+			order by f.orden,a.nalterno,g.orden,a.elemento,convert(date,a.fecha)
 
 		end
 	end try

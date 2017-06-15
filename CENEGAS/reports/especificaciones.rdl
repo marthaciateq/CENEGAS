@@ -5739,11 +5739,6 @@
                     </PageBreak>
                     <PageName>=iif(Fields!formato.Value="EXCEL",Fields!nalterno.Value,"")</PageName>
                   </Group>
-                  <SortExpressions>
-                    <SortExpression>
-                      <Value>=Fields!idpmuestreo.Value</Value>
-                    </SortExpression>
-                  </SortExpressions>
                   <TablixMembers>
                     <TablixMember>
                       <Group Name="Details">

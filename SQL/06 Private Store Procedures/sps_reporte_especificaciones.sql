@@ -7,7 +7,8 @@ CREATE PROCEDURE sps_reporte_especificaciones
 	@formato varchar(max),
 	@resultado int, --(1) Solo puntos de muestreo que cuentan con información fuera de especificacion (2) Informacion completa
 	@reporte varchar(max), -- (G) General (D) detalle 
-	@separacion char(1) -- (P) Punto de Muestreo, (E) Elemento
+	@separacion char(1), -- (P) Punto de Muestreo, (E) Elemento
+	@bloque int -- Generar reporte por bloque de 10 puntos de muestreo
 AS
 BEGIN
 	declare @error varchar(max)
@@ -24,8 +25,10 @@ BEGIN
 		set @d_ffinal=convert(date,@ffinal,103)		
 		
 		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
-		if ( (@pmuestreo is null and DATEDIFF(day,@d_finicial,@d_ffinal)>15) or (@pmuestreo is not null and DATEDIFF(day,@d_finicial,@d_ffinal)>90) )
-			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo son 15 dias y con puntos de muestreo 3 meses'
+		
+		if( @separacion='E' and (@bloque is null or (select count(col1) from dbo.fn_table(1,@pmuestreo)) > 10 ) ) execute sp_error 'U','El máximo número de puntos de muestreo a consultar son 10 '
+		if (@pmuestreo is null and @bloque is null and DATEDIFF(day,@d_finicial,@d_ffinal)>10)
+			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo son 15 dias'
 	
 		declare @fcero datetime
 		declare @fechas table(
@@ -36,14 +39,18 @@ BEGIN
 			idelemento varchar(max),
 			totalrowsXelemento float
 		)
+		declare @registros int
+		set @registros= @bloque*10
 		
 		select a.*
 		into #base_rpromedio
 		from v_promedios a
+			left join v_pmuestreo b on a.idpmuestreo=b.idpmuestreo
 		where 
 			(fecha>=@d_finicial and convert(date,fecha)<=@d_ffinal)
 			and (@pmuestreo is null or a.idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
-			and (@elementos is null or a.idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
+			and (@elementos is null or a.idelemento in (select col1 from dbo.fn_table(1,@elementos)))	
+			and (@bloque is null or (b.orden>@registros and b.orden<=@registros+10))						
 
 		select @d_finicial=min(fecha),@d_ffinal=max(fecha) 
 		from #base_rpromedio
@@ -66,20 +73,31 @@ BEGIN
 		begin
 			if @separacion='P'
 				select 
-					distinct idpmuestreo,
-					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
+					distinct a.idpmuestreo,
+					cast(b.orden as varchar(max))+'.'+b.abreviatura pmuestreo,
+					b.abreviatura abrev_pmuestreo,
+					b.orden npmuestreo,				
 					null as idelemento,
-					null as descripcion
+					null as descripcion,
+					null as abrev_elemento,
+					null as nelemento
 				from 
-					#fespecificacion
+					#fespecificacion a
+						left join v_pmuestreo b on a.idpmuestreo=b.idpmuestreo
 			else
 				select 
-					distinct idpmuestreo,
-					punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo,
-					idelemento,
-					celemento
+					distinct a.idpmuestreo,
+					cast(c.orden as varchar(max))+'.'+c.abreviatura pmuestreo,
+					a.idelemento,
+					a.celemento,
+					b.abreviatura abrev_elemento,
+					b.orden nelemento,
+					c.abreviatura abrev_pmuestreo,
+					c.orden npmuestreo
 				from 
-					#fespecificacion
+					#fespecificacion a
+						left join v_elementos b on a.idelemento=b.idelemento
+						left join v_pmuestreo c on a.idpmuestreo=c.idpmuestreo
 		end
 		else
 		begin
@@ -104,9 +122,6 @@ BEGIN
 					@ffinal ffinal,
 					@reporte reporte,
 					0 as totalrowsXelemento
-					--null fecha,
-					--null fechaS,
-					--null valor
 				from #fespecificacion a
 				order by a.nalterno,a.fecha						
 			else
@@ -144,14 +159,15 @@ BEGIN
 					@finicial finicial,
 					@ffinal ffinal,
 					@reporte reporte,
-					ROW_NUMBER() OVER(PARTITION BY a.nalterno,a.celemento ORDER BY a.nalterno,a.celemento,a.fecha,b.fecha) as nrow,
+					ROW_NUMBER() OVER(PARTITION BY d.orden,a.nalterno,a.celemento ORDER BY d.orden,a.nalterno,a.celemento,a.fecha,b.fecha) as nrow,
 					totalrowsXelemento
 				from #fespecificacion a
 					left join v_horarios b on a.idpmuestreo=b.idpmuestreo 
 						and a.idelemento=b.idelemento 
 						and b.fecha<=a.rango and b.fecha>=a.fcorte
 					left join @totalrowsXelemento c on b.idpmuestreo=c.idpmuestreo and b.idelemento=c.idelemento
-				order by a.nalterno,a.celemento,a.fecha,b.fecha
+					left join v_pmuestreo d on a.idpmuestreo=d.idpmuestreo
+				order by d.orden,a.nalterno,a.celemento,a.fecha,b.fecha
 			end
 				
 		

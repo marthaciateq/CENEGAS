@@ -716,6 +716,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -968,11 +969,6 @@
                     </PageBreak>
                     <PageName>=iif(First(Fields!formato.Value, "DataSet1")="PDF","",Fields!nalterno.Value)</PageName>
                   </Group>
-                  <SortExpressions>
-                    <SortExpression>
-                      <Value>=Fields!idpmuestreo.Value</Value>
-                    </SortExpression>
-                  </SortExpressions>
                   <TablixMembers>
                     <TablixMember>
                       <Group Name="Details" />

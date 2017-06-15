@@ -107,6 +107,7 @@ BEGIN
 		
 		select 
 			isnull(a.idpmuestreo,b.idpmuestreo) idpmuestreo,
+			isnull(a.idelemento,b.idelemento) idelemento,			
 			isnull(a.punto,b.punto) punto,
 			isnull(a.nalterno,b.nalterno) nalterno,
 			isnull(a.elemento,b.elemento) descripcion,	
@@ -141,15 +142,21 @@ BEGIN
 		if @resultado=1
 		begin
 			select 
-				distinct idpmuestreo idpmuestreo,
-				punto+'_'+dbo.fn_depurateText(nalterno) pmuestreo
+				distinct a.idpmuestreo idpmuestreo,
+				cast(b.orden as varchar(max))+'.'+b.abreviatura pmuestreo,
+				b.orden npmuestreo,
+				b.abreviatura abrev_pmuestreo
 			from 
-				#horarios_1
+				#horarios_1 a
+					left join v_pmuestreo b on a.idpmuestreo=b.idpmuestreo
 		end	
 		else
 		begin
-			select * from #horarios_1
-			order by nalterno,fecha
+			select a.* 
+			from #horarios_1 a
+				left join v_pmuestreo b on a.idpmuestreo=b.idpmuestreo
+				left join v_elementos c on a.idelemento=c.idelemento
+			order by b.orden,b.abreviatura,a.fecha,c.orden,c.abreviatura
 		end
 		
 	end try

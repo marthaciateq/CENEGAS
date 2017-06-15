@@ -28,6 +28,14 @@
       <Name>tendencia.rdl</Name>
       <FullPath>tendencia.rdl</FullPath>
     </ProjectItem>
+    <ProjectItem>
+      <Name>viaticos.rdl</Name>
+      <FullPath>viaticos.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>especificaciones_excel.rdl</Name>
+      <FullPath>especificaciones_excel.rdl</FullPath>
+    </ProjectItem>
   </Reports>
   <Configurations>
     <Configuration>

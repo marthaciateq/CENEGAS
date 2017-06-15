@@ -13,7 +13,7 @@ BEGIN
 			a.*
 		from v_pmuestreo a
 		where (@buscar is null or dbo.fn_buscar(@buscar, a.punto,a.nalterno,a.descripcion,a.zonaS,null) = 'S') 
-		order by a.zona,a.punto,a.nalterno
+		order by a.orden
 	end try
 	begin catch
 		set @error = error_message()

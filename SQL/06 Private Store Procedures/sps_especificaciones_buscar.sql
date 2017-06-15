@@ -16,7 +16,7 @@ BEGIN
 		from v_especificaciones a
 			inner join v_elementos b on a.idelemento=b.idelemento
 		where (@buscar is null or dbo.fn_buscar(@buscar, b.elemento,a.zonaS,null,null,null) = 'S') 
-		order by a.zona,b.elemento,a.fecha
+		order by b.orden,a.zona,a.fecha
 	end try
 	begin catch
 		set @error = error_message()

@@ -97,11 +97,11 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['','Punto', 'Nombre Alterno', 'Descripcion','Zona','Hora de Corte','Abreviatrua','Órden','Estado']]
+                    data: [['','Núm.','Punto', 'Nombre Alterno', 'Descripcion','Zona','Hora de Corte','Abreviatrua','Estado']]
                 },
                 body: {
                     data: r,
-                    cols: ['punto', 'nalterno', 'descripcion','zonaS','hcorte','abreviatura','orden','deletedS']
+                    cols: ['orden','punto', 'nalterno', 'descripcion','zonaS','hcorte','abreviatura','deletedS']
                 },
                 addCheckbox: true
             });

@@ -46,8 +46,8 @@ namespace cenegas.clases
                 string formato = "pdf";
 
                 if (request.Params["formato"] != null)
-                    if (request.Params["formato"] == "EXCEL") formato = ".xls";
-                    else if (request.Params["formato"] == "PDF") formato = ".pdf";
+                    if (request.Params["formato"] == "EXCEL") formato = "xls";
+                    else if (request.Params["formato"] == "PDF") formato = "pdf";
 
                 string nfile = "temp_" + DateTime.Now.ToString().Replace("/", "").Replace(".", "").Replace(" ", "").Replace(":", "") + ".zip";
                 using (var fileStream = new FileStream(Files.Path + "\\" + nfile, FileMode.Create))

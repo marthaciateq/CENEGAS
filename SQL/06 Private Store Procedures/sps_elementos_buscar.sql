@@ -12,7 +12,7 @@ BEGIN
 			a.*
 		from v_elementos a
 		where (@buscar is null or dbo.fn_buscar(@buscar, a.elemento,null,null,null,null) = 'S') 
-		order by a.descripcion
+		order by a.orden
 	end try
 	begin catch
 		set @error = error_message()

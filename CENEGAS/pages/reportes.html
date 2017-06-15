@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/bootstrap-datetimepicker.min.css" />
     <script type="text/javascript">
         var files = [];
-        var apmuestreo = new Array();
+        var narchivos = new Array();
         function getPuntosMuestreoConInformacion(pmuestreo, reporte,formato,separacion) {
             var nombre = 'especificaciones';
             var procedimiento = 'sps_reporte_especificaciones';
@@ -25,12 +25,17 @@
                 nombre = 'tendencia';
                 procedimiento = 'sps_reporte_grafico_tendencia'
             }
+            else if (reporte == 'C') {
+                nombre = 'mensualCRE';
+                procedimiento = 'sps_reporte_mensualCRE'
+            }
 
             Mi.AJAX.request({
                 data: {
                     NAME: procedimiento,
                     pmuestreo: pmuestreo==""?null:pmuestreo,
-                    elementos: $("#idelemento").val()==""?null:$("#idelemento").val(),
+                    elementos: $("#idelemento").val() == "" ? null : $("#idelemento").val(),
+                    bloque: $("#bloque").val() == 0 ? null : $("#bloque").val(),
                     finicial: $("#finicial").val(),
                     ffinal: $("#ffinal").val(),
                     resultado: 1,
@@ -47,7 +52,8 @@
             });
             return dfd.promise();
         }
-        function generarReporte(pmuestreo,punto,elementos,celemento,reporte,formato,separacion,ptoFile) {
+        
+        function generarReporte(pmuestreo,elementos,npmuestreo,abrev_pmuestreo,nelemento,abrev_elemento,reporte,formato,separacion,ptoFile) {
             var nombre = 'especificaciones';
             var procedimiento = 'sps_reporte_especificaciones';
             var dfd = $.Deferred();
@@ -88,7 +94,13 @@
                     format: formato,
                     toFile: ptoFile,
                     onsuccess: function (data) {
-                        apmuestreo[data] = punto+(celemento!=null && separacion=='E'?'-'+celemento:'');
+                        var mes = Mi.Util.months[Mi.Convert.stringToDate($("#finicial").val()).getMonth()+1].shortName;
+
+                        if (abrev_elemento != null && separacion == 'E') {
+                            narchivos[data] = npmuestreo + '.' + nelemento+' '+mes+' '+abrev_pmuestreo +' '+ abrev_elemento;
+                        }
+                        else
+                            narchivos[data] = npmuestreo + ' '+abrev_pmuestreo;
                         files.push(data);
                         dfd.resolve(data);
                     },
@@ -115,6 +127,12 @@
                 elementos.appendTo("#divElementos");
                 elementos.prop("id", "idelemento");
 
+                
+                var bloque = Mi.Input.combo();
+                bloque.MiFill([[0, 'Sin bloque'],[1, '1-10'], [2, '11-20'], [3, '21-30'], [4, '31-40'], [5, '41-50'], [6, '51-60'], [7, '61-70']]);
+                bloque.appendTo("#divBloques");
+                bloque.prop("id", "bloque");
+
                 var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
                 var options = {
                     format: 'dd/mm/yyyy',
@@ -132,13 +150,13 @@
                         console.log(files.length);
                      }
                      files = [];
-                     apmuestreo = new Array();
+                     narchivos = new Array();
 
                      var formato = $("#formato:checked").val();
                      var reporte = $("#reporte:checked").val();
                      var separacion = $("#separacion:checked").val();
 
-                     if ( (formato == 'PDF' && (reporte == 'G' || reporte == 'D' || reporte == 'T') ) || (formato=='EXCEL' && separacion=='E') ) {
+                     if ( (formato == 'PDF' && (reporte == 'G' || reporte == 'D' || reporte == 'T' || reporte=='C') ) || (formato=='EXCEL' && separacion=='E') ) {
 
                         var processItemsDeferred = [];
                         $('#bgenerar').attr('disabled', true);
@@ -152,11 +170,11 @@
                                 var pmuestreo = null;
                                 $.each(data, function (index, value) {
                                     pmuestreo = value;
-                                    if(separacion=='P' || reporte=='C' || reporte=='F')
-                                        processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, pmuestreo.pmuestreo, $("#idelemento").val(), null, reporte, formato, separacion, 'S'));
+                                    if(separacion=='P' || reporte=='C' || reporte=='F' )
+                                        processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, $("#idelemento").val(), pmuestreo.npmuestreo, pmuestreo.abrev_pmuestreo, null, null, reporte, formato, separacion, 'S'));
                                     else 
                                         if(separacion=='E')
-                                            processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, pmuestreo.pmuestreo, pmuestreo.idelemento, pmuestreo.celemento, reporte, formato, separacion, 'S'));
+                                            processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, pmuestreo.idelemento, pmuestreo.npmuestreo,pmuestreo.abrev_pmuestreo,pmuestreo.nelemento,pmuestreo.abrev_elemento,reporte, formato, separacion, 'S'));
                                 });
 
                                 $.when.apply($, processItemsDeferred).then(function () {
@@ -179,7 +197,7 @@
                                             input.value = value;
                                             input2 = document.createElement('input');
                                             input2.name = "files";
-                                            input2.value = apmuestreo[value];
+                                            input2.value = narchivos[value];
                                             frm01.appendChild(input);
                                             frm01.appendChild(input2);
                                         }
@@ -202,7 +220,7 @@
                         });
                     } 
                     else {
-                         generarReporte($("#idpmuestreo").val(), null, $("#idelemento").val(),null,reporte, formato,separacion);
+                         generarReporte($("#idpmuestreo").val(),$("#idelemento").val(),null,null,null,null,reporte, formato,separacion);
                    }
                 });
 
@@ -220,6 +238,11 @@
                     <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Punto(s) de Muestreo:</label>
                         <div id="divpmuestreo" class="col-sm-4">
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="control-label col-sm-2">Bloques de Puntos de Muestreo por Órden:</label>
+                        <div id="divBloques" class="col-sm-4">
                         </div>
                     </div>
                     <div class="form-group clearfix">
@@ -270,8 +293,8 @@
                     <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Separación del Reporte:</label>
                         <div id="divFormatos" class="col-sm-4">
-                            <label class="radio-inline"><input type="radio" id="separacion" name="optradio3" value="P" checked="checked" />Punto de Muestreo</label>
-                            <label class="radio-inline"><input type="radio" id="separacion" name="optradio3" value="E" />Elemento</label>
+                            <label class="radio-inline"><input type="radio" id="separacion" name="optradio3" value="P" checked="checked" />Archivos Concentrados</label>
+                            <label class="radio-inline"><input type="radio" id="separacion" name="optradio3" value="E" />Archivos Individuales</label>
                         </div>
                     </div>
                     <div class="form-group clearfix">
