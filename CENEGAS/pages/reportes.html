@@ -38,6 +38,7 @@
                     bloque: $("#bloque").val() == 0 ? null : $("#bloque").val(),
                     finicial: $("#finicial").val(),
                     ffinal: $("#ffinal").val(),
+                    reporte:reporte,
                     resultado: 1,
                     separacion:separacion
                 },
@@ -73,7 +74,7 @@
                 nombre = 'mensualCRE';
                 procedimiento = 'sps_reporte_mensualCRE'
             }else{
-                if(formato=='EXCEL')
+                if(formato=='EXCEL' && (reporte=='D' || reporte=="G"))
                     nombre = 'especificaciones_excel'; 
             }
 
@@ -88,7 +89,8 @@
                         ffinal: $("#ffinal").val() == "" ? null : $("#ffinal").val(),
                         formato: formato,
                         resultado: 2,
-                        reporte: reporte == "" ? 'D' : reporte
+                        reporte: reporte == "" ? 'D' : reporte,
+                        separacion:separacion
                     },
                     nombre: nombre,
                     format: formato,
@@ -156,7 +158,7 @@
                      var reporte = $("#reporte:checked").val();
                      var separacion = $("#separacion:checked").val();
 
-                     if ( (formato == 'PDF' && (reporte == 'G' || reporte == 'D' || reporte == 'T' || reporte=='C') ) || (formato=='EXCEL' && separacion=='E') ) {
+                     if ((separacion=='P' || separacion=='E')) {
 
                         var processItemsDeferred = [];
                         $('#bgenerar').attr('disabled', true);
@@ -170,7 +172,7 @@
                                 var pmuestreo = null;
                                 $.each(data, function (index, value) {
                                     pmuestreo = value;
-                                    if(separacion=='P' || reporte=='C' || reporte=='F' )
+                                    if(separacion=='P' || reporte=='C' || reporte=='F')
                                         processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, $("#idelemento").val(), pmuestreo.npmuestreo, pmuestreo.abrev_pmuestreo, null, null, reporte, formato, separacion, 'S'));
                                     else 
                                         if(separacion=='E')
@@ -241,8 +243,11 @@
                         </div>
                     </div>
                     <div class="form-group clearfix">
-                        <label class="control-label col-sm-2">Bloques de Puntos de Muestreo por Órden:</label>
+                        <label class="control-label col-sm-2">Bloques de Puntos de Muestreo por Órden :</label>
                         <div id="divBloques" class="col-sm-4">
+                        </div>
+                        <div class="col-sm-4">
+                            * Solo aplica para Reporte A. y D. en archivos individuales
                         </div>
                     </div>
                     <div class="form-group clearfix">
@@ -255,19 +260,19 @@
 
                         <div id="divReportes" class="col-sm-4">
                             <div class="radio">
-                                <label><input type="radio" id="reporte" name="optradio" value="D" checked="checked" />NOM-001-SECRE-2010</label>
+                                <label><input type="radio" id="reporte" name="optradio" value="D" checked="checked" />A. NOM-001-SECRE-2010</label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" id="reporte"  name="optradio" value="G" />NOM-001-SECRE-2010 (Solo punto A y B)</label>
+                                <label><input type="radio" id="reporte"  name="optradio" value="G" />B. NOM-001-SECRE-2010 (Solo punto A y B)</label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" id="reporte"  name="optradio" value="F" />Información Faltante</label>
+                                <label><input type="radio" id="reporte"  name="optradio" value="F" />C. Información Faltante</label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" id="reporte"  name="optradio" value="T" />Gráfico de Tendencia</label>
+                                <label><input type="radio" id="reporte"  name="optradio" value="T" />D. Gráfico de Tendencia</label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" id="reporte" name="optradio" value="C" />Reporte Mensual CRE</label>
+                                <label><input type="radio" id="reporte" name="optradio" value="C" />E. Reporte Mensual CRE</label>
                             </div>
                         </div>
                     </div>
@@ -293,9 +298,16 @@
                     <div class="form-group clearfix">
                         <label class="control-label col-sm-2">Separación del Reporte:</label>
                         <div id="divFormatos" class="col-sm-4">
-                            <label class="radio-inline"><input type="radio" id="separacion" name="optradio3" value="P" checked="checked" />Archivos Concentrados</label>
-                            <label class="radio-inline"><input type="radio" id="separacion" name="optradio3" value="E" />Archivos Individuales</label>
-                        </div>
+                            <div class="radio">
+                                <label class="radio-inline clearfix"><input type="radio" id="separacion" name="optradio3" value="C" checked="checked" />Archivos Concentrados</label>
+                            </div>
+                            <div class="radio">
+                                <label class="radio-inline clearfix"><input type="radio" id="separacion" name="optradio3" value="P" />Archivos Individuales X Punto de Muestreo</label>
+                            </div>
+                            <div class="radio">
+                                <label class="radio-inline clearfix"><input type="radio" id="separacion" name="optradio3" value="E" />Archivos Individuales X Elemento</label>
+                            </div>
+                       </div>
                     </div>
                     <div class="form-group clearfix">
                         <div class="col-sm-3">

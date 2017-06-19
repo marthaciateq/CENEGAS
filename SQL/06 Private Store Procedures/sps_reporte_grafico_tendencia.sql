@@ -7,7 +7,8 @@ CREATE PROCEDURE sps_reporte_grafico_tendencia
 	@ffinal varchar(max),
 	@formato varchar(max),
 	@resultado int, --(1) Solo puntos de muestreo que cuentan con información fuera de especificacion (2) Informacion completa
-	@separacion char(1) -- (P) Punto de Muestreo, (E) Elemento
+	@separacion char(1), -- (P) Punto de Muestreo, (E) Elemento
+	@bloque int -- Generar reporte por bloque de 10 puntos de muestreo
 AS
 BEGIN
 	declare @error varchar(max)
@@ -24,7 +25,12 @@ BEGIN
 		set @d_ffinal=convert(date,@ffinal,103)		
 		
 		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
-		if ( (@pmuestreo is null and DATEDIFF(day,@d_finicial,@d_ffinal)>7) or (@pmuestreo is not null and DATEDIFF(day,@d_finicial,@d_ffinal)>90) )
+		if( 
+			(@separacion='E' or @separacion='P') 
+			and @bloque is null 
+			and (@pmuestreo is null or (select count(col1) from dbo.fn_table(1,@pmuestreo)) > 10 )
+		) execute sp_error 'U','El máximo número de puntos de muestreo a consultar son 10'
+		if ( (@pmuestreo is null and @bloque is null and DATEDIFF(day,@d_finicial,@d_ffinal)>7) or (@pmuestreo is not null and DATEDIFF(day,@d_finicial,@d_ffinal)>90) )
 			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo es una semana y con puntos de muestreo 3 meses'
 			
 		declare @query varchar(max)
@@ -32,14 +38,18 @@ BEGIN
 		declare @fechas table(
 			fecha date
 		)
+		declare @registros int
+		set @registros= @bloque*10		
 		
-		select *
+		select a.*
 		into #base_rpromedio
-		from v_promedios
+		from v_promedios a
+			left join v_pmuestreo b on a.idpmuestreo=b.idpmuestreo		
 		where 
 	        (@idbdatos is null and fecha>=@d_finicial and fecha<DATEADD(day,1,@d_ffinal))
-			and (@pmuestreo is null or idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
-			and (@elementos is null or idelemento in (select col1 from dbo.fn_table(1,@elementos)))								
+			and (@pmuestreo is null or a.idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
+			and (@elementos is null or a.idelemento in (select col1 from dbo.fn_table(1,@elementos)))			
+			and (@bloque is null or (b.orden>@registros-10 and b.orden<=@registros))														
 		
 		if @resultado=1
 		begin

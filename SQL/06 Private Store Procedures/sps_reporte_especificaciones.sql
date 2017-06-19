@@ -26,8 +26,13 @@ BEGIN
 		
 		if(@d_finicial>@d_ffinal) execute sp_error 'U','La fecha inicial debe ser menor que la final'
 		
-		if( @separacion='E' and (@bloque is null or (select count(col1) from dbo.fn_table(1,@pmuestreo)) > 10 ) ) execute sp_error 'U','El máximo número de puntos de muestreo a consultar son 10 '
-		if (@pmuestreo is null and @bloque is null and DATEDIFF(day,@d_finicial,@d_ffinal)>10)
+		if( 
+			(@separacion='E' or @separacion='P') 
+			and @reporte='D' 
+			and @bloque is null 
+			and (@pmuestreo is null or (select count(col1) from dbo.fn_table(1,@pmuestreo)) > 10 )
+		) execute sp_error 'U','El máximo número de puntos de muestreo a consultar son 10'
+		if (@pmuestreo is null and @bloque is null and DATEDIFF(day,@d_finicial,@d_ffinal)>15)
 			execute sp_error 'U','El máximo rango de consulta sin puntos de muestreo son 15 dias'
 	
 		declare @fcero datetime
@@ -50,7 +55,7 @@ BEGIN
 			(fecha>=@d_finicial and convert(date,fecha)<=@d_ffinal)
 			and (@pmuestreo is null or a.idpmuestreo in (select col1 from dbo.fn_table(1,@pmuestreo)))
 			and (@elementos is null or a.idelemento in (select col1 from dbo.fn_table(1,@elementos)))	
-			and (@bloque is null or (b.orden>@registros and b.orden<=@registros+10))						
+			and (@bloque is null or (b.orden>@registros-10 and b.orden<=@registros))						
 
 		select @d_finicial=min(fecha),@d_ffinal=max(fecha) 
 		from #base_rpromedio
@@ -123,7 +128,8 @@ BEGIN
 					@reporte reporte,
 					0 as totalrowsXelemento
 				from #fespecificacion a
-				order by a.nalterno,a.fecha						
+					left join v_pmuestreo b on a.idpmuestreo=b.idpmuestreo
+				order by b.orden,a.nalterno,a.celemento,a.fecha				
 			else
 				begin
 				insert into @totalrowsXelemento
