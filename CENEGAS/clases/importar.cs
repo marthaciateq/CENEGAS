@@ -380,7 +380,7 @@ namespace cenegas.clases
             {
                 // open the file "data.csv" which is a CSV file with headers
                 using (CsvReader csv =
-                       new CsvReader(new StreamReader(pathFile), true))
+                       new CsvReader(new StreamReader(pathFile,System.Text.Encoding.GetEncoding("iso-8859-1")), true))
                 {
                     int fieldCount = csv.FieldCount;
 

@@ -71,6 +71,22 @@ namespace cenegas.clases
             }
         }
 
+        public static void borrarArchivos(HttpRequest request, HttpResponse response)
+        {
+
+            try{
+                DirectoryInfo myDirInfo = new DirectoryInfo(Files.Path);
+                foreach (FileInfo file in myDirInfo.GetFiles())
+                {
+                    file.Delete();
+                }
+
+            }
+            catch(Exception exception){
+                response.Output.Write(AJAX.Exception(exception));
+            }
+            
+        }
         
     }
 }

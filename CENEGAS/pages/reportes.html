@@ -117,6 +117,25 @@
         function _onload() {
             Mi.Template.load(function () {
                 Mi.Template.menuTop([
+                    {
+                        label: "Eliminar Archivos Temporales",
+                        onclick: function () {
+                           
+                            var request = {
+                                cache: false,
+                                type: 'post',
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    alert("Ocurrio un error al eliminar los archivos temporales");
+                                },
+                                success: function (data, textStatus, jqXHR) {
+                                    alert("Se eliminaron los archivos con éxito.");
+                                },
+                                data: { action:"eliminar" }
+                            }
+                            $.ajax( Mi.webHome + 'dispatch/zip.aspx', request);      
+                            
+                        }, img: "glyphicon glyphicon-trash"
+                    },
                 ], "Reportes del Registro de propiedades fuera de especificaciones ( NOM-001-SECRE-2010 )");
 
                 Mi.Modal.hidePleaseWait();
