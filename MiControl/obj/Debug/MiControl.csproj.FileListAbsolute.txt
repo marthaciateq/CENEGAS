@@ -3,3 +3,13 @@ C:\proyectos\cenegas\MiControl\bin\Debug\MiControl.pdb
 C:\proyectos\cenegas\MiControl\obj\Debug\MiControl.csprojResolveAssemblyReference.cache
 C:\proyectos\cenegas\MiControl\obj\Debug\MiControl.dll
 C:\proyectos\cenegas\MiControl\obj\Debug\MiControl.pdb
+G:\proyectos\CENEGAS\MiControl\bin\Debug\MiControl.dll
+G:\proyectos\CENEGAS\MiControl\bin\Debug\MiControl.pdb
+G:\proyectos\CENEGAS\MiControl\bin\Debug\Microsoft.ReportViewer.Common.dll
+G:\proyectos\CENEGAS\MiControl\bin\Debug\Microsoft.ReportViewer.WebForms.DLL
+G:\proyectos\CENEGAS\MiControl\bin\Debug\Microsoft.ReportViewer.ProcessingObjectModel.dll
+G:\proyectos\CENEGAS\MiControl\bin\Debug\Microsoft.ReportViewer.DataVisualization.dll
+G:\proyectos\CENEGAS\MiControl\bin\Debug\Microsoft.SqlServer.Types.dll
+G:\proyectos\CENEGAS\MiControl\obj\Debug\MiControl.csprojResolveAssemblyReference.cache
+G:\proyectos\CENEGAS\MiControl\obj\Debug\MiControl.dll
+G:\proyectos\CENEGAS\MiControl\obj\Debug\MiControl.pdb

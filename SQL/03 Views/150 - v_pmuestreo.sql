@@ -1,4 +1,4 @@
-CREATE VIEW v_pmuestreo (
+ALTER VIEW v_pmuestreo (
 	idpmuestreo,
 	punto,
 	nalterno,
@@ -8,6 +8,7 @@ CREATE VIEW v_pmuestreo (
 	abreviatura,
 	orden,
 	deleted,
+	tcre,
 	deletedS,
 	zonaS,
 	pmuestreo

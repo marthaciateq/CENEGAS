@@ -16,6 +16,7 @@
                     punto: Mi.MiTextVal($("#punto")),
                     nalterno: Mi.MiTextVal($("#nalterno")),
                     descripcion: Mi.MiTextVal($("#descripcion")),
+                    tcre: Mi.MiTextVal($("#tcre")),
                     zona: $("#zona").val(),
                     hcorte: $("#hcorte").val(),
                     abreviatura: Mi.MiTextVal($("#abreviatura")),
@@ -42,6 +43,7 @@
                 $("#punto").val("");
                 $("#nalterno").val("");
                 $("#descripcion").val("");
+                $("#tcre").val("");
                 $("#hcorte").val("");
                 $("#abreviatura").val("");
                 $("#orden").val("");
@@ -63,6 +65,7 @@
                     $("#punto").val(row.punto);
                     $("#nalterno").val(row.nalterno);
                     $("#descripcion").val(row.descripcion);
+                    $("#tcre").val(row.tcre);
                     $("#zona").val(row.zona);
                     $("#hcorte").val(row.hcorte);
                     $("#abreviatura").val(row.abreviatura);
@@ -97,7 +100,7 @@
 
             var table = Mi.table({
                 head: {
-                    data: [['','Núm.','Punto', 'Nombre Alterno', 'Descripcion','Zona','Hora de Corte','Abreviatrua','Estado']]
+                    data: [['','Núm.','Punto', 'Nombre Alterno', 'Descripcion','Zona','Hora de Corte','Abreviatura','Estado']]
                 },
                 body: {
                     data: r,
@@ -230,6 +233,12 @@
                         <label class="control-label col-sm-2">Descripción:</label>
                         <div class="col-sm-6">
                             <input type="text" class="form-control" id="descripcion" placeholder="Descripción" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Título Reporte Mensual CRE:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="tcre" placeholder="tcre" />
                         </div>
                     </div>
                     <div class="form-group">

@@ -1,4 +1,4 @@
-CREATE PROCEDURE sps_pmuestreo_guardar 
+ALTER PROCEDURE sps_pmuestreo_guardar 
 	@idsesion varchar(max),
 	@idpmuestreo varchar(max),
 	@punto varchar(max),	
@@ -8,7 +8,8 @@ CREATE PROCEDURE sps_pmuestreo_guardar
 	@hcorte int,
 	@abreviatura varchar(max),
 	@orden int,
-	@deleted varchar(max)
+	@deleted varchar(max),
+	@tcre varchar(max)
 AS
 BEGIN
 	declare @error varchar(max)
@@ -35,11 +36,11 @@ BEGIN
 				if @idpmuestreo is null
 				begin
 					execute sp_randomKey @idpmuestreo output
-					insert into pmuestreo values(@idpmuestreo,@punto,@nalterno,@descripcion,@zona,@hcorte,@abreviatura,@orden,@deleted)
+					insert into pmuestreo values(@idpmuestreo,@punto,@nalterno,@descripcion,@zona,@hcorte,@abreviatura,@orden,@deleted,@tcre)
 				end
 				else
 				begin 
-					update pmuestreo set punto = @punto, nalterno=@nalterno, descripcion=@descripcion, zona=@zona,hcorte=@hcorte,abreviatura=@abreviatura, orden=@orden,deleted=@deleted
+					update pmuestreo set punto = @punto, nalterno=@nalterno, descripcion=@descripcion, zona=@zona,hcorte=@hcorte,abreviatura=@abreviatura, orden=@orden,deleted=@deleted,tcre=@tcre
 					where idpmuestreo = @idpmuestreo
 					
 				end					

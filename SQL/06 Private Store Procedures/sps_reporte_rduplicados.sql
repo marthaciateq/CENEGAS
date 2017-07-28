@@ -1,4 +1,4 @@
-CREATE PROCEDURE sps_reporte_rduplicados
+ALTER PROCEDURE sps_reporte_rduplicados
 	@idsesion varchar(max),
 	@idbdatos varchar(max)
 AS

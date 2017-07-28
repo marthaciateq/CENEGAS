@@ -409,6 +409,28 @@ namespace cenegas.clases
 
                         }
                     }
+                    else if (activeElements == 11)
+                    {
+                        while (csv.ReadNextRecord())
+                        {
+                            index++;
+
+                            dt.Rows.Add(csv[0], csv[1], evalDate(csv[3], ref index, 4, ref type), hoy
+                                        , evalDouble(csv[4], ref index, 5, ref type)
+                                        , evalDouble(csv[5], ref index, 6, ref type)
+                                        , evalDouble(csv[6], ref index, 7, ref type)
+                                        , evalDouble(csv[7], ref index, 8, ref type)
+                                        , evalDouble(csv[8], ref index, 9, ref type)
+                                        , evalDouble(csv[9], ref index, 10, ref type)
+                                        , evalDouble(csv[10], ref index, 11, ref type)
+                                        , evalDouble(csv[11], ref index, 12, ref type)
+                                        , evalDouble(csv[12], ref index, 13, ref type)
+                                        , evalDouble(csv[13], ref index, 14, ref type)
+                                        , evalDouble(csv[14], ref index, 15, ref type)
+                                        );
+                        }
+
+                    }
                     else if (activeElements == 12)
                     {
                         while (csv.ReadNextRecord())
