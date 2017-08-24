@@ -1,0 +1,3 @@
+Admin=MSSQL,Data Source=(local); Initial Catalog=CENAGAS; User ID=CenagasAdmin; Password=123
+Default=MSSQL,Data Source=(local); Initial Catalog=CENaGAS; User ID=CenagasDefault; Password=123
+SMTP=SMTP,localhost/25/rob@rnwood.co.uk/_Ramanet/25/postmaster@ramaps.net/_Rama3023

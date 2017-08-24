@@ -14,7 +14,7 @@ BEGIN
 		
 		select 
 			a.*,
-			dbo.fn_dateToString(a.fecha) fechaS
+			dbo.fn_datetimeToString(a.fecha,3) fechaS
 		from importacionesRegistrosDuplicados a
 			where a.idbdatos=@idbdatos
 		order by fecha
