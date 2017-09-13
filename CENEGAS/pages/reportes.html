@@ -73,7 +73,12 @@
             else if (reporte == 'C') {
                 nombre = 'mensualCRE';
                 procedimiento = 'sps_reporte_mensualCRE'
-            }else{
+            }
+            else if (reporte == 'A') {
+                nombre = 'concentrado';
+                procedimiento = 'sps_reporte_concentrado'
+            }
+            else {
                 if(formato=='EXCEL' && (reporte=='D' || reporte=="G"))
                     nombre = 'especificaciones_excel'; 
             }
@@ -177,7 +182,7 @@
                      var reporte = $("#reporte:checked").val();
                      var separacion = $("#separacion:checked").val();
 
-                     if ((separacion=='P' || separacion=='E')) {
+                     if (reporte != 'A' && (separacion=='P' || separacion=='E')) {
 
                         var processItemsDeferred = [];
                         $('#bgenerar').attr('disabled', true);
@@ -292,6 +297,9 @@
                             </div>
                             <div class="radio">
                                 <label><input type="radio" id="reporte" name="optradio" value="C" />E. Reporte Mensual CRE</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" id="reporte" name="optradio" value="A" />F. Reporte Concentrado NOM-001-SECRE-2010 </label>
                             </div>
                         </div>
                     </div>

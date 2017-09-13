@@ -8,6 +8,14 @@
       <Name>mensualCRE.rdl</Name>
       <FullPath>mensualCRE.rdl</FullPath>
     </ProjectItem>
+    <ProjectItem>
+      <Name>concentrado.rdl</Name>
+      <FullPath>concentrado.rdl</FullPath>
+    </ProjectItem>
+    <ProjectItem>
+      <Name>especificaciones.rdl</Name>
+      <FullPath>especificaciones.rdl</FullPath>
+    </ProjectItem>
   </Reports>
   <Configurations>
     <Configuration>

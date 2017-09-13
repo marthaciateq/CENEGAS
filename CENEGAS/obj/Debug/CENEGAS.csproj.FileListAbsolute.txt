@@ -33,3 +33,5 @@ G:\proyectos\CENEGAS\CENEGAS\obj\Debug\CENEGAS.csprojResolveAssemblyReference.ca
 G:\proyectos\CENEGAS\CENEGAS\obj\Debug\CENEGAS.dll
 G:\proyectos\CENEGAS\CENEGAS\obj\Debug\CENEGAS.pdb
 G:\proyectos\CENEGAS\CENEGAS\bin\Spire.Barcode.dll
+C:\proyectos\CENEGAS\CENEGAS\bin\Spire.Barcode.dll
+C:\proyectos\CENEGAS\CENEGAS\obj\Debug\CENEGAS.csproj.CoreCompileInputs.cache
