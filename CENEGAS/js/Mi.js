@@ -121,7 +121,7 @@ Mi.plugin = function ($) {
 				$(this).addClass('MiDialog');
 				$(this).data('params', params);
 				var divClose = null, divHeader = null, divContent = null, divFooter = null;
-				divClose = $('<div class="MiDialogDivClose"><span><span><img src="' + Mi.webHome + 'img/close.png" /></span></span></div>');
+				divClose = $('<div class="MiDialogDivClose"><span><span><img src="' + Mi.webHome + 'imgs/close.png" /></span></span></div>');
 				Mi.css(divClose);
 				divClose.children('span').eq(0).children('span').eq(0).children('img').eq(0).click(function () {
 					var e = $(this).parent().parent().parent().parent();
@@ -443,9 +443,9 @@ Mi.plugin = function ($) {
 					for (var i = 0; i < tmp.length; i++) content.append(tmp[i]);
 					content.addClass('MiTreeNodeContentDiv');
 					Mi.css(content);
-					$(this).append($('<img src="' + Mi.webHome + 'img/collapse.png"/>\
-							<img src="' + Mi.webHome + 'img/expand.png"/>\
-							<img src="' + Mi.webHome + 'img/transparent.png"/>\
+					$(this).append($('<img src="' + Mi.webHome + 'imgs/collapse.png"/>\
+							<img src="' + Mi.webHome + 'imgs/expand.png"/>\
+							<img src="' + Mi.webHome + 'imgs/transparent.png"/>\
 							<div/>\
 							<div/>'));
 					var imgCollapse = $(this).children('img').eq(0);

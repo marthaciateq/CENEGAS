@@ -202,48 +202,39 @@ BEGIN
 			left join v_promedios  b on a.idpmuestreo=b.idpmuestreo and a.idelemento=b.idelemento and a.fecha=convert(date,b.fecha)
 		where b.promedio is null	
 
-		select distinct idpmuestreo,convert(date,fpromedio) fpromedio
-			into #fechas_horarios
-		from #horarios
+		select distinct a.idpmuestreo,b.abreviatura elemento
+			into #elementos_horarios
+		from #horarios a
+			inner join v_elementos b on a.idelemento=b.idelemento
+
 		select a.idpmuestreo,
 			STUFF((
-						SELECT ','+dbo.fn_datetimeToString(z.fpromedio,1)
-						FROM #fechas_horarios z
+						SELECT ','+elemento
+						FROM #elementos_horarios z
 						where z.idpmuestreo=a.idpmuestreo 
-						order by z.fpromedio
+						order by z.elemento
 						FOR XML PATH('')
-				),1,1,'') fechas,
-				b.total
+				),1,1,'') elementos
 		into #fechas_1
-		from #fechas_horarios a
-			left join (
-				select idpmuestreo,count(*) total
-				from #fechas_horarios
-				group by idpmuestreo
-			) b on a.idpmuestreo=b.idpmuestreo
-		group by a.idpmuestreo,b.total
+		from #elementos_horarios a
+		group by a.idpmuestreo
 
-		select distinct idpmuestreo,convert(date,fecha) fpromedio
-		into #fechas_promedio
-		from #promedios
+		select distinct a.idpmuestreo,b.abreviatura elemento
+		into #elementos_promedio
+		from #promedios a
+			inner join v_elementos b on a.idelemento=b.idelemento
 		
 		select a.idpmuestreo,
 			STUFF((
-						SELECT ','+dbo.fn_datetimeToString(z.fpromedio,1)
-						FROM #fechas_promedio z
+						SELECT ','+elemento
+						FROM #elementos_promedio z
 						where z.idpmuestreo=a.idpmuestreo 
-						order by z.fpromedio
+						order by z.elemento
 						FOR XML PATH('')
-				),1,1,'') fechas,
-				b.total
+				),1,1,'') elementos
 		into #fechas_2
-		from #fechas_promedio a
-			left join (
-				select idpmuestreo,count(*) total
-				from #fechas_promedio
-				group by idpmuestreo
-			) b on a.idpmuestreo=b.idpmuestreo
-		group by a.idpmuestreo,b.total
+		from #elementos_promedio a
+		group by a.idpmuestreo
 
 		 --RESULTADO FINAL
 		select 
@@ -251,8 +242,8 @@ BEGIN
 			a.nalterno,
 			b.elementos,
 			c.total,
-			case when h.idpmuestreo is null then 'NO' when e.total = (datediff(DAY, @d_finicial, @d_ffinal)+1) then 'TODOS LOS DÍAS' else e.fechas end fhorarios,
-			case when p.idpmuestreo is null then 'NO' when f.total = (datediff(DAY, @d_finicial, @d_ffinal)+1) then 'TODOS LOS DÍAS' else f.fechas end fpromedios,
+			e.elementos fhorarios,
+			f.elementos fpromedios,
 			case when 
 				d.idpmuestreo is not null then 'AB'
 				else 'ABC'

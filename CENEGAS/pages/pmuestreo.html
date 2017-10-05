@@ -18,9 +18,9 @@
                     descripcion: Mi.MiTextVal($("#descripcion")),
                     tcre: Mi.MiTextVal($("#tcre")),
                     zona: $("#zona").val(),
-                    hcorte: $("#hcorte").val(),
+                    hcorte: Mi.Val.inputNumber($("#hcorte")),
                     abreviatura: Mi.MiTextVal($("#abreviatura")),
-                    orden: $("#orden").val(),
+                    orden: Mi.Val.inputNumber($("#orden")),
                     deleted: $("#deleted").val()
                 },
                 onsuccess: function (r) {

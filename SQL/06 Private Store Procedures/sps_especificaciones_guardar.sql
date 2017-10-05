@@ -19,6 +19,7 @@ BEGIN
 		if @idelemento is null execute sp_error 'U', 'Campo elemento requerido.'
 		if @zona is null execute sp_error 'U', 'Campo zona requerido.'
 		if @fecha is null execute sp_error 'U', 'Campo fecha requerido.'
+		if @minimo is null and @maximo is null and @max_diaria is null execute sp_error 'U', 'Especificación requerida.'
 		
 		declare @fecha1 date
 		set @fecha1=convert(date,@fecha,103)

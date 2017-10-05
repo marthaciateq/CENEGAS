@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Puntos de Muestreo</title>
+    <title>Especificaciones</title>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/cenegas.css">
     <link rel="stylesheet" href="../css/chosen.css">
@@ -9,7 +9,6 @@
         function guardar() {
             row = $("#registros").find('input:checked').first().parent().parent().data('row');
             $("#formulario").hide();
-
             Mi.AJAX.request({
                 data: {
                     NAME: 'sps_especificaciones_guardar',
@@ -32,7 +31,6 @@
                     $("#formulario").show();
                     $("#guardar").attr('disabled', false)
                     Mi.Modal.error(r);
-
                 }
             });
         }
@@ -48,7 +46,7 @@
 
                 $("#guardar").unbind("click").click(function () {
                     $(this).prop("disabled", true);
-                    guardar()
+                    guardar();
                 });
 
                 $("#formulario").show();

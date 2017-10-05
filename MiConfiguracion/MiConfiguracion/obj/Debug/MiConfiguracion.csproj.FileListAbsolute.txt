@@ -1,0 +1,4 @@
+G:\proyectos\MiConfiguracion\MiConfiguracion\bin\Debug\MiConfiguracion.dll
+G:\proyectos\MiConfiguracion\MiConfiguracion\bin\Debug\MiConfiguracion.pdb
+G:\proyectos\MiConfiguracion\MiConfiguracion\obj\Debug\MiConfiguracion.dll
+G:\proyectos\MiConfiguracion\MiConfiguracion\obj\Debug\MiConfiguracion.pdb

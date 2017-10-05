@@ -1,12 +1,13 @@
 ﻿Mi.Menu = {};
 Mi.Menu.menu = { 'caption': '', 'url': null, 'servicios': [] }
 Mi.Menu.menu.administracion = { 'caption': 'Análisis de Calidad del Gas', 'url': null, 'servicios': [] }
-Mi.Menu.menu.administracion.usuarios = { 'caption': 'Usuarios', 'url': 'pages/usuarios.html', 'servicios': ['sps_usuarios_guardar','sps_usuarios_borrar'] }
-Mi.Menu.menu.administracion.pmuestreo = { 'caption': 'Puntos de Muestreo', 'url': 'pages/pmuestreo.html', 'servicios': ['sps_pmuestreo_guardar','sps_pmuestreo_borrar'] }
-Mi.Menu.menu.administracion.elementos = { 'caption': 'Elementos', 'url': 'pages/elementos.html', 'servicios': ['sps_elementos_guardar','sps_elementos_borrar'] }
-Mi.Menu.menu.administracion.especificaciones = { 'caption': 'Especificaciones', 'url': 'pages/especificaciones.html', 'servicios': ['sps_especificaciones_guardar','sps_especificaciones_borrar'] }
-Mi.Menu.menu.administracion.bdatos = { 'caption': 'Carga de Bases de Datos', 'url': 'pages/bdatos.html', 'servicios': [] }
-Mi.Menu.menu.administracion.reportes = { 'caption': 'Reportes', 'url': 'pages/reportes.html', 'servicios': [] }
+Mi.Menu.menu.administracion.usuarios = { 'caption': 'Usuarios', 'url': 'pages/usuarios.html', 'servicios': ['sps_usuarios_guardar', 'sps_usuarios_borrar', 'sps_usuarios_buscar'] }
+Mi.Menu.menu.administracion.roles = { 'caption': 'Roles', 'url': 'pages/roles.html', 'servicios': ['sps_roles_guardar', 'sps_roles_borrar', 'sps_roles_buscar'] }
+Mi.Menu.menu.administracion.pmuestreo = { 'caption': 'Puntos de Muestreo', 'url': 'pages/pmuestreo.html', 'servicios': ['sps_pmuestreo_guardar','sps_pmuestreo_borrar','sps_pmuestreo_buscar'] }
+Mi.Menu.menu.administracion.elementos = { 'caption': 'Elementos', 'url': 'pages/elementos.html', 'servicios': ['sps_elementos_guardar','sps_elementos_borrar','sps_elementos_buscar'] }
+Mi.Menu.menu.administracion.especificaciones = { 'caption': 'Especificaciones', 'url': 'pages/especificaciones.html', 'servicios': ['sps_especificaciones_guardar','sps_especificaciones_borrar','sps_especificaciones_buscar'] }
+Mi.Menu.menu.administracion.bdatos = {'caption': 'Carga de Bases de Datos', 'url': 'pages/bdatos.html', 'servicios': ['sps_bdatos_borrar','sps_bdatos_buscar','sps_import','sps_files_read','sps_files_write','sps_getFileName','sps_reporte_rduplicados'] }
+Mi.Menu.menu.administracion.reportes = { 'caption': 'Reportes', 'url': 'pages/reportes.html', 'servicios': ['sps_reporte_concentrado','sps_reporte_especificaciones','sps_reporte_falta_informacion','sps_reporte_grafico_tendencia','sps_reporte_mensualCRE'] }
 Mi.Menu.menu.administracion.salir = {
     'caption': 'Salir', 'url': function () {
         Mi.Modal.confirm('¿Esta usted seguro de cerrar su sesión?',

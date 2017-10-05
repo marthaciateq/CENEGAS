@@ -20,6 +20,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -147,6 +148,7 @@
     <Content Include="pages\bdatos.html" />
     <Content Include="pages\elementos.html" />
     <Content Include="pages\reportes.html" />
+    <Content Include="pages\roles.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

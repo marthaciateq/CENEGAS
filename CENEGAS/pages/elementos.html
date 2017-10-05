@@ -18,7 +18,7 @@
                     simbolo: Mi.MiTextVal($("#simbolo")),
                     unidad: Mi.MiTextVal($("#unidad")),
                     abreviatura: Mi.MiTextVal($("#abreviatura")),
-                    orden: $("#orden").val(),
+                    orden: Mi.Val.inputNumber($("#orden")),
                     deleted: $("#deleted").val()
                 },
                 onsuccess: function (r) {

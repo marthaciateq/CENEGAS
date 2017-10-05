@@ -22,3 +22,11 @@ Mi.Util.weekDays = {
 	5: {value:5, name: 'Viernes', shortName: 'Vie' },
 	6: {value:6, name: 'Sábado', shortName: 'Sab' }
 }
+Mi.Util.arrayToObject = function (a) {
+    var o = {}
+    if ($.isArray(a))
+        for (var i = 0; i < a.length; i++)
+            if (!$.isArray(a[i]) && !$.isPlainObject(a[i])) o[a[i]] = a[i];
+            else for (var j in a[i]) o[a[i][j]] = a[i][j];
+    return o;
+}
