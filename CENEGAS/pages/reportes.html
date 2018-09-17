@@ -9,7 +9,8 @@
     <script type="text/javascript">
         var files = [];
         var narchivos = new Array();
-        function getPuntosMuestreoConInformacion(pmuestreo, reporte,formato,separacion) {
+        function getPuntosMuestreoConInformacion(pmuestreo, reporte, formato, separacion) {
+            alert(reporte);
             var nombre = 'especificaciones';
             var procedimiento = 'sps_reporte_especificaciones';
             var dfd = $.Deferred();
@@ -25,10 +26,11 @@
                 nombre = 'tendencia';
                 procedimiento = 'sps_reporte_grafico_tendencia'
             }
-            else if (reporte == 'C') {
+            else if (reporte == 'CMIN' || reporte=='CMAX' || reporte=='PROM') {
                 nombre = 'mensualCRE';
                 procedimiento = 'sps_reporte_mensualCRE'
             }
+
 
             Mi.AJAX.request({
                 data: {
@@ -40,7 +42,7 @@
                     ffinal: $("#ffinal").val(),
                     reporte:reporte,
                     resultado: 1,
-                    separacion:separacion
+                    separacion: separacion
                 },
                 onsuccess: function (r) {
                    dfd.resolve(r);
@@ -56,6 +58,7 @@
         
         function generarReporte(pmuestreo,elementos,npmuestreo,abrev_pmuestreo,nelemento,abrev_elemento,reporte,formato,separacion,ptoFile) {
             var nombre = 'especificaciones';
+            var tipo;
             var procedimiento = 'sps_reporte_especificaciones';
             var dfd = $.Deferred();
 
@@ -70,9 +73,20 @@
                 nombre = 'tendencia';
                 procedimiento = 'sps_reporte_grafico_tendencia'
             }
-            else if (reporte == 'C') {
+            else if (reporte == 'CMAX') {
                 nombre = 'mensualCRE';
                 procedimiento = 'sps_reporte_mensualCRE'
+                tipo='MAX'
+            }
+            else if (reporte == 'CMIN') {
+                nombre = 'mensualCRE';
+                procedimiento = 'sps_reporte_mensualCRE'
+                tipo = 'MIN'
+            }
+            else if (reporte == 'CPROM') {
+                nombre = 'mensualCRE';
+                procedimiento = 'sps_reporte_mensualCRE'
+                tipo = 'PROM'
             }
             else if (reporte == 'A') {
                 nombre = 'concentrado';
@@ -95,7 +109,8 @@
                         formato: formato,
                         resultado: 2,
                         reporte: reporte == "" ? 'D' : reporte,
-                        separacion:separacion
+                        separacion: separacion,
+                        tipo:tipo
                     },
                     nombre: nombre,
                     format: formato,
@@ -196,7 +211,7 @@
                                 var pmuestreo = null;
                                 $.each(data, function (index, value) {
                                     pmuestreo = value;
-                                    if(separacion=='P' || reporte=='C' || reporte=='F')
+                                    if (separacion == 'P' || reporte == 'CMIN' || reporte == 'CMAX' || reporte == 'PROM' || reporte=='F')
                                         processItemsDeferred.push(generarReporte(pmuestreo.idpmuestreo, $("#idelemento").val(), pmuestreo.npmuestreo, pmuestreo.abrev_pmuestreo, null, null, reporte, formato, separacion, 'S'));
                                     else 
                                         if(separacion=='E')
@@ -287,19 +302,25 @@
                                 <label><input type="radio" id="reporte" name="optradio" value="D" checked="checked" />A. NOM-001-SECRE-2010</label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" id="reporte"  name="optradio" value="G" />B. NOM-001-SECRE-2010 (Solo punto A y B)</label>
+                                <label><input type="radio" id="reporte" name="optradio" value="G" />B. NOM-001-SECRE-2010 (Solo punto A y B)</label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" id="reporte"  name="optradio" value="F" />C. Información Faltante</label>
+                                <label><input type="radio" id="reporte" name="optradio" value="F" />C. Información Faltante</label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" id="reporte"  name="optradio" value="T" />D. Gráfico de Tendencia</label>
+                                <label><input type="radio" id="reporte" name="optradio" value="T" />D. Gráfico de Tendencia</label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" id="reporte" name="optradio" value="C" />E. Reporte Mensual CRE</label>
+                                <label><input type="radio" id="reporte" name="optradio" value="CMIN" />E. Reporte Mensual CRE (Minimos)</label>
                             </div>
                             <div class="radio">
-                                <label><input type="radio" id="reporte" name="optradio" value="A" />F. Reporte Concentrado NOM-001-SECRE-2010 </label>
+                                <label><input type="radio" id="reporte" name="optradio" value="CMAX" />F. Reporte Mensual CRE (Máximos)</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" id="reporte" name="optradio" value="CPROM" />G. Reporte Mensual CRE (Promedios)</label>
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" id="reporte" name="optradio" value="A" />H. Reporte Concentrado NOM-001-SECRE-2010 </label>
                             </div>
                         </div>
                     </div>

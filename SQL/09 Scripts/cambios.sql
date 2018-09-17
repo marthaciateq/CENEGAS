@@ -179,7 +179,7 @@ END
 
 go
 
-ALTER PROCEDURE sps_pmuestreo_guardar 
+CREATE PROCEDURE sps_pmuestreo_guardar 
 	@idsesion varchar(max),
 	@idpmuestreo varchar(max),
 	@punto varchar(max),	
@@ -241,7 +241,7 @@ END
 
 GO
 
-ALTER VIEW v_pmuestreo (
+CREATE VIEW v_pmuestreo (
 	idpmuestreo,
 	punto,
 	nalterno,
