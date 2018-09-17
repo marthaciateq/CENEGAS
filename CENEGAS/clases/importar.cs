@@ -370,8 +370,6 @@ namespace cenegas.clases
             return DBNull.Value;
         }
 
-
-
         private static void readCSV(string pathFile, ref DataTable dt, int activeElements, string type)
         {
             DateTime hoy = DateTime.Now;
@@ -385,14 +383,16 @@ namespace cenegas.clases
                     int fieldCount = csv.FieldCount;
 
                     string[] headers = csv.GetFieldHeaders();
-                    csv.MissingFieldAction = MissingFieldAction.ReplaceByNull;
-                    
+
 
                     if (activeElements == 10)
                     {
                         while (csv.ReadNextRecord())
                         {
                             index++;
+
+                            //if ( csv[13] != null )
+                            //    throw(new Exception("La linea " + index.ToString() + " tiene " + csv.FieldCount + " y se esperaban 14. Favor de verificar el archivo CSV de " + ( type == "H" ? "Horario." : "Diario.") ));
 
                             dt.Rows.Add(csv[0], csv[1], evalDate(csv[3], ref index, 4, ref type), hoy
                                 , evalDouble(csv[4], ref index, 5, ref type)
@@ -406,7 +406,6 @@ namespace cenegas.clases
                                 , evalDouble(csv[12], ref index, 13, ref type)
                                 , evalDouble(csv[13], ref index, 14, ref type)
                                 );
-
                         }
                     }
                     else if (activeElements == 11)
@@ -437,6 +436,9 @@ namespace cenegas.clases
                         {
                             index++;
 
+                            //if (csv.FieldCount < 16)
+                            //    throw (new Exception("La linea " + index.ToString() + " tiene " + csv.FieldCount + " y se esperaban 16. Favor de verificar el archivo CSV de " + (type == "H" ? "Horario." : "Diario.")));
+
                             dt.Rows.Add(csv[0], csv[1], evalDate(csv[3], ref index, 4, ref type), hoy
                                         , evalDouble(csv[4], ref index, 5, ref type)
                                         , evalDouble(csv[5], ref index, 6, ref type)
@@ -459,7 +461,10 @@ namespace cenegas.clases
             }
             catch (Exception e)
             {
-                throw (e);
+                //if (e.HResult == -2146233088) {
+                //    throw (new Exception("La linea " + index.ToString() + " no tiene las columnas esperadas, se esperaban " + activeElements.ToString() + " columnas de valores para los elementos. Favor de verificar el archivo CSV de " + (type == "H" ? "Horario." : "Diario.")));
+                //}else
+                    throw (e);
             }
         }
 
