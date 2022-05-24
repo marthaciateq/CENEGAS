@@ -25,6 +25,7 @@ GO
 
 USE CENEGAS
 GO
+GO
 
 EXECUTE sp_changedbowner @loginame = N'cenegasAdmin', @map = false
 GO
