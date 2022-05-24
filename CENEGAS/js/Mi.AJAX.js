@@ -1,6 +1,6 @@
 ﻿Mi.AJAX = {}
 Mi.AJAX.request = function (params) {
-	if (!$.isPlainObject(params)) params = {}
+	if (!$.isPlainObject(params)) params = {};
 	if ($.type(params.url) != 'string') params.url = Mi.webHome + 'dispatch/ajax.aspx';
 	if ($.type(params.onsuccess) != 'function') params.onsuccess = function () { }
 	if ($.type(params.onerror) != 'function') params.onerror = function (r) { Mi.Modal.alert(r); }
